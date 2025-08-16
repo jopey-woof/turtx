@@ -1,0 +1,56 @@
+# Turtle Monitoring System - Binary Sensors Configuration
+# Phase 1: Basic system binary sensors only
+# Hardware-specific sensors will be added in Phase 2
+
+# System connectivity sensors
+- platform: ping
+  host: 8.8.8.8
+  name: "Internet Connection"
+  scan_interval: 60
+
+- platform: ping
+  host: 10.0.20.1
+  name: "Router Connection"
+  scan_interval: 30
+
+# Template binary sensors for system health
+- platform: template
+  sensors:
+    turtle_system_online:
+      friendly_name: "Turtle System Online"
+      icon_template: mdi:server-network
+      value_template: >
+        {{ is_state('binary_sensor.internet_connection', 'on') and
+           is_state('binary_sensor.router_connection', 'on') }}
+      device_class: connectivity
+
+    turtle_system_healthy:
+      friendly_name: "Turtle System Healthy"
+      icon_template: mdi:heart-pulse
+      value_template: >
+        {{ states('sensor.turtle_system_health') in ['Good', 'Warning'] }}
+      device_class: safety
+
+    turtle_alerts_active:
+      friendly_name: "Turtle Alerts Active"
+      icon_template: mdi:bell-alert
+      value_template: >
+        {{ states('sensor.turtle_system_health') == 'Critical' or
+           is_state('input_boolean.turtle_maintenance_mode', 'on') }}
+      device_class: safety
+
+# Placeholder binary sensors for future hardware (Phase 2)
+# These will be replaced with actual hardware sensors
+- platform: template
+  sensors:
+    turtle_temperature_ok_placeholder:
+      friendly_name: "Temperature OK (Placeholder)"
+      icon_template: mdi:thermometer-check
+      value_template: "true"
+      device_class: safety
+      
+    turtle_humidity_ok_placeholder:
+      friendly_name: "Humidity OK (Placeholder)"
+      icon_template: mdi:water-check
+      value_template: "true"
+      device_class: safety

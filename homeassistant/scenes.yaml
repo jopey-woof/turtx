@@ -1,0 +1,38 @@
+# Turtle Monitoring System - Scenes
+# Phase 1: Basic system control scenes
+# Environmental scenes will be added in Phase 2
+
+# Normal monitoring scene
+- name: "Normal Monitoring"
+  icon: mdi:turtle
+  entities:
+    input_boolean.turtle_system_armed: true
+    input_boolean.turtle_manual_mode: false
+    input_boolean.turtle_maintenance_mode: false
+
+# Manual control scene
+- name: "Manual Control Mode"
+  icon: mdi:account-wrench
+  entities:
+    input_boolean.turtle_system_armed: true
+    input_boolean.turtle_manual_mode: true
+    input_boolean.turtle_maintenance_mode: false
+
+# Maintenance scene
+- name: "Maintenance Mode"
+  icon: mdi:tools
+  entities:
+    input_boolean.turtle_system_armed: true
+    input_boolean.turtle_manual_mode: false
+    input_boolean.turtle_maintenance_mode: true
+
+# System disarmed scene
+- name: "System Disarmed"
+  icon: mdi:shield-off
+  entities:
+    input_boolean.turtle_system_armed: false
+    input_boolean.turtle_manual_mode: false
+    input_boolean.turtle_maintenance_mode: false
+
+# Placeholder scenes for future hardware (Phase 2)
+# These will be replaced with actual environmental control scenes

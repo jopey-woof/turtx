@@ -1,0 +1,82 @@
+# Turtle Monitoring System - Entity Customizations
+# Phase 1: Basic entity customizations with turtle theme
+
+# System status entities
+sensor.turtle_system_status:
+  friendly_name: "System Status"
+  icon: mdi:turtle
+
+sensor.turtle_system_health:
+  friendly_name: "System Health"
+
+binary_sensor.turtle_system_online:
+  friendly_name: "System Online"
+
+binary_sensor.turtle_system_healthy:
+  friendly_name: "System Healthy"
+
+binary_sensor.turtle_alerts_active:
+  friendly_name: "Alerts Active"
+
+# Control entities with turtle theme
+input_boolean.turtle_system_armed:
+  friendly_name: "System Armed"
+  icon: mdi:shield-check
+
+input_boolean.turtle_manual_mode:
+  friendly_name: "Manual Mode"
+  icon: mdi:account-wrench
+
+input_boolean.turtle_maintenance_mode:
+  friendly_name: "Maintenance Mode"
+  icon: mdi:tools
+
+# Temperature entities with turtle theme
+input_number.turtle_temp_min:
+  friendly_name: "Min Temperature"
+  icon: mdi:thermometer-chevron-down
+
+input_number.turtle_temp_max:
+  friendly_name: "Max Temperature"
+  icon: mdi:thermometer-chevron-up
+
+sensor.turtle_temperature_placeholder:
+  friendly_name: "Temperature"
+  icon: mdi:turtle
+
+# Humidity entities with turtle theme
+input_number.turtle_humidity_min:
+  friendly_name: "Min Humidity"
+  icon: mdi:water-chevron-down
+
+input_number.turtle_humidity_max:
+  friendly_name: "Max Humidity"
+  icon: mdi:water-chevron-up
+
+sensor.turtle_humidity_placeholder:
+  friendly_name: "Humidity"
+  icon: mdi:water-percent
+
+# Network entities
+binary_sensor.internet_connection:
+  friendly_name: "Internet"
+
+binary_sensor.router_connection:
+  friendly_name: "Router"
+
+# System resource entities
+sensor.disk_use_percent_:
+  friendly_name: "Disk Usage"
+  icon: mdi:harddisk
+
+sensor.memory_use_percent:
+  friendly_name: "Memory Usage"
+  icon: mdi:memory
+
+sensor.processor_use:
+  friendly_name: "CPU Usage"
+  icon: mdi:cpu-64-bit
+
+sensor.home_assistant_uptime:
+  friendly_name: "System Uptime"
+  icon: mdi:clock-time-eight

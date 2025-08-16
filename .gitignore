@@ -1,0 +1,34 @@
+# Home Assistant
+homeassistant/secrets.yaml
+homeassistant/.storage/
+homeassistant/home-assistant.log
+homeassistant/home-assistant_v2.db*
+homeassistant/known_devices.yaml
+homeassistant/ip_bans.yaml
+
+# Docker
+.env
+docker/data/
+docker/logs/
+
+# System files
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+
+# SSH keys and sensitive data
+*.pem
+*.key
+secrets/
+.ssh/
+
+# IDE
+.vscode/launch.json
+.vscode/tasks.json
+.cursor/
+
+# Backup files
+*.backup
+*.bak
+*~

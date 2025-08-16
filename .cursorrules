@@ -1,0 +1,285 @@
+# Cursor Configuration Files for Turtle Monitoring Project
+
+## .cursorrules
+
+```
+# Turtle Monitoring System - Cursor AI Rules
+
+## Project Context
+You are helping build an IoT turtle monitoring system that runs on Ubuntu Server with Docker and Home Assistant. All commands should be executed via SSH on the remote machine at shrimp@10.0.20.69.
+
+## Command Execution Rules
+- ALWAYS execute commands via SSH: ssh shrimp@10.0.20.69 'command'
+- Test each component immediately after configuration
+- Verify hardware functionality in real-time
+- Create configuration files directly on the remote machine
+- Use appropriate file paths for Ubuntu Server (/home/shrimp/, /etc/, etc.)
+
+## Hardware Awareness
+The system includes:
+- Beelink Mini PC running Ubuntu Server 22.04 LTS
+- 10.1" touchscreen (1024x600) for kiosk interface
+- TEMPerHUM USB sensor
+- Arducam 1080P USB camera
+- Sonoff Zigbee dongle
+- 4x Zigbee smart plugs with energy monitoring
+
+## Code Style & Practices
+- Use clear, descriptive variable names
+- Add comments explaining hardware-specific configurations
+- Include error handling and validation in all scripts
+- Follow Ubuntu/systemd conventions for service files
+- Use Docker best practices for container configurations
+
+## Home Assistant Specific
+- Use YAML format for all HA configurations
+- Include entity IDs that match hardware device names
+- Create turtle-themed entity names (turtle_temp, shell_humidity, etc.)
+- Optimize all UI elements for 1024x600 touchscreen
+- Use nature/turtle color palette: greens, browns, earth tones
+
+## MANDATORY Project Structure
+ALWAYS use this exact directory structure when creating files:
+
+```
+turtle-monitor/                    # Project root on remote machine: /home/shrimp/turtle-monitor/
+├── setup/                         # System setup and installation scripts
+│   ├── bootstrap.sh              # Initial system setup
+│   ├── install-docker.sh         # Docker installation
+│   └── install-display.sh        # Display/kiosk setup
+├── docker/                        # Docker configurations
+│   ├── docker-compose.yml        # Main container orchestration
+│   └── homeassistant/
+│       └── Dockerfile            # Custom HA image if needed
+├── homeassistant/                 # Home Assistant configurations
+│   ├── configuration.yaml        # Main HA config
+│   ├── automations.yaml         # All turtle automations
+│   ├── scripts.yaml             # Custom scripts
+│   ├── sensors.yaml             # Sensor definitions
+│   └── lovelace/
+│       ├── dashboard.yaml       # Kiosk dashboard
+│       └── themes/
+│           └── turtle-theme.yaml # Custom turtle theme
+├── kiosk/                         # Kiosk mode configurations
+│   ├── kiosk.service            # Systemd service
+│   ├── start-kiosk.sh           # Kiosk startup script
+│   └── chromium-flags.conf      # Browser configuration
+├── hardware/                      # Hardware device configurations
+│   ├── 99-turtle-devices.rules  # Udev rules for USB devices
+│   └── display-config.conf      # Touchscreen configuration
+├── themes/                        # Custom UI themes and assets
+│   ├── turtle.css               # Custom CSS theme
+│   ├── icons/                   # Turtle-themed icons
+│   └── animations.css           # Nature animations
+└── docs/                          # Documentation
+    ├── DEPLOYMENT.md            # Deployment guide
+    ├── HARDWARE.md              # Hardware setup notes
+    └── TROUBLESHOOTING.md       # Common issues
+```
+
+**File Creation Rules:**
+- NEVER create files outside this structure
+- ALWAYS use the exact paths shown above
+- When creating a script in setup/, put it in setup/
+- When creating HA configs, put them in homeassistant/
+- When creating kiosk files, put them in kiosk/
+- All SSH commands should reference /home/shrimp/turtle-monitor/ as the base path
+
+## Testing & Validation
+- Test each SSH command before moving to next step
+- Verify file creation and permissions
+- Check service status after configuration
+- Validate hardware device detection
+- Test touchscreen interaction
+
+## Turtle Theming
+- Use turtle and nature-inspired naming
+- Implement earth-tone color schemes
+- Create organic, curved UI elements
+- Add subtle nature animations where appropriate
+- Make interface delightful and emotionally engaging
+```
+
+## .vscode/settings.json (Cursor IDE Settings)
+
+```json
+{
+    "files.associations": {
+        "*.yaml": "home-assistant",
+        "docker-compose*.yml": "dockercompose",
+        "*.rules": "udev"
+    },
+    "yaml.schemas": {
+        "https://raw.githubusercontent.com/home-assistant/core/dev/homeassistant/helpers/config_validation.py": "configuration.yaml"
+    },
+    "files.exclude": {
+        "**/__pycache__": true,
+        "**/node_modules": true,
+        ".git": true
+    },
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/bower_components": true,
+        "**/.git": true
+    },
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true,
+    "editor.detectIndentation": true,
+    "yaml.format.enable": true,
+    "yaml.validate": true,
+    "editor.rulers": [80, 120],
+    "editor.wordWrap": "bounded",
+    "editor.wordWrapColumn": 120,
+    "terminal.integrated.defaultProfile.linux": "bash",
+    "remote.SSH.defaultExtensions": [
+        "ms-vscode.vscode-yaml",
+        "ms-vscode-remote.remote-ssh",
+        "ms-azuretools.vscode-docker"
+    ]
+}
+```
+
+## Project Structure (.cursorrules should reference this)
+
+```
+turtle-monitor/
+├── README.md
+├── setup/
+│   ├── bootstrap.sh              # Initial system setup
+│   ├── install-docker.sh         # Docker installation
+│   └── install-display.sh        # Display/kiosk setup
+├── docker/
+│   ├── docker-compose.yml        # Main container orchestration
+│   └── homeassistant/
+│       └── Dockerfile            # Custom HA image if needed
+├── homeassistant/
+│   ├── configuration.yaml        # Main HA config
+│   ├── automations.yaml         # All turtle automations
+│   ├── scripts.yaml             # Custom scripts
+│   ├── sensors.yaml             # Sensor definitions
+│   └── lovelace/
+│       ├── dashboard.yaml       # Kiosk dashboard
+│       └── themes/
+│           └── turtle-theme.yaml # Custom turtle theme
+├── kiosk/
+│   ├── kiosk.service            # Systemd service
+│   ├── start-kiosk.sh           # Kiosk startup script
+│   └── chromium-flags.conf      # Browser configuration
+├── hardware/
+│   ├── 99-turtle-devices.rules  # Udev rules for USB devices
+│   └── display-config.conf      # Touchscreen configuration
+├── themes/
+│   ├── turtle.css               # Custom CSS theme
+│   ├── icons/                   # Turtle-themed icons
+│   └── animations.css           # Nature animations
+└── docs/
+    ├── DEPLOYMENT.md            # Deployment guide
+    ├── HARDWARE.md              # Hardware setup notes
+    └── TROUBLESHOOTING.md       # Common issues
+```
+
+## .gitignore
+
+```
+# Home Assistant
+homeassistant/secrets.yaml
+homeassistant/.storage/
+homeassistant/home-assistant.log
+homeassistant/home-assistant_v2.db*
+homeassistant/known_devices.yaml
+homeassistant/ip_bans.yaml
+
+# Docker
+.env
+docker/data/
+docker/logs/
+
+# System files
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+
+# SSH keys and sensitive data
+*.pem
+*.key
+secrets/
+.ssh/
+
+# IDE
+.vscode/launch.json
+.vscode/tasks.json
+.cursor/
+
+# Backup files
+*.backup
+*.bak
+*~
+```
+
+## Remote Development Configuration (.vscode/launch.json)
+
+```json
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "SSH: turtle-monitor",
+            "type": "node",
+            "request": "attach",
+            "address": "10.0.20.69",
+            "port": 22,
+            "localRoot": "${workspaceFolder}",
+            "remoteRoot": "/home/shrimp/turtle-monitor",
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
+        }
+    ]
+}
+```
+
+## package.json (for any Node.js tooling)
+
+```json
+{
+    "name": "turtle-monitor",
+    "version": "1.0.0",
+    "description": "Eastern Box Turtle IoT Monitoring System",
+    "main": "index.js",
+    "scripts": {
+        "deploy": "ssh shrimp@10.0.20.69 'cd turtle-monitor && git pull && ./setup/bootstrap.sh'",
+        "logs": "ssh shrimp@10.0.20.69 'docker logs homeassistant -f'",
+        "restart": "ssh shrimp@10.0.20.69 'cd turtle-monitor && docker-compose restart'",
+        "backup": "ssh shrimp@10.0.20.69 'cd turtle-monitor && tar -czf backup-$(date +%Y%m%d).tar.gz homeassistant/'"
+    },
+    "repository": {
+        "type": "git",
+        "url": "your-repo-url"
+    },
+    "keywords": ["iot", "turtle", "monitoring", "home-assistant", "kiosk"],
+    "author": "Your Name",
+    "license": "MIT",
+    "devDependencies": {
+        "yaml-lint": "^1.10.0"
+    }
+}
+```
+
+## Current Premier Coding Model
+
+**Claude 3.5 Sonnet** is currently the premier coding model and what Cursor uses by default. It excels at:
+
+- Complex systems integration (perfect for your IoT project)
+- Multi-language projects (Python, YAML, Bash, CSS, etc.)
+- Infrastructure as Code
+- Docker and containerization
+- Linux system administration
+- Real-time problem solving and debugging
+
+For your turtle monitoring project, Claude 3.5 Sonnet is ideal because it can:
+- Handle the complexity of Ubuntu Server + Docker + Home Assistant integration
+- Write robust bash scripts for system configuration
+- Create beautiful, functional Home Assistant YAML configurations
+- Design responsive CSS for your touchscreen interface
+- Debug hardware integration issues in real-time via SSH

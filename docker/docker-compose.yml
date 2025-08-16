@@ -1,0 +1,82 @@
+version: '3.8'
+
+services:
+  homeassistant:
+    container_name: homeassistant
+    image: homeassistant/home-assistant:2024.1.0
+    restart: unless-stopped
+    environment:
+      - TZ=${TZ:-America/New_York}
+    volumes:
+      - ../homeassistant:/config
+      - /etc/localtime:/etc/localtime:ro
+      - /dev:/dev
+      - /run/dbus:/run/dbus:ro
+    ports:
+      - "8123:8123"
+    privileged: true
+    network_mode: host
+    devices:
+      # USB devices will be mapped here
+      - /dev/video0:/dev/video0  # Camera
+      - /dev/ttyUSB0:/dev/ttyUSB0  # Temperature sensor
+      - /dev/ttyUSB1:/dev/ttyUSB1  # Zigbee coordinator (if separate)
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8123"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    labels:
+      - "turtle.service=homeassistant"
+      - "turtle.critical=true"
+      - "turtle.recovery_time=60s"
+
+  # Optional: Watchtower for automatic updates (disabled by default for critical system)
+  # watchtower:
+  #   container_name: watchtower
+  #   image: containrrr/watchtower:latest
+  #   restart: unless-stopped
+  #   environment:
+  #     - WATCHTOWER_SCHEDULE=0 0 4 * * *  # Check daily at 4 AM
+  #     - WATCHTOWER_CLEANUP=true
+  #     - WATCHTOWER_INCLUDE_STOPPED=true
+  #     - WATCHTOWER_NOTIFICATIONS=email
+  #     - WATCHTOWER_NOTIFICATION_EMAIL_FROM=${EMAIL_USERNAME}
+  #     - WATCHTOWER_NOTIFICATION_EMAIL_TO=${EMAIL_RECIPIENT}
+  #     - WATCHTOWER_NOTIFICATION_EMAIL_SERVER=${EMAIL_SMTP_HOST}
+  #     - WATCHTOWER_NOTIFICATION_EMAIL_SERVER_PORT=${EMAIL_SMTP_PORT}
+  #     - WATCHTOWER_NOTIFICATION_EMAIL_SERVER_USER=${EMAIL_USERNAME}
+  #     - WATCHTOWER_NOTIFICATION_EMAIL_SERVER_PASSWORD=${EMAIL_PASSWORD}
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   labels:
+  #     - "turtle.service=watchtower"
+  #     - "turtle.critical=false"
+
+  # Nginx reverse proxy for HTTPS (optional, for production)
+  # nginx:
+  #   container_name: nginx
+  #   image: nginx:1.25-alpine
+  #   restart: unless-stopped
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+  #     - ./nginx/ssl:/etc/nginx/ssl:ro
+  #   depends_on:
+  #     - homeassistant
+  #   labels:
+  #     - "turtle.service=nginx"
+  #     - "turtle.critical=false"
+
+networks:
+  default:
+    name: turtle_network
+    driver: bridge
+
+volumes:
+  homeassistant_config:
+    name: turtle_ha_config
+    driver: local

@@ -1,0 +1,123 @@
+# Turtle Monitoring System - Custom Theme
+# Phase 1: Basic turtle-themed colors and styling
+# Optimized for 1024x600 touchscreen display
+
+turtle_theme:
+  # Primary colors - earth tones and nature colors
+  primary-color: "#4a7c59"                    # Forest green
+  accent-color: "#8b4513"                     # Saddle brown (shell color)
+  dark-primary-color: "#2d4a35"              # Darker forest green
+  light-primary-color: "#7fb069"             # Light forest green
+  
+  # Text colors
+  primary-text-color: "#2c3e34"              # Dark forest green for text
+  text-primary-color: "#ffffff"              # White text on colored backgrounds
+  secondary-text-color: "#5a6c62"            # Muted green for secondary text
+  disabled-text-color: "#9e9e9e"             # Gray for disabled elements
+  
+  # Background colors - warm, natural tones
+  primary-background-color: "#f5f3f0"        # Warm off-white (sand/shell color)
+  secondary-background-color: "#e8e5e0"      # Slightly darker warm gray
+  divider-color: "rgba(74, 124, 89, .12)"   # Subtle green divider
+  
+  # Card colors
+  card-background-color: "#ffffff"           # Pure white cards
+  ha-card-border-radius: "12px"              # Rounded corners for organic feel
+  ha-card-box-shadow: "0 4px 12px rgba(74, 124, 89, 0.15)"
+  
+  # Header colors
+  app-header-background-color: "#4a7c59"     # Forest green header
+  app-header-text-color: "#ffffff"           # White header text
+  
+  # Sidebar colors  
+  sidebar-background-color: "#2d4a35"        # Dark forest green sidebar
+  sidebar-text-color: "#ffffff"              # White sidebar text
+  sidebar-selected-background-color: "#4a7c59"
+  sidebar-selected-icon-color: "#ffffff"
+  sidebar-selected-text-color: "#ffffff"
+  
+  # Button colors - turtle shell inspired
+  paper-button-color: "#4a7c59"              # Forest green buttons
+  paper-button-background-color: "transparent"
+  paper-button-raised-background-color: "#4a7c59"
+  paper-button-raised-color: "#ffffff"
+  
+  # Toggle colors
+  paper-toggle-button-checked-button-color: "#4a7c59"
+  paper-toggle-button-checked-bar-color: "#4a7c59"
+  paper-toggle-button-unchecked-button-color: "#9e9e9e"
+  paper-toggle-button-unchecked-bar-color: "#9e9e9e"
+  
+  # Slider colors
+  paper-slider-knob-color: "#4a7c59"
+  paper-slider-knob-start-color: "#4a7c59"
+  paper-slider-pin-color: "#4a7c59"
+  paper-slider-active-color: "#4a7c59"
+  
+  # Input colors
+  paper-input-container-color: "#5a6c62"
+  paper-input-container-focus-color: "#4a7c59"
+  paper-input-container-invalid-color: "#db4437"
+  
+  # State colors - natural and intuitive
+  state-icon-color: "#5a6c62"                # Muted green for inactive
+  state-icon-active-color: "#4a7c59"         # Forest green for active
+  state-icon-unavailable-color: "#9e9e9e"    # Gray for unavailable
+  
+  # Entity state colors
+  state-active-color: "#4a7c59"              # Forest green for active states
+  state-inactive-color: "#9e9e9e"            # Gray for inactive states
+  state-unavailable-color: "#db4437"         # Red for unavailable
+  state-unknown-color: "#ff9800"             # Orange for unknown
+  
+  # Gauge colors - temperature and humidity themed
+  gauge-color: "#4a7c59"                     # Primary gauge color
+  
+  # Graph colors
+  history-color-1: "#4a7c59"                 # Forest green
+  history-color-2: "#8b4513"                 # Brown
+  history-color-3: "#2e7d32"                 # Darker green
+  history-color-4: "#d84315"                 # Orange-red
+  history-color-5: "#1976d2"                 # Blue
+  
+  # Alert colors
+  error-color: "#db4437"                     # Red for errors
+  warning-color: "#ff9800"                   # Orange for warnings
+  success-color: "#4caf50"                   # Green for success
+  info-color: "#2196f3"                      # Blue for info
+  
+  # Border and outline colors
+  border-color: "rgba(74, 124, 89, 0.2)"    # Subtle green border
+  outline-color: "rgba(74, 124, 89, 0.3)"   # Slightly more visible outline
+  
+  # Paper colors for material design elements
+  paper-grey-50: "#f5f3f0"                  # Lightest background
+  paper-grey-200: "#e8e5e0"                 # Light background
+  
+  # Table colors
+  table-row-background-color: "#ffffff"      # White table rows
+  table-row-alternative-background-color: "#f5f3f0"  # Alternating rows
+  
+  # Touchscreen optimizations - larger touch targets
+  mdc-theme-primary: "#4a7c59"
+  mdc-theme-on-primary: "#ffffff"
+  mdc-theme-secondary: "#8b4513"
+  mdc-theme-on-secondary: "#ffffff"
+  mdc-theme-surface: "#ffffff"
+  mdc-theme-on-surface: "#2c3e34"
+  
+  # Custom CSS for turtle-specific styling
+  turtle-bg-image: "linear-gradient(135deg, #f5f3f0 0%, #e8e5e0 100%)"
+  
+  # Font settings optimized for touchscreen readability
+  ha-card-header-font-size: "18px"
+  ha-card-header-font-weight: "600"
+  
+  # Spacing optimized for touch
+  spacing-small: "8px"
+  spacing-medium: "16px"
+  spacing-large: "24px"
+  
+  # Touch-friendly button sizing
+  button-min-height: "48px"
+  button-min-width: "48px"

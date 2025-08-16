@@ -1,0 +1,131 @@
+# Turtle Monitoring System - Automations
+# Phase 1: Basic system monitoring automations only
+# Environmental and hardware automations will be added in Phase 2
+
+# System startup notification
+- id: turtle_system_startup
+  alias: "Turtle System - Startup Notification"
+  description: "Notify when the turtle monitoring system starts up"
+  trigger:
+    - platform: homeassistant
+      event: start
+  action:
+    - service: notify.turtle_email
+      data:
+        title: "🐢 Turtle System Online"
+        message: "The turtle monitoring system has started successfully at {{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+
+# System shutdown notification  
+- id: turtle_system_shutdown
+  alias: "Turtle System - Shutdown Notification"
+  description: "Notify when the turtle monitoring system shuts down"
+  trigger:
+    - platform: homeassistant
+      event: shutdown
+  action:
+    - service: notify.turtle_email
+      data:
+        title: "⚠️ Turtle System Offline"
+        message: "The turtle monitoring system is shutting down at {{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+
+# Critical system health alerts
+- id: turtle_system_critical_alert
+  alias: "Turtle System - Critical Health Alert"
+  description: "Send alerts when system health becomes critical"
+  trigger:
+    - platform: state
+      entity_id: sensor.turtle_system_health
+      to: 'Critical'
+  action:
+    - service: notify.turtle_email
+      data:
+        title: "🚨 CRITICAL: Turtle System Health Alert"
+        message: >
+          The turtle monitoring system has detected critical issues:
+          - Disk Usage: {{ states('sensor.disk_use_percent_') }}%
+          - Memory Usage: {{ states('sensor.memory_use_percent') }}%
+          - CPU Usage: {{ states('sensor.processor_use') }}%
+          
+          Please check the system immediately.
+
+# Internet connectivity alerts
+- id: turtle_internet_connection_lost
+  alias: "Turtle System - Internet Connection Lost"
+  description: "Alert when internet connection is lost"
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.internet_connection
+      to: 'off'
+      for: '00:05:00'  # Wait 5 minutes to avoid false positives
+  action:
+    - service: persistent_notification.create
+      data:
+        title: "⚠️ Internet Connection Lost"
+        message: "The turtle monitoring system has lost internet connectivity. Remote monitoring may be unavailable."
+        notification_id: turtle_internet_lost
+
+# Internet connectivity restored
+- id: turtle_internet_connection_restored
+  alias: "Turtle System - Internet Connection Restored"
+  description: "Clear alert when internet connection is restored"
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.internet_connection
+      to: 'on'
+  action:
+    - service: persistent_notification.dismiss
+      data:
+        notification_id: turtle_internet_lost
+    - service: notify.turtle_email
+      data:
+        title: "✅ Turtle System - Internet Restored"
+        message: "Internet connectivity has been restored to the turtle monitoring system."
+
+# Daily system health report
+- id: turtle_daily_health_report
+  alias: "Turtle System - Daily Health Report"
+  description: "Send daily system health summary"
+  trigger:
+    - platform: time
+      at: '08:00:00'  # 8 AM daily report
+  condition:
+    - condition: state
+      entity_id: input_boolean.turtle_system_armed
+      state: 'on'
+  action:
+    - service: notify.turtle_email
+      data:
+        title: "🐢 Daily Turtle System Report"
+        message: >
+          Daily system status for {{ now().strftime('%Y-%m-%d') }}:
+          
+          System Health: {{ states('sensor.turtle_system_health') }}
+          Uptime: {{ states('sensor.home_assistant_uptime') }}
+          
+          System Resources:
+          - Disk Usage: {{ states('sensor.disk_use_percent_') }}%
+          - Memory Usage: {{ states('sensor.memory_use_percent') }}%
+          - CPU Usage: {{ states('sensor.processor_use') }}%
+          
+          Network Status:
+          - Internet: {{ 'Connected' if is_state('binary_sensor.internet_connection', 'on') else 'Disconnected' }}
+          - Router: {{ 'Connected' if is_state('binary_sensor.router_connection', 'on') else 'Disconnected' }}
+          
+          System Mode: {{ states('sensor.turtle_system_status') }}
+
+# Placeholder automations for future hardware (Phase 2)
+# These will be replaced with actual environmental control automations
+
+# Temperature monitoring placeholder
+- id: turtle_temperature_monitoring_placeholder
+  alias: "Turtle System - Temperature Monitoring (Placeholder)"
+  description: "Placeholder for temperature monitoring automation"
+  trigger:
+    - platform: template
+      value_template: "false"  # Never triggers
+  action:
+    - service: persistent_notification.create
+      data:
+        title: "Phase 2: Temperature Monitoring"
+        message: "Temperature monitoring will be implemented in Phase 2"
+        notification_id: turtle_temp_placeholder

@@ -1,0 +1,193 @@
+# Turtle Monitoring System - Kiosk Dashboard Configuration
+# Phase 1: Basic dashboard with turtle theme
+# Optimized for 1024x600 touchscreen display
+
+title: "🐢 Turtle Monitor"
+background: "var(--turtle-bg-image)"
+
+views:
+  - title: "Home"
+    path: "home"
+    icon: "mdi:turtle"
+    theme: "turtle_theme"
+    cards:
+      # Top status row
+      - type: horizontal-stack
+        cards:
+          - type: entity
+            entity: sensor.turtle_system_status
+            name: "System Status"
+            icon: "mdi:turtle"
+            state_color: true
+            
+          - type: entity
+            entity: sensor.turtle_system_health
+            name: "System Health"
+            state_color: true
+            
+          - type: entity
+            entity: binary_sensor.turtle_system_online
+            name: "Online"
+            state_color: true
+
+      # Main monitoring cards
+      - type: horizontal-stack
+        cards:
+          # Temperature card (placeholder)
+          - type: gauge
+            entity: sensor.turtle_temperature_placeholder
+            name: "Temperature"
+            unit: "°F"
+            min: 60
+            max: 95
+            severity:
+              green: 70
+              yellow: 75
+              red: 85
+            needle: true
+            
+          # Humidity card (placeholder)
+          - type: gauge
+            entity: sensor.turtle_humidity_placeholder
+            name: "Humidity"
+            unit: "%"
+            min: 40
+            max: 90
+            severity:
+              green: 60
+              yellow: 50
+              red: 45
+            needle: true
+
+      # Quick controls row
+      - type: horizontal-stack
+        cards:
+          - type: button
+            entity: input_boolean.turtle_system_armed
+            name: "System Armed"
+            icon: "mdi:shield-check"
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
+            
+          - type: button
+            entity: input_boolean.turtle_manual_mode
+            name: "Manual Mode"
+            icon: "mdi:account-wrench"
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
+              
+          - type: button
+            entity: script.turtle_system_health_check
+            name: "Health Check"
+            icon: "mdi:heart-pulse"
+            tap_action:
+              action: call-service
+              service: script.turtle_system_health_check
+
+      # System information card
+      - type: entities
+        title: "System Information"
+        show_header_toggle: false
+        entities:
+          - entity: sensor.home_assistant_uptime
+            name: "System Uptime"
+            icon: "mdi:clock"
+          - entity: sensor.processor_use
+            name: "CPU Usage"
+            icon: "mdi:cpu-64-bit"
+          - entity: sensor.memory_use_percent
+            name: "Memory Usage"
+            icon: "mdi:memory"
+          - entity: sensor.disk_use_percent_
+            name: "Storage Usage"
+            icon: "mdi:harddisk"
+
+      # Emergency actions (Phase 2 placeholders)
+      - type: entities
+        title: "Emergency Controls (Phase 2)"
+        show_header_toggle: false
+        entities:
+          - entity: script.turtle_emergency_cooling_placeholder
+            name: "Emergency Cooling"
+            icon: "mdi:snowflake-alert"
+          - entity: script.turtle_emergency_heating_placeholder
+            name: "Emergency Heating"
+            icon: "mdi:fire-alert"
+
+  # Settings view
+  - title: "Settings"
+    path: "settings"
+    icon: "mdi:cog"
+    theme: "turtle_theme"
+    cards:
+      # Temperature settings
+      - type: entities
+        title: "Temperature Settings"
+        show_header_toggle: false
+        entities:
+          - entity: input_number.turtle_temp_min
+            name: "Minimum Temperature"
+          - entity: input_number.turtle_temp_max
+            name: "Maximum Temperature"
+
+      # Humidity settings
+      - type: entities
+        title: "Humidity Settings"
+        show_header_toggle: false
+        entities:
+          - entity: input_number.turtle_humidity_min
+            name: "Minimum Humidity"
+          - entity: input_number.turtle_humidity_max
+            name: "Maximum Humidity"
+
+      # System controls
+      - type: entities
+        title: "System Controls"
+        show_header_toggle: false
+        entities:
+          - entity: script.turtle_system_maintenance_mode
+            name: "Enter Maintenance Mode"
+          - entity: script.turtle_system_exit_maintenance
+            name: "Exit Maintenance Mode"
+          - entity: script.turtle_clear_notifications
+            name: "Clear Notifications"
+          - entity: script.turtle_system_restart
+            name: "Restart System"
+
+  # Status view
+  - title: "Status"
+    path: "status"
+    icon: "mdi:information"
+    theme: "turtle_theme"
+    cards:
+      # Network status
+      - type: entities
+        title: "Network Status"
+        show_header_toggle: false
+        entities:
+          - entity: binary_sensor.internet_connection
+            name: "Internet Connection"
+          - entity: binary_sensor.router_connection
+            name: "Router Connection"
+
+      # System resources
+      - type: history-graph
+        title: "System Resources"
+        hours_to_show: 12
+        refresh_interval: 30
+        entities:
+          - sensor.processor_use
+          - sensor.memory_use_percent
+
+      # Environmental data (Phase 2 placeholders)
+      - type: history-graph
+        title: "Environmental Data (Phase 2)"
+        hours_to_show: 24
+        refresh_interval: 60
+        entities:
+          - sensor.turtle_temperature_placeholder
+          - sensor.turtle_humidity_placeholder

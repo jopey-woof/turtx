@@ -1,0 +1,65 @@
+# Turtle Monitoring System - Groups
+# Phase 1: Basic system groups
+# Hardware groups will be added in Phase 2
+
+# System control group
+turtle_system_controls:
+  name: "Turtle System Controls"
+  icon: mdi:cog
+  entities:
+    - input_boolean.turtle_system_armed
+    - input_boolean.turtle_manual_mode
+    - input_boolean.turtle_maintenance_mode
+    - script.turtle_system_maintenance_mode
+    - script.turtle_system_exit_maintenance
+    - script.turtle_system_health_check
+
+# System status group
+turtle_system_status:
+  name: "Turtle System Status"
+  icon: mdi:information
+  entities:
+    - sensor.turtle_system_status
+    - sensor.turtle_system_health
+    - binary_sensor.turtle_system_online
+    - binary_sensor.turtle_system_healthy
+    - sensor.home_assistant_uptime
+
+# System resources group
+turtle_system_resources:
+  name: "System Resources"
+  icon: mdi:server
+  entities:
+    - sensor.disk_use_percent_
+    - sensor.memory_use_percent
+    - sensor.processor_use
+    - sensor.load_1m
+    - sensor.last_boot
+
+# Network status group
+turtle_network_status:
+  name: "Network Status"
+  icon: mdi:network
+  entities:
+    - binary_sensor.internet_connection
+    - binary_sensor.router_connection
+
+# Temperature settings group (placeholder for Phase 2)
+turtle_temperature_settings:
+  name: "Temperature Settings"
+  icon: mdi:thermometer-lines
+  entities:
+    - input_number.turtle_temp_min
+    - input_number.turtle_temp_max
+    - sensor.turtle_temperature_placeholder
+    - binary_sensor.turtle_temperature_ok_placeholder
+
+# Humidity settings group (placeholder for Phase 2)
+turtle_humidity_settings:
+  name: "Humidity Settings"
+  icon: mdi:water-percent
+  entities:
+    - input_number.turtle_humidity_min
+    - input_number.turtle_humidity_max
+    - sensor.turtle_humidity_placeholder
+    - binary_sensor.turtle_humidity_ok_placeholder

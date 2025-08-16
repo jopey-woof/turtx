@@ -1,0 +1,139 @@
+# Turtle Monitoring System - Scripts
+# Phase 1: Basic system control scripts
+# Hardware control scripts will be added in Phase 2
+
+# System maintenance script
+turtle_system_maintenance_mode:
+  alias: "Enter Maintenance Mode"
+  description: "Put the turtle system into maintenance mode"
+  icon: mdi:tools
+  sequence:
+    - service: input_boolean.turn_on
+      target:
+        entity_id: input_boolean.turtle_maintenance_mode
+    - service: persistent_notification.create
+      data:
+        title: "🔧 Maintenance Mode Active"
+        message: "Turtle system is now in maintenance mode. Some automations are paused."
+        notification_id: turtle_maintenance_active
+    - service: notify.turtle_email
+      data:
+        title: "🔧 Turtle System - Maintenance Mode"
+        message: "The turtle monitoring system has entered maintenance mode at {{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+
+# Exit maintenance mode script
+turtle_system_exit_maintenance:
+  alias: "Exit Maintenance Mode"
+  description: "Return turtle system to normal operation"
+  icon: mdi:check-circle
+  sequence:
+    - service: input_boolean.turn_off
+      target:
+        entity_id: input_boolean.turtle_maintenance_mode
+    - service: persistent_notification.dismiss
+      data:
+        notification_id: turtle_maintenance_active
+    - service: persistent_notification.create
+      data:
+        title: "✅ Normal Operation Restored"
+        message: "Turtle system has returned to normal monitoring mode."
+        notification_id: turtle_maintenance_exit
+    - delay: '00:00:05'
+    - service: persistent_notification.dismiss
+      data:
+        notification_id: turtle_maintenance_exit
+    - service: notify.turtle_email
+      data:
+        title: "✅ Turtle System - Normal Operation"
+        message: "The turtle monitoring system has returned to normal operation at {{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+
+# System restart script
+turtle_system_restart:
+  alias: "Restart Home Assistant"
+  description: "Restart the Home Assistant system"
+  icon: mdi:restart
+  sequence:
+    - service: notify.turtle_email
+      data:
+        title: "🔄 Turtle System Restart"
+        message: "Home Assistant is restarting at {{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+    - delay: '00:00:02'
+    - service: homeassistant.restart
+
+# System check script
+turtle_system_health_check:
+  alias: "System Health Check"
+  description: "Run a comprehensive system health check"
+  icon: mdi:heart-pulse
+  sequence:
+    - service: persistent_notification.create
+      data:
+        title: "🏥 System Health Check"
+        message: >
+          System Health: {{ states('sensor.turtle_system_health') }}
+          
+          Resources:
+          - Disk: {{ states('sensor.disk_use_percent_') }}%
+          - Memory: {{ states('sensor.memory_use_percent') }}%
+          - CPU: {{ states('sensor.processor_use') }}%
+          
+          Network:
+          - Internet: {{ 'OK' if is_state('binary_sensor.internet_connection', 'on') else 'FAILED' }}
+          - Router: {{ 'OK' if is_state('binary_sensor.router_connection', 'on') else 'FAILED' }}
+          
+          Uptime: {{ states('sensor.home_assistant_uptime') }}
+        notification_id: turtle_health_check
+    - delay: '00:00:30'
+    - service: persistent_notification.dismiss
+      data:
+        notification_id: turtle_health_check
+
+# Clear all notifications script
+turtle_clear_notifications:
+  alias: "Clear All Notifications"
+  description: "Clear all persistent notifications"
+  icon: mdi:notification-clear-all
+  sequence:
+    - service: persistent_notification.dismiss
+      data:
+        notification_id: turtle_maintenance_active
+    - service: persistent_notification.dismiss
+      data:
+        notification_id: turtle_internet_lost
+    - service: persistent_notification.dismiss
+      data:
+        notification_id: turtle_health_check
+    - service: persistent_notification.create
+      data:
+        title: "🧹 Notifications Cleared"
+        message: "All turtle system notifications have been cleared."
+        notification_id: turtle_cleared
+    - delay: '00:00:05'
+    - service: persistent_notification.dismiss
+      data:
+        notification_id: turtle_cleared
+
+# Placeholder scripts for future hardware (Phase 2)
+# These will be replaced with actual hardware control scripts
+
+turtle_emergency_cooling_placeholder:
+  alias: "Emergency Cooling (Placeholder)"
+  description: "Placeholder for emergency cooling activation"
+  icon: mdi:snowflake-alert
+  sequence:
+    - service: persistent_notification.create
+      data:
+        title: "Phase 2: Emergency Cooling"
+        message: "Emergency cooling controls will be implemented in Phase 2"
+        notification_id: turtle_cooling_placeholder
+
+turtle_emergency_heating_placeholder:
+  alias: "Emergency Heating (Placeholder)"
+  description: "Placeholder for emergency heating activation"  
+  icon: mdi:fire-alert
+  sequence:
+    - service: persistent_notification.create
+      data:
+        title: "Phase 2: Emergency Heating"
+        message: "Emergency heating controls will be implemented in Phase 2"
+        notification_id: turtle_heating_placeholder
