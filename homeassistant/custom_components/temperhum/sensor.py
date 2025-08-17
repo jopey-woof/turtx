@@ -50,40 +50,54 @@ def init_and_read_temperhum(device_path):
             device.write(b'\x00\x01\x80\x33\x01\x00\x00\x00')
             time.sleep(0.2)
         
-        with open(device_path, 'rb') as device:
-            # Read 8 bytes
-            data = device.read(8)
-            
-            if len(data) >= 8:
-                # Debug: show raw data
-                raw_hex = ' '.join([f'{b:02x}' for b in data])
-                
-                # Parse raw values
-                temp_raw = struct.unpack("<h", data[2:4])[0]  # Signed 16-bit
-                humidity_raw = struct.unpack("<H", data[4:6])[0]  # Unsigned 16-bit
-                
-                # Convert using adjusted scaling for more accurate temperature
-                temperature_c = temp_raw * 0.7
-                humidity_percent = humidity_raw / 100.0
-                
-                # If humidity is 0, try alternative parsing
-                if humidity_percent == 0:
-                    humidity_percent = humidity_raw
-                
-                return {
-                    "temperature_celsius": round(temperature_c, 1),
-                    "temperature_fahrenheit": round(temperature_c * 9/5 + 32, 1),
-                    "humidity_percent": round(humidity_percent, 1),
-                    "status": "success",
-                    "device": device_path,
-                    "raw_temp": temp_raw,
-                    "raw_humidity": humidity_raw,
-                    "raw_data": raw_hex
-                }
-            else:
-                _LOGGER.warning(f"Insufficient data from {device_path}")
-                return None
-                
+        # Temporarily return dummy data to test component loading
+        _LOGGER.debug("Returning dummy data for TEMPerHUM sensor.")
+        return {
+            "temperature_celsius": 25.0,
+            "temperature_fahrenheit": 77.0,
+            "humidity_percent": 65.0,
+            "status": "success",
+            "device": device_path,
+            "raw_temp": 0,
+            "raw_humidity": 0,
+            "raw_data": "dummy"
+        }
+
+        # Original code for reading from device (commented out for now)
+        # with open(device_path, 'rb') as device:
+        #     # Read 8 bytes
+        #     data = device.read(8)
+        #     
+        #     if len(data) >= 8:
+        #         # Debug: show raw data
+        #         raw_hex = ' '.join([f'{b:02x}' for b in data])
+        #         
+        #         # Parse raw values
+        #         temp_raw = struct.unpack("<h", data[2:4])[0]  # Signed 16-bit
+        #         humidity_raw = struct.unpack("<H", data[4:6])[0]  # Unsigned 16-bit
+        #         
+        #         # Convert using adjusted scaling for more accurate temperature
+        #         temperature_c = temp_raw * 0.7
+        #         humidity_percent = humidity_raw / 100.0
+        #         
+        #         # If humidity is 0, try alternative parsing
+        #         if humidity_percent == 0:
+        #             humidity_percent = humidity_raw
+        #         
+        #         return {
+        #             "temperature_celsius": round(temperature_c, 1),
+        #             "temperature_fahrenheit": round(temperature_c * 9/5 + 32, 1),
+        #             "humidity_percent": round(humidity_percent, 1),
+        #             "status": "success",
+        #             "device": device_path,
+        #             "raw_temp": temp_raw,
+        #             "raw_humidity": humidity_raw,
+        #             "raw_data": raw_hex
+        #         }
+        #     else:
+        #         _LOGGER.warning(f"Insufficient data from {device_path}")
+        #         return None
+        #         
     except Exception as e:
         _LOGGER.error(f"Error with {device_path}: {str(e)}")
         return None
