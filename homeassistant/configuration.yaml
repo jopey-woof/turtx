@@ -16,13 +16,22 @@ zone:
 sun:
 system_health:
 logger:
-  default: info
+  default: debug
+  logs:
+    custom_components.temperhum: debug
 history:
 logbook:
 recorder:
 
 # Include configuration files
-sensor: !include sensors.yaml
+sensor:
+  - !include sensors.yaml
+  - platform: temperhum
+    name: "Turtle Warm Side"
+    device_path: /dev/hidraw1
+  - platform: temperhum
+    name: "Turtle Cool Side"
+    device_path: /dev/hidraw2
 binary_sensor: !include binary_sensors.yaml
 automation: !include automations.yaml
 script: !include scripts.yaml

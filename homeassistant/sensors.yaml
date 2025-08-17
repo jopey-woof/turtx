@@ -1,10 +1,6 @@
 # Turtle Monitoring System - Sensors Configuration
 # Phase 1: Basic system sensors only (Fixed for Phase 2A)
 
-- platform: temperhum
-  name: "Turtle Habitat"
-  device_path: /dev/hidraw1 # Adjust if your sensor is on a different hidraw device
-
 # System monitoring sensors
 - platform: systemmonitor
   resources:

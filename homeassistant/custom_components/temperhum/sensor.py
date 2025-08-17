@@ -4,6 +4,8 @@ import logging
 import os
 import struct
 import time
+import asyncio
+import functools
 
 from datetime import timedelta
 
@@ -33,19 +35,19 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     }
 )
 
-def init_and_read_temperhum(device_path):
+async def init_and_read_temperhum(device_path):
     """Initialize TEMPerHUM device and read data with accurate conversion"""
     try:
         with open(device_path, 'rb+') as device:
             # Send initialization sequence for TEMPerHUM - IMPORTANT for getting live data
             # Command 1: Send 'temp' command and read (discarding result as per temper.py's "magic")
             device.write(b'\x01\x80\x33\x01\x00\x00\x00\x00') # COMMANDS['temp'] from temper.py
-            time.sleep(0.1)
+            await asyncio.sleep(0.1)
             _ = device.read(8) # Discard first read as per temper.py
 
             # Command 2: Send 'temp' command again and read actual data
             device.write(b'\x01\x80\x33\x01\x00\x00\x00\x00') # COMMANDS['temp'] from temper.py
-            time.sleep(0.2)
+            await asyncio.sleep(0.2)
             data = device.read(8) # This should be the actual sensor data
             
             # Log the raw data immediately after reading
@@ -87,7 +89,7 @@ def init_and_read_temperhum(device_path):
         _LOGGER.exception(f"Error with {device_path} while trying to read TEMPerHUM sensor.")
         return None
 
-def setup_platform(
+async def setup_platform(
     hass: HomeAssistant,
     config: ConfigType,
     add_entities,
@@ -102,12 +104,12 @@ def setup_platform(
         hass,
         _LOGGER,
         name=f"TEMPerHUM {name}",
-        update_method=lambda: init_and_read_temperhum(device_path),
+        update_method=functools.partial(init_and_read_temperhum, device_path),
         update_interval=SCAN_INTERVAL,
     )
 
     # Fetch initial data so we have data when entities are added
-    coordinator.async_refresh()
+    await coordinator.async_refresh()
 
     entities = [
         TemperhumTemperatureSensor(name, coordinator),
