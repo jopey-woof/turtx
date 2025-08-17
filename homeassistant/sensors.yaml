@@ -20,7 +20,7 @@
 # TEMPerHUM USB sensor data - Real sensor reading
 - platform: command_line
   name: "TEMPerHUM Raw Data"
-  command: "python3 /home/shrimp/turtle-monitor/hardware/sensors/temperhum_working_simple.py"
+  command: "python3 /home/shrimp/turtle-monitor/hardware/sensors/temperhum_fixed.py"
   scan_interval: 60
 
 # Simple template sensors (minimal to avoid dependency issues)
@@ -99,10 +99,10 @@
           {% if data and data.status == 'success' %}
             {{ data.temperature_fahrenheit | float }}
           {% else %}
-            72.5
+            {{ data.error if data and data.error else 'Sensor Error' }}
           {% endif %}
         {% else %}
-          72.5
+          Sensor Unavailable
         {% endif %}
       unit_of_measurement: "°F"
       
@@ -116,9 +116,9 @@
           {% if data and data.status == 'success' %}
             {{ data.humidity_percent | float }}
           {% else %}
-            65.0
+            {{ data.error if data and data.error else 'Sensor Error' }}
           {% endif %}
         {% else %}
-          65.0
+          Sensor Unavailable
         {% endif %}
       unit_of_measurement: "%"
