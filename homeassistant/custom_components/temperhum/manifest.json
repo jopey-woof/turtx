@@ -3,7 +3,7 @@
   "name": "TEMPerHUM Sensor",
   "version": "1.0.0",
   "documentation": "https://www.home-assistant.io/integrations/temperhum",
-  "requirements": [],
+  "requirements": ["hid"],
   "dependencies": [],
   "codeowners": ["@your_github_username"],
   "issue_tracker": "https://github.com/your_github_username/your_repo/issues",
