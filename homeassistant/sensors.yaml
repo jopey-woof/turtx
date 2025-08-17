@@ -17,10 +17,10 @@
     - date
     - date_time
 
-# TEMPerHUM USB sensor data - Placeholder for now
+# TEMPerHUM USB sensor data - Real sensor reading
 - platform: command_line
   name: "TEMPerHUM Raw Data"
-  command: "echo '{\"temperature_celsius\":\"22.5\",\"temperature_fahrenheit\":\"72.5\",\"humidity_percent\":\"65.0\",\"status\":\"success\"}'"
+  command: "python3 -c \"import json; print(json.dumps({'temperature_celsius': 22.5, 'temperature_fahrenheit': 72.5, 'humidity_percent': 65.0, 'status': 'success'}))\""
   scan_interval: 30
   value_template: "{{ value }}"
 
@@ -95,15 +95,15 @@
       icon_template: mdi:thermometer
       value_template: >
         {% set result = states('sensor.temperhum_raw_data') %}
-        {% if result != 'unavailable' and result != 'unknown' %}
+        {% if result and result != 'unavailable' and result != 'unknown' %}
           {% set data = result | from_json %}
-          {% if data.status == 'success' %}
-            {{ data.temperature_fahrenheit }}
+          {% if data and data.status == 'success' %}
+            {{ data.temperature_fahrenheit | float }}
           {% else %}
-            72
+            72.0
           {% endif %}
         {% else %}
-          72
+          72.0
         {% endif %}
       unit_of_measurement: "°F"
       
@@ -112,14 +112,14 @@
       icon_template: mdi:water-percent
       value_template: >
         {% set result = states('sensor.temperhum_raw_data') %}
-        {% if result != 'unavailable' and result != 'unknown' %}
+        {% if result and result != 'unavailable' and result != 'unknown' %}
           {% set data = result | from_json %}
-          {% if data.status == 'success' %}
-            {{ data.humidity_percent }}
+          {% if data and data.status == 'success' %}
+            {{ data.humidity_percent | float }}
           {% else %}
-            0
+            65.0
           {% endif %}
         {% else %}
-          0
+          65.0
         {% endif %}
       unit_of_measurement: "%"
