@@ -1,0 +1,52 @@
+/* 🐢 Turtle Kiosk Mode - Hide UI Elements */
+
+/* Hide sidebar completely */
+.sidebar, ha-sidebar, .mdc-drawer {
+    display: none !important;
+}
+
+/* Hide header/top bar */
+app-header, .header, app-toolbar {
+    display: none !important;
+}
+
+/* Hide menu button */
+ha-menu-button, .menu {
+    display: none !important;
+}
+
+/* Hide Home Assistant title */
+.main-title {
+    display: none !important;
+}
+
+/* Make main content full width */
+.main-container, app-drawer-layout {
+    margin-left: 0 !important;
+    width: 100% !important;
+}
+
+/* Hide tabs if any */
+paper-tabs, .tabs {
+    display: none !important;
+}
+
+/* Hide edit buttons */
+.edit-mode, hui-edit-mode {
+    display: none !important;
+}
+
+/* Full screen content */
+ha-panel-lovelace {
+    padding: 0 !important;
+}
+
+/* Hide any overflow menus */
+.overflow-menu {
+    display: none !important;
+}
+
+/* Hide profile/settings in top corner */
+ha-icon-button[label="Profile"] {
+    display: none !important;
+}

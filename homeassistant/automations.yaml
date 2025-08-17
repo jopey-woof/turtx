@@ -10,7 +10,11 @@
     - platform: homeassistant
       event: start
   action:
-    - service: notify.turtle_email
+    # TODO: Enable in Phase 2 - Email notifications disabled for Phase 1
+    - service: persistent_notification.create
+      data:
+        title: "Phase 1: Email Disabled"
+        message: "This notification would be emailed in Phase 2"
       data:
         title: "🐢 Turtle System Online"
         message: "The turtle monitoring system has started successfully at {{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
@@ -23,7 +27,11 @@
     - platform: homeassistant
       event: shutdown
   action:
-    - service: notify.turtle_email
+    # TODO: Enable in Phase 2 - Email notifications disabled for Phase 1
+    - service: persistent_notification.create
+      data:
+        title: "Phase 1: Email Disabled"
+        message: "This notification would be emailed in Phase 2"
       data:
         title: "⚠️ Turtle System Offline"
         message: "The turtle monitoring system is shutting down at {{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
@@ -37,12 +45,16 @@
       entity_id: sensor.turtle_system_health
       to: 'Critical'
   action:
-    - service: notify.turtle_email
+    # TODO: Enable in Phase 2 - Email notifications disabled for Phase 1
+    - service: persistent_notification.create
+      data:
+        title: "Phase 1: Email Disabled"
+        message: "This notification would be emailed in Phase 2"
       data:
         title: "🚨 CRITICAL: Turtle System Health Alert"
         message: >
           The turtle monitoring system has detected critical issues:
-          - Disk Usage: {{ states('sensor.disk_use_percent_') }}%
+          - Disk Usage: {{ states('sensor.disk_use_percent_home') }}%
           - Memory Usage: {{ states('sensor.memory_use_percent') }}%
           - CPU Usage: {{ states('sensor.processor_use') }}%
           
@@ -76,7 +88,11 @@
     - service: persistent_notification.dismiss
       data:
         notification_id: turtle_internet_lost
-    - service: notify.turtle_email
+    # TODO: Enable in Phase 2 - Email notifications disabled for Phase 1
+    - service: persistent_notification.create
+      data:
+        title: "Phase 1: Email Disabled"
+        message: "This notification would be emailed in Phase 2"
       data:
         title: "✅ Turtle System - Internet Restored"
         message: "Internet connectivity has been restored to the turtle monitoring system."
@@ -93,7 +109,11 @@
       entity_id: input_boolean.turtle_system_armed
       state: 'on'
   action:
-    - service: notify.turtle_email
+    # TODO: Enable in Phase 2 - Email notifications disabled for Phase 1
+    - service: persistent_notification.create
+      data:
+        title: "Phase 1: Email Disabled"
+        message: "This notification would be emailed in Phase 2"
       data:
         title: "🐢 Daily Turtle System Report"
         message: >
@@ -103,7 +123,7 @@
           Uptime: {{ states('sensor.home_assistant_uptime') }}
           
           System Resources:
-          - Disk Usage: {{ states('sensor.disk_use_percent_') }}%
+          - Disk Usage: {{ states('sensor.disk_use_percent_home') }}%
           - Memory Usage: {{ states('sensor.memory_use_percent') }}%
           - CPU Usage: {{ states('sensor.processor_use') }}%
           
@@ -129,3 +149,14 @@
         title: "Phase 2: Temperature Monitoring"
         message: "Temperature monitoring will be implemented in Phase 2"
         notification_id: turtle_temp_placeholder
+# Set turtle theme on startup
+- id: set_turtle_theme_startup
+  alias: "Set Turtle Theme on Startup"
+  description: "Automatically apply turtle theme when Home Assistant starts"
+  trigger:
+    - platform: homeassistant
+      event: start
+  action:
+    - service: frontend.set_theme
+      data:
+        name: "turtle-theme"

@@ -141,8 +141,8 @@ EOF
 
 # Set up auto-login for user shrimp
 echo "Configuring auto-login..."
-sudo mkdir -p /etc/systemd/system/getty@tty1.service.d/
-sudo tee /etc/systemd/system/getty@tty1.service.d/override.conf > /dev/null << 'EOF'
+echo "shrimp" | sudo -S mkdir -p /etc/systemd/system/getty@tty1.service.d/
+echo "shrimp" | sudo -S tee /etc/systemd/system/getty@tty1.service.d/override.conf > /dev/null << 'EOF'
 [Service]
 ExecStart=
 ExecStart=-/sbin/agetty --noissue --autologin shrimp %I $TERM
@@ -162,7 +162,7 @@ chmod +x /home/shrimp/.xinitrc
 
 # Configure X11 to allow any user to start X (for kiosk)
 echo "Configuring X11 permissions..."
-sudo tee /etc/X11/Xwrapper.config > /dev/null << 'EOF'
+echo "shrimp" | sudo -S tee /etc/X11/Xwrapper.config > /dev/null << 'EOF'
 allowed_users=anybody
 needs_root_rights=yes
 EOF
@@ -171,7 +171,7 @@ EOF
 if [ -e /dev/input/event* ]; then
     echo "Setting up basic touchscreen configuration..."
     # This will be refined once we test with actual hardware
-    sudo tee /usr/share/X11/xorg.conf.d/40-libinput.conf > /dev/null << 'EOF'
+    echo "shrimp" | sudo -S tee /usr/share/X11/xorg.conf.d/40-libinput.conf > /dev/null << 'EOF'
 Section "InputClass"
     Identifier "libinput touchscreen catchall"
     MatchIsTouchscreen "on"
@@ -191,7 +191,7 @@ echo "- X11 configured for direct hardware access"
 echo "- Touchscreen drivers configured"
 echo ""
 echo "🧪 To test the kiosk setup:"
-echo "1. sudo systemctl start kiosk.service"
-echo "2. Check status: sudo systemctl status kiosk.service"
-echo "3. View logs: sudo journalctl -u kiosk.service -f"
+echo "1. echo "shrimp" | sudo -S systemctl start kiosk.service"
+echo "2. Check status: echo "shrimp" | sudo -S systemctl status kiosk.service"
+echo "3. View logs: echo "shrimp" | sudo -S journalctl -u kiosk.service -f"
 echo ""

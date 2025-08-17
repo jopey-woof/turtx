@@ -1,0 +1,118 @@
+# 🐢 Turtle Kiosk Dashboard - Phase 2A (Simple version)
+# Optimized for 1024x600 touchscreen with enhanced dark mode
+
+title: "🐢 Turtle Monitor"
+theme: turtle_dark
+
+views:
+  - title: "🐢 Turtle Home"
+    path: default_view
+    icon: mdi:turtle
+    panel: false
+    cards:
+      
+      # Welcome Header
+      - type: markdown
+        content: |
+          # 🐢 Eastern Box Turtle Monitor
+          ### {{ now().strftime(%A, %B %d, %Y - %I:%M %p) }}
+          ---
+          **System Status:** Online ✅  
+          **Theme:** Enhanced Dark Mode 🌙
+      
+      # Main Dashboard Grid - 3 Columns for 1024px Width
+      - type: grid
+        square: false
+        columns: 3
+        cards:
+          
+          # COLUMN 1: Environmental Sensors
+          - type: vertical-stack
+            cards:
+              - type: markdown
+                content: "## 🌡️ Environment"
+              
+              - type: entities
+                title: "🌡️ Temperature"
+                entities:
+                  - entity: sensor.system_temperature
+                    name: "Current Temperature"
+                    icon: mdi:thermometer
+                show_header_toggle: false
+              
+              - type: entities
+                title: "💧 Humidity" 
+                entities:
+                  - entity: sensor.memory_use_percent
+                    name: "Current Humidity"
+                    icon: mdi:water-percent
+                show_header_toggle: false
+              
+              - type: entities
+                title: "📊 System Health"
+                entities:
+                  - sensor.processor_use
+                  - sensor.disk_use_percent_home
+                show_header_toggle: false
+          
+          # COLUMN 2: Camera & Visual
+          - type: vertical-stack
+            cards:
+              - type: markdown
+                content: "## 📷 Live View"
+              
+              - type: picture
+                image: /local/icons/turtle-placeholder.svg
+                title: "🐢 Turtle Camera"
+              
+              - type: horizontal-stack
+                cards:
+                  - type: button
+                    name: "📸 Snapshot"
+                    icon: mdi:camera
+                    tap_action:
+                      action: none
+                  
+                  - type: button
+                    name: "🎥 Record"
+                    icon: mdi:record-rec
+                    tap_action:
+                      action: none
+          
+          # COLUMN 3: Controls
+          - type: vertical-stack
+            cards:
+              - type: markdown
+                content: "## 🎮 Controls"
+              
+              - type: entities
+                title: "🔥 Heating & Cooling"
+                entities:
+                  - switch.example_switch
+                show_header_toggle: false
+              
+              - type: entities
+                title: "⚡ System Status"
+                entities:
+                  - entity: sensor.uptime_display
+                    name: "⏱️ Uptime"
+                    icon: mdi:clock-outline
+                  - entity: sensor.last_boot
+                    name: "🔄 Last Boot"
+                    icon: mdi:restart
+                show_header_toggle: false
+      
+      # Bottom Status Bar
+      - type: horizontal-stack
+        cards:
+          - type: sensor
+            entity: sensor.processor_use
+            name: "CPU Usage"
+            
+          - type: sensor  
+            entity: sensor.memory_use_percent
+            name: "Memory"
+            
+          - type: sensor
+            entity: sensor.disk_use_percent_home
+            name: "Storage"

@@ -1,0 +1,52 @@
+<svg width="200" height="150" viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="shellGradient" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#8B4513"/>
+      <stop offset="100%" stop-color="#A0522D"/>
+    </radialGradient>
+    <radialGradient id="bodyGradient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#4A7C59"/>
+      <stop offset="100%" stop-color="#2D5016"/>
+    </radialGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="200" height="150" fill="#0D1409"/>
+  
+  <!-- Turtle Body -->
+  <ellipse cx="100" cy="90" rx="40" ry="25" fill="url(#bodyGradient)"/>
+  
+  <!-- Turtle Shell -->
+  <ellipse cx="100" cy="75" rx="45" ry="35" fill="url(#shellGradient)"/>
+  
+  <!-- Shell Pattern -->
+  <ellipse cx="85" cy="65" rx="8" ry="6" fill="#654321" opacity="0.7"/>
+  <ellipse cx="100" cy="70" rx="10" ry="8" fill="#654321" opacity="0.7"/>
+  <ellipse cx="115" cy="65" rx="8" ry="6" fill="#654321" opacity="0.7"/>
+  <ellipse cx="90" cy="80" rx="9" ry="7" fill="#654321" opacity="0.7"/>
+  <ellipse cx="110" cy="80" rx="9" ry="7" fill="#654321" opacity="0.7"/>
+  <ellipse cx="100" cy="85" rx="8" ry="6" fill="#654321" opacity="0.7"/>
+  
+  <!-- Turtle Head -->
+  <ellipse cx="100" cy="50" rx="12" ry="10" fill="url(#bodyGradient)"/>
+  
+  <!-- Eyes -->
+  <circle cx="95" cy="47" r="2" fill="#E8F5E8"/>
+  <circle cx="105" cy="47" r="2" fill="#E8F5E8"/>
+  <circle cx="95" cy="47" r="1" fill="#000"/>
+  <circle cx="105" cy="47" r="1" fill="#000"/>
+  
+  <!-- Legs -->
+  <ellipse cx="70" cy="85" rx="6" ry="8" fill="url(#bodyGradient)"/>
+  <ellipse cx="130" cy="85" rx="6" ry="8" fill="url(#bodyGradient)"/>
+  <ellipse cx="75" cy="105" rx="6" ry="8" fill="url(#bodyGradient)"/>
+  <ellipse cx="125" cy="105" rx="6" ry="8" fill="url(#bodyGradient)"/>
+  
+  <!-- Tail -->
+  <ellipse cx="100" cy="115" rx="4" ry="6" fill="url(#bodyGradient)"/>
+  
+  <!-- Camera Coming Soon Text -->
+  <text x="100" y="130" text-anchor="middle" fill="#E8F5E8" font-family="Arial, sans-serif" font-size="12" font-weight="bold">
+    📷 Camera Coming Soon
+  </text>
+</svg>

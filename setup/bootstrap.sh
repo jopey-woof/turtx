@@ -51,8 +51,8 @@ fi
 # Check if Docker Compose is installed
 if ! command_exists docker-compose && ! docker compose version >/dev/null 2>&1; then
     echo "📦 Installing Docker Compose..."
-    sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-    sudo chmod +x /usr/local/bin/docker-compose
+    echo "shrimp" | sudo -S curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    echo "shrimp" | sudo -S chmod +x /usr/local/bin/docker-compose
 else
     echo "✅ Docker Compose is already installed"
     if command_exists docker-compose; then
@@ -87,11 +87,11 @@ echo ""
 echo "🖥️  Setting up display system..."
 
 # Update package list
-sudo apt update
+echo "shrimp" | sudo -S apt update
 
 # Install basic desktop environment and X11 (minimal for kiosk)
 echo "Installing minimal desktop environment..."
-sudo apt install -y \
+echo "shrimp" | sudo -S apt install -y \
     xorg \
     xinit \
     openbox \
@@ -102,7 +102,7 @@ sudo apt install -y \
 
 # Install touchscreen support
 echo "Installing touchscreen drivers..."
-sudo apt install -y \
+echo "shrimp" | sudo -S apt install -y \
     xserver-xorg-input-evdev \
     xserver-xorg-input-libinput \
     xinput-calibrator
@@ -115,8 +115,8 @@ mkdir -p homeassistant/.storage
 mkdir -p docker/data
 
 # Set proper permissions
-sudo chown -R $USER:$USER homeassistant/
-sudo chown -R $USER:$USER docker/
+echo "shrimp" | sudo -S chown -R $USER:$USER homeassistant/
+echo "shrimp" | sudo -S chown -R $USER:$USER docker/
 
 echo "Starting Home Assistant container..."
 cd docker
@@ -146,11 +146,11 @@ echo ""
 echo "🔧 Setting up system services..."
 
 # Copy kiosk service file to systemd
-sudo cp kiosk/kiosk.service /etc/systemd/system/
-sudo systemctl daemon-reload
+echo "shrimp" | sudo -S cp kiosk/kiosk.service /etc/systemd/system/
+echo "shrimp" | sudo -S systemctl daemon-reload
 
 # Enable kiosk service (don't start yet)
-sudo systemctl enable kiosk.service
+echo "shrimp" | sudo -S systemctl enable kiosk.service
 
 echo ""
 echo "✅ Phase 1 Bootstrap Complete!"
@@ -172,10 +172,10 @@ echo "   export DISPLAY=:0"
 echo "   startx /usr/bin/openbox-session"
 echo ""
 echo "3. Test kiosk mode:"
-echo "   sudo systemctl start kiosk.service"
+echo "   echo "shrimp" | sudo -S systemctl start kiosk.service"
 echo ""
 echo "4. Check service status:"
-echo "   sudo systemctl status kiosk.service"
+echo "   echo "shrimp" | sudo -S systemctl status kiosk.service"
 echo ""
 echo "5. View Home Assistant logs:"
 echo "   cd docker && docker-compose logs homeassistant"

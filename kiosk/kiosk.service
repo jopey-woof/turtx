@@ -1,0 +1,24 @@
+[Unit]
+Description=Turtle Monitoring Kiosk Display
+After=docker.service graphical.target
+Wants=docker.service graphical.target
+
+[Service]
+Type=simple
+User=shrimp
+Group=shrimp
+WorkingDirectory=/home/shrimp/turtle-monitor
+Environment=DISPLAY=:0
+Environment=HOME=/home/shrimp
+Environment=XDG_RUNTIME_DIR=/run/user/1000
+Environment=XDG_SESSION_TYPE=x11
+ExecStartPre=/bin/bash -c "while ! docker ps | grep -q homeassistant; do sleep 5; done"
+ExecStartPre=/bin/bash -c "until pgrep Xorg; do sleep 1; done"
+ExecStart=/home/shrimp/turtle-monitor/kiosk/start-kiosk.sh
+Restart=always
+RestartSec=10
+KillMode=mixed
+TimeoutStopSec=30
+
+[Install]
+WantedBy=graphical.target

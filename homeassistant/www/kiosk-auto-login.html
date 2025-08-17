@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🐢 Turtle System - Auto Login</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #2D5016, #4A7C59);
+            color: #E8F5E8;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+        }
+        .turtle {
+            font-size: 4em;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+        form {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="turtle">🐢</div>
+        <div>Turtle System</div>
+        <div>Connecting to habitat...</div>
+    </div>
+    
+    <!-- Auto-submit login form -->
+    <form id="loginForm" method="post" action="/auth/login_flow" target="_self">
+        <input type="text" name="username" value="shrimp">
+        <input type="password" name="password" value="shrimp">
+        <input type="hidden" name="client_id" value="">
+        <input type="hidden" name="redirect_uri" value="/">
+    </form>
+    
+    <script>
+        console.log("🐢 Auto-login starting...");
+        
+        // Wait 2 seconds then redirect to login page with auto-submit
+        setTimeout(function() {
+            window.location.href = "/auth/login_flow";
+        }, 2000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+# 🐢 Authentic Eastern Box Turtle Theme - With Orange Spots!
+# Matching your turtle's beautiful orange markings
+
+turtle_dark:
+  # Primary Colors - Forest & Authentic Turtle Colors
+  primary-color: "#4A7C59"                    # Forest green
+  accent-color: "#FF8C42"                     # Bright turtle orange!
+  dark-primary-color: "#2D5016"               # Deep forest
+  light-primary-color: "#6B8E6B"              # Light green
+  
+  # Background Colors - Deep forest habitat
+  primary-background-color: "#0A0F07"         # Almost black with green tint
+  secondary-background-color: "#1A2F0B"       # Dark forest background
+  card-background-color: "#1A2F0B"            # Dark forest cards
+  ha-card-background: "#1A2F0B"               # HA cards
+  sidebar-background-color: "#0A0F07"         # Sidebar
+  
+  # Text Colors - HIGH CONTRAST for readability
+  primary-text-color: "#FFFFFF"               # Pure white text
+  secondary-text-color: "#E8F5E8"             # Very light mint
+  text-primary-color: "#FFFFFF"               # Primary text pure white
+  disabled-text-color: "#B8D4B8"              # Light green for disabled
+  
+  # Card Text Colors - Bright and readable
+  card-primary-color: "#FFFFFF"               # Card text pure white
+  card-secondary-color: "#E8F5E8"             # Card secondary light
+  
+  # Header Colors - Beautiful contrast
+  app-header-background-color: "#0A0F07"      # Very dark header
+  app-header-text-color: "#FFFFFF"            # Pure white header text
+  
+  # Interactive Elements - ORANGE TURTLE SPOTS!
+  paper-item-selected-color: "#FF8C42"        # Orange selection - turtle spots!
+  paper-item-icon-color: "#E8F5E8"            # Icons light mint
+  paper-item-icon-active-color: "#FF8C42"     # ACTIVE ICONS ORANGE! 🐢🧡
+  
+  # State Colors - Orange accent features
+  state-icon-color: "#E8F5E8"                 # Default light mint
+  state-icon-active-color: "#FF8C42"          # ORANGE ACTIVE STATES! 🧡
+  state-icon-unavailable-color: "#B8D4B8"     # Light green unavailable
+  
+  # Entity States - Beautiful orange for active
+  state-active-color: "#FF8C42"               # ORANGE for active states! 🐢
+  state-inactive-color: "#B8D4B8"             # Medium green inactive  
+  state-unavailable-color: "#CD853F"          # Brown unavailable
+  state-unknown-color: "#DAA520"              # Golden unknown
+  
+  # Button & Control Colors - Orange turtle highlights
+  paper-slider-knob-color: "#FF8C42"          # ORANGE slider knobs! 🧡
+  paper-slider-knob-start-color: "#FF8C42"    # ORANGE slider start
+  paper-slider-pin-color: "#FF8C42"           # ORANGE slider pin
+  paper-slider-active-color: "#6B8E6B"        # Green slider track
+  paper-slider-container-color: "#4A7C59"     # Forest container
+  
+  # Toggle & Switch Colors - Orange when active
+  paper-toggle-button-checked-button-color: "#FFFFFF"     # Toggle white
+  paper-toggle-button-checked-bar-color: "#FF8C42"        # ORANGE toggle bar! 🧡
+  paper-toggle-button-unchecked-button-color: "#B8D4B8"   # Unchecked light
+  paper-toggle-button-unchecked-bar-color: "#4A7C59"      # Unchecked green
+  
+  # Input & Form Colors - Orange focus states
+  input-fill-color: "#1A2F0B"                 # Input backgrounds
+  input-disabled-fill-color: "#0A0F07"        # Disabled inputs
+  input-idle-line-color: "#6B8E6B"            # Input lines green
+  input-hover-line-color: "#FF8C42"           # ORANGE input hover! 🧡
+  input-disabled-line-color: "#4A7C59"        # Disabled lines
+  
+  # Border & Outline Colors - Subtle orange accents
+  ha-card-border-color: "#4A7C59"             # Card borders green
+  paper-card-border-color: "#4A7C59"          # Paper cards green
+  divider-color: "#4A7C59"                    # Dividers green
+  
+  # Warning & Alert Colors - Orange for attention
+  warning-color: "#FF8C42"                    # TURTLE ORANGE warnings! 🐢🧡
+  error-color: "#FF6B6B"                      # Coral red errors
+  success-color: "#90EE90"                    # Light green success
+  info-color: "#87CEEB"                       # Sky blue info
+  
+  # Sidebar Colors - Orange selections
+  sidebar-icon-color: "#E8F5E8"               # Sidebar icons light
+  sidebar-text-color: "#FFFFFF"               # Sidebar text white
+  sidebar-selected-background-color: "#FF8C42" # ORANGE selection! 🧡
+  sidebar-selected-icon-color: "#FFFFFF"      # Selected icons white
+  sidebar-selected-text-color: "#FFFFFF"      # Selected text white
+  
+  # Data Table Colors
+  data-table-background-color: "#1A2F0B"      # Table background
+  table-row-background-color: "#1A2F0B"       # Row background
+  table-row-alternative-background-color: "#2D5016" # Alternate rows
+  
+  # Custom Properties - Orange focus states
+  mdc-text-field-label-color: "#E8F5E8"       # Form labels light
+  mdc-text-field-ink-color: "#FFFFFF"         # Form text white
+  mdc-select-ink-color: "#FFFFFF"             # Select text white
+  mdc-select-label-color: "#E8F5E8"           # Select labels light
+  mdc-theme-primary: "#FF8C42"                # ORANGE primary theme! 🐢🧡
+  mdc-theme-secondary: "#4A7C59"              # Green secondary
+  
+  # Special Turtle Colors - Your turtle's authentic markings!
+  turtle-shell-brown: "#8B4513"               # Shell brown
+  turtle-forest-green: "#228B22"              # Habitat green
+  turtle-orange-spots: "#FF8C42"              # YOUR TURTLE'S ORANGE SPOTS! 🐢🧡✨
+  turtle-soft-mint: "#E8F5E8"                 # Soft text
+  turtle-deep-forest: "#0A0F07"               # Deep backgrounds

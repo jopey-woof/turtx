@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🐢 Turtle System Loading...</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #2D5016, #4A7C59);
+            color: #E8F5E8;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .loader {
+            text-align: center;
+        }
+        .turtle {
+            font-size: 4em;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+        .message {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+        .status {
+            font-size: 1em;
+            color: #B8E6B8;
+        }
+    </style>
+</head>
+<body>
+    <div class="loader">
+        <div class="turtle">🐢</div>
+        <div class="message">Turtle System</div>
+        <div class="status" id="status">Authenticating...</div>
+    </div>
+    
+    <script>
+        // Get the token from the URL or use the stored token
+        const KIOSK_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJlY2I5MDlkNTBmNTQ0YWM0YTJiMmUyNjMyNDI4Y2ZkNiIsImlhdCI6MTc1NTM3NjAwNSwiZXhwIjoyMDcwNzM2MDA1fQ.NMEOro3JiWLbw5JasQ2KCl58lpNlFF-pKxbAvwGfcOg";
+        
+        document.getElementById("status").innerText = "Connecting to turtle habitat...";
+        
+        // Set up authentication headers
+        fetch("/auth/login_flow", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + KIOSK_TOKEN
+            },
+            body: JSON.stringify({})
+        })
+        .then(response => {
+            if (response.ok) {
+                document.getElementById("status").innerText = "Authentication successful!";
+                setTimeout(() => {
+                    window.location.href = "/lovelace";
+                }, 1000);
+            } else {
+                // Fallback: just redirect to main page
+                document.getElementById("status").innerText = "Redirecting...";
+                setTimeout(() => {
+                    window.location.href = "/";
+                }, 2000);
+            }
+        })
+        .catch(error => {
+            // Fallback: just redirect to main page
+            document.getElementById("status").innerText = "Redirecting...";
+            setTimeout(() => {
+                window.location.href = "/";
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

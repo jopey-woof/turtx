@@ -30,7 +30,7 @@ turtle_system_resources:
   name: "System Resources"
   icon: mdi:server
   entities:
-    - sensor.disk_use_percent_
+    - sensor.disk_use_percent_home
     - sensor.memory_use_percent
     - sensor.processor_use
     - sensor.load_1m

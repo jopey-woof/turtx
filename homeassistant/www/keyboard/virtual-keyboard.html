@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🐢 Virtual Keyboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #2D5016, #4A7C59);
+            color: #E8F5E8;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+        
+        .keyboard-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(74, 124, 89, 0.95);
+            padding: 15px;
+            border-top: 3px solid #8b4513;
+            z-index: 10000;
+        }
+        
+        .keyboard-row {
+            display: flex;
+            justify-content: center;
+            margin: 5px 0;
+        }
+        
+        .key {
+            background: #4a7c59;
+            color: white;
+            border: 2px solid #8b4513;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 3px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            min-width: 45px;
+            text-align: center;
+            user-select: none;
+            transition: all 0.2s;
+        }
+        
+        .key:hover, .key:active {
+            background: #8b4513;
+            transform: scale(0.95);
+        }
+        
+        .key.space {
+            min-width: 200px;
+        }
+        
+        .key.wide {
+            min-width: 80px;
+        }
+        
+        .output {
+            background: rgba(255, 255, 255, 0.9);
+            color: #2D5016;
+            padding: 15px;
+            margin: 0 20px 20px 20px;
+            border-radius: 8px;
+            font-size: 18px;
+            min-height: 60px;
+            border: 3px solid #8b4513;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            background: #8b4513;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        
+        .title {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 24px;
+            color: #E8F5E8;
+        }
+    </style>
+</head>
+<body>
+    <div class="title">🐢 Turtle Virtual Keyboard</div>
+    <div class="output" id="output" contenteditable="true">Type here...</div>
+    
+    <div class="keyboard-container">
+        <button class="close-btn" onclick="window.close()">×</button>
+        
+        <div class="keyboard-row">
+            <div class="key" onclick="type(1)">1</div>
+            <div class="key" onclick="type(2)">2</div>
+            <div class="key" onclick="type(3)">3</div>
+            <div class="key" onclick="type(4)">4</div>
+            <div class="key" onclick="type(5)">5</div>
+            <div class="key" onclick="type(6)">6</div>
+            <div class="key" onclick="type(7)">7</div>
+            <div class="key" onclick="type(8)">8</div>
+            <div class="key" onclick="type(9)">9</div>
+            <div class="key" onclick="type(0)">0</div>
+        </div>
+        
+        <div class="keyboard-row">
+            <div class="key" onclick="type(q)">Q</div>
+            <div class="key" onclick="type(w)">W</div>
+            <div class="key" onclick="type(e)">E</div>
+            <div class="key" onclick="type(r)">R</div>
+            <div class="key" onclick="type(t)">T</div>
+            <div class="key" onclick="type(y)">Y</div>
+            <div class="key" onclick="type(u)">U</div>
+            <div class="key" onclick="type(i)">I</div>
+            <div class="key" onclick="type(o)">O</div>
+            <div class="key" onclick="type(p)">P</div>
+        </div>
+        
+        <div class="keyboard-row">
+            <div class="key" onclick="type(a)">A</div>
+            <div class="key" onclick="type(s)">S</div>
+            <div class="key" onclick="type(d)">D</div>
+            <div class="key" onclick="type(f)">F</div>
+            <div class="key" onclick="type(g)">G</div>
+            <div class="key" onclick="type(h)">H</div>
+            <div class="key" onclick="type(j)">J</div>
+            <div class="key" onclick="type(k)">K</div>
+            <div class="key" onclick="type(l)">L</div>
+        </div>
+        
+        <div class="keyboard-row">
+            <div class="key" onclick="type(z)">Z</div>
+            <div class="key" onclick="type(x)">X</div>
+            <div class="key" onclick="type(c)">C</div>
+            <div class="key" onclick="type(v)">V</div>
+            <div class="key" onclick="type(b)">B</div>
+            <div class="key" onclick="type(n)">N</div>
+            <div class="key" onclick="type(m)">M</div>
+            <div class="key wide" onclick="backspace()">⌫</div>
+        </div>
+        
+        <div class="keyboard-row">
+            <div class="key space" onclick="type( )">Space</div>
+            <div class="key wide" onclick="clear()">Clear</div>
+            <div class="key wide" onclick="copy()">Copy</div>
+        </div>
+    </div>
+    
+    <script>
+        const output = document.getElementById(output);
+        
+        function type(char) {
+            const selection = window.getSelection();
+            const range = selection.getRangeAt(0);
+            range.deleteContents();
+            range.insertNode(document.createTextNode(char));
+            range.collapse(false);
+            selection.removeAllRanges();
+            selection.addRange(range);
+        }
+        
+        function backspace() {
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0) {
+                const range = selection.getRangeAt(0);
+                if (range.startOffset > 0) {
+                    range.setStart(range.startContainer, range.startOffset - 1);
+                    range.deleteContents();
+                }
+            }
+        }
+        
+        function clear() {
+            output.textContent = ;
+        }
+        
+        function copy() {
+            const text = output.textContent;
+            navigator.clipboard.writeText(text).then(() => {
+            });
+        }
+        
+        // Focus the output area
+        output.focus();
+    </script>
+</body>
+</html>

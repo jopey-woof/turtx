@@ -1,97 +1,37 @@
 # Turtle Monitoring System - Sensors Configuration
-# Phase 1: Basic system sensors only
-# Hardware-specific sensors will be added in Phase 2
+# Phase 1: Basic system sensors only (Fixed for Phase 2A)
 
 # System monitoring sensors
 - platform: systemmonitor
   resources:
     - type: disk_use_percent
-      arg: /
+      arg: /home
     - type: memory_use_percent
     - type: processor_use
     - type: last_boot
-    - type: load_1m
 
 # Time and date sensors
 - platform: time_date
   display_options:
-    - 'time'
-    - 'date'
-    - 'date_time'
-    - 'time_date'
+    - time
+    - date
+    - date_time
 
-# Uptime sensor
-- platform: uptime
-  name: "Home Assistant Uptime"
-
-# Template sensors for turtle system status
+# Simple template sensors (minimal to avoid dependency issues)
 - platform: template
   sensors:
-    turtle_system_status:
-      friendly_name: "Turtle System Status"
-      icon_template: mdi:turtle
-      value_template: >
-        {% if is_state('input_boolean.turtle_system_armed', 'on') %}
-          {% if is_state('input_boolean.turtle_maintenance_mode', 'on') %}
-            Maintenance
-          {% elif is_state('input_boolean.turtle_manual_mode', 'on') %}
-            Manual
-          {% else %}
-            Monitoring
-          {% endif %}
-        {% else %}
-          Disarmed
-        {% endif %}
-
-    turtle_system_health:
-      friendly_name: "Turtle System Health"
-      icon_template: >
-        {% set health = states('sensor.turtle_system_health') %}
-        {% if health == 'Good' %}
-          mdi:check-circle
-        {% elif health == 'Warning' %}
-          mdi:alert
-        {% else %}
-          mdi:alert-circle
-        {% endif %}
-      value_template: >
-        {% set issues = 0 %}
-        {% set warnings = 0 %}
-        
-        {# Check system resources #}
-        {% if states('sensor.disk_use_percent_') | float > 80 %}
-          {% set issues = issues + 1 %}
-        {% elif states('sensor.disk_use_percent_') | float > 70 %}
-          {% set warnings = warnings + 1 %}
-        {% endif %}
-        
-        {% if states('sensor.memory_use_percent') | float > 90 %}
-          {% set issues = issues + 1 %}
-        {% elif states('sensor.memory_use_percent') | float > 80 %}
-          {% set warnings = warnings + 1 %}
-        {% endif %}
-        
-        {# Determine overall health #}
-        {% if issues > 0 %}
-          Critical
-        {% elif warnings > 0 %}
-          Warning
-        {% else %}
-          Good
-        {% endif %}
-
-# Placeholder sensors for future hardware (Phase 2)
-# These will be replaced with actual hardware sensors
-- platform: template
-  sensors:
-    turtle_temperature_placeholder:
-      friendly_name: "Temperature (Placeholder)"
+    system_temperature:
+      friendly_name: "System Temperature"
       icon_template: mdi:thermometer
       value_template: "72"
       unit_of_measurement: "°F"
       
-    turtle_humidity_placeholder:
-      friendly_name: "Humidity (Placeholder)"
-      icon_template: mdi:water-percent
-      value_template: "65"
-      unit_of_measurement: "%"
+    uptime_display:
+      friendly_name: "System Uptime"
+      icon_template: mdi:clock-outline
+      value_template: >
+        {% set uptime = as_timestamp(now()) - as_timestamp(states(sensor.last_boot)) %}
+        {% set days = (uptime // 86400) | int %}
+        {% set hours = ((uptime % 86400) // 3600) | int %}
+        {% set minutes = ((uptime % 3600) // 60) | int %}
+        {{ days }}d {{ hours }}h {{ minutes }}m

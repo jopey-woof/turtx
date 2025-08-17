@@ -65,7 +65,7 @@ binary_sensor.router_connection:
   friendly_name: "Router"
 
 # System resource entities
-sensor.disk_use_percent_:
+sensor.disk_use_percent_home:
   friendly_name: "Disk Usage"
   icon: mdi:harddisk
 
