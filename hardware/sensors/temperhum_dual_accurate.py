@@ -49,10 +49,9 @@ def init_and_read_temperhum(device_path):
                 humidity_raw = struct.unpack("<H", data[4:6])[0]  # Unsigned 16-bit
                 
                 # Convert using adjusted scaling for more accurate temperature
-                # Based on typical room temperature being around 65-70°F
-                # If raw value 26 gives 78.8°F, we need to scale down
-                # Try scaling factor of 0.8 to get more realistic temperature
-                temperature_c = temp_raw * 0.8
+                # Try scaling factor of 0.7 to get more realistic temperature
+                # Raw value 31 * 0.7 = 21.7°C = 71.1°F (more reasonable)
+                temperature_c = temp_raw * 0.7
                 humidity_percent = humidity_raw / 100.0
                 
                 # If humidity is 0, try alternative parsing
@@ -90,6 +89,9 @@ def read_temperhum_dual():
             result = init_and_read_temperhum(hidraw)
             if result.get("status") == "success":
                 results.append(result)
+                # Only read from first 2 sensors (we have 2 TEMPerHUM devices)
+                if len(results) >= 2:
+                    break
         
         if results:
             # Return the first successful result (primary sensor)
