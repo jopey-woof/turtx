@@ -20,7 +20,7 @@
 # TEMPerHUM USB sensor data - Real sensor reading
 - platform: command_line
   name: "TEMPerHUM Raw Data"
-  command: "python3 /home/shrimp/turtle-monitor/hardware/sensors/temperhum_fixed.py"
+  command: "python3 /home/shrimp/turtle-monitor/hardware/sensors/temperhum_working_final.py"
   scan_interval: 60
 
 # Simple template sensors (minimal to avoid dependency issues)
@@ -88,37 +88,40 @@
           {% endif %}
         {% endif %}
         
-    # Real TEMPerHUM sensor data
-    turtle_temperature_fahrenheit:
-      friendly_name: "Turtle Temperature" 
-      icon_template: mdi:thermometer
-      value_template: >
-        {% set result = states('sensor.temperhum_raw_data') %}
-        {% if result and result != 'unavailable' and result != 'unknown' %}
-          {% set data = result | from_json %}
-          {% if data and data.status == 'success' %}
-            {{ data.temperature_fahrenheit | float }}
-          {% else %}
-            {{ data.error if data and data.error else 'Sensor Error' }}
-          {% endif %}
-        {% else %}
-          Sensor Unavailable
-        {% endif %}
-      unit_of_measurement: "°F"
-      
-    turtle_humidity_percent:
-      friendly_name: "Turtle Humidity"
-      icon_template: mdi:water-percent
-      value_template: >
-        {% set result = states('sensor.temperhum_raw_data') %}
-        {% if result and result != 'unavailable' and result != 'unknown' %}
-          {% set data = result | from_json %}
-          {% if data and data.status == 'success' %}
-            {{ data.humidity_percent | float }}
-          {% else %}
-            {{ data.error if data and data.error else 'Sensor Error' }}
-          {% endif %}
-        {% else %}
-          Sensor Unavailable
-        {% endif %}
-      unit_of_measurement: "%"
+                 # Real TEMPerHUM sensor data
+             turtle_temperature_fahrenheit:
+               friendly_name: "Turtle Temperature" 
+               icon_template: mdi:thermometer
+               value_template: >
+                 {% set result = states('sensor.temperhum_raw_data') %}
+                 {% if result and result != 'unavailable' and result != 'unknown' %}
+                   {% set data = result | from_json %}
+                   {% if data and data.status == 'success' %}
+                     {% set temp_raw = data.raw_temp | int %}
+                     {% set temp_c = (temp_raw / 100.0) - 40 %}
+                     {{ (temp_c * 9/5 + 32) | round(1) }}
+                   {% else %}
+                     {{ data.error if data and data.error else 'Sensor Error' }}
+                   {% endif %}
+                 {% else %}
+                   Sensor Unavailable
+                 {% endif %}
+               unit_of_measurement: "°F"
+               
+             turtle_humidity_percent:
+               friendly_name: "Turtle Humidity"
+               icon_template: mdi:water-percent
+               value_template: >
+                 {% set result = states('sensor.temperhum_raw_data') %}
+                 {% if result and result != 'unavailable' and result != 'unknown' %}
+                   {% set data = result | from_json %}
+                   {% if data and data.status == 'success' %}
+                     {% set humidity_raw = data.raw_humidity | int %}
+                     {{ (humidity_raw / 100.0) | round(1) }}
+                   {% else %}
+                     {{ data.error if data and data.error else 'Sensor Error' }}
+                   {% endif %}
+                 {% else %}
+                   Sensor Unavailable
+                 {% endif %}
+               unit_of_measurement: "%"
