@@ -64,9 +64,12 @@
       friendly_name: "System Health" 
       icon_template: mdi:check-circle
       value_template: >
-        {% set cpu = states('sensor.processor_use') | default(0) | float %}
-        {% set memory = states('sensor.memory_use_percent') | default(0) | float %}
-        {% set disk = states('sensor.disk_use_percent_home') | default(0) | float %}
+        {% set cpu_raw = states('sensor.processor_use') %}
+        {% set memory_raw = states('sensor.memory_use_percent') %}
+        {% set disk_raw = states('sensor.disk_use_percent_home') %}
+        {% set cpu = cpu_raw | default(0) | float if cpu_raw != 'unknown' else 0 %}
+        {% set memory = memory_raw | default(0) | float if memory_raw != 'unknown' else 0 %}
+        {% set disk = disk_raw | default(0) | float if disk_raw != 'unknown' else 0 %}
         {% if cpu > 80 or memory > 90 or disk > 90 %}
           Critical
         {% elif cpu > 60 or memory > 75 or disk > 75 %}

@@ -28,7 +28,6 @@ automation: !include automations.yaml
 script: !include scripts.yaml
 scene: !include scenes.yaml
 group: !include groups.yaml
-customize: !include customize.yaml
 
 # Input helpers for dashboard controls
 input_boolean:
@@ -71,6 +70,13 @@ input_number:
     step: 5
     unit_of_measurement: "%"
     icon: mdi:water-percent
+
+# Camera integration (placeholder for Phase 2)
+camera:
+  - platform: generic
+    name: "Turtle Camera"
+    still_image_url: /local/icons/turtle-placeholder.svg
+    stream_source: ""
 
 # Lovelace dashboards
 lovelace:

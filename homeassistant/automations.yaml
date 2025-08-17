@@ -13,9 +13,6 @@
     # TODO: Enable in Phase 2 - Email notifications disabled for Phase 1
     - service: persistent_notification.create
       data:
-        title: "Phase 1: Email Disabled"
-        message: "This notification would be emailed in Phase 2"
-      data:
         title: "🐢 Turtle System Online"
         message: "The turtle monitoring system has started successfully at {{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
 
@@ -29,9 +26,6 @@
   action:
     # TODO: Enable in Phase 2 - Email notifications disabled for Phase 1
     - service: persistent_notification.create
-      data:
-        title: "Phase 1: Email Disabled"
-        message: "This notification would be emailed in Phase 2"
       data:
         title: "⚠️ Turtle System Offline"
         message: "The turtle monitoring system is shutting down at {{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
@@ -47,9 +41,6 @@
   action:
     # TODO: Enable in Phase 2 - Email notifications disabled for Phase 1
     - service: persistent_notification.create
-      data:
-        title: "Phase 1: Email Disabled"
-        message: "This notification would be emailed in Phase 2"
       data:
         title: "🚨 CRITICAL: Turtle System Health Alert"
         message: >
@@ -91,9 +82,6 @@
     # TODO: Enable in Phase 2 - Email notifications disabled for Phase 1
     - service: persistent_notification.create
       data:
-        title: "Phase 1: Email Disabled"
-        message: "This notification would be emailed in Phase 2"
-      data:
         title: "✅ Turtle System - Internet Restored"
         message: "Internet connectivity has been restored to the turtle monitoring system."
 
@@ -112,15 +100,12 @@
     # TODO: Enable in Phase 2 - Email notifications disabled for Phase 1
     - service: persistent_notification.create
       data:
-        title: "Phase 1: Email Disabled"
-        message: "This notification would be emailed in Phase 2"
-      data:
         title: "🐢 Daily Turtle System Report"
         message: >
           Daily system status for {{ now().strftime('%Y-%m-%d') }}:
           
-          System Health: {{ states('sensor.turtle_system_health') }}
-          Uptime: {{ states('sensor.home_assistant_uptime') }}
+          System Health: {{ states('sensor.turtle_system_status') }}
+          Uptime: {{ states('sensor.uptime_display') }}
           
           System Resources:
           - Disk Usage: {{ states('sensor.disk_use_percent_home') }}%
