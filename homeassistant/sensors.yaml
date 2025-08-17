@@ -41,8 +41,10 @@
           {% set uptime = as_timestamp(now()) - as_timestamp(last_boot) %}
           {% if uptime > 0 %}
             {% set days = (uptime // 86400) | int %}
-            {% set hours = ((uptime % 86400) // 3600) | int %}
-            {% set minutes = ((uptime % 3600) // 60) | int %}
+            {% set remaining_seconds = uptime - (days * 86400) %}
+            {% set hours = (remaining_seconds // 3600) | int %}
+            {% set remaining_after_hours = remaining_seconds - (hours * 3600) %}
+            {% set minutes = (remaining_after_hours // 60) | int %}
             {{ days }}d {{ hours }}h {{ minutes }}m
           {% else %}
             Just Started
@@ -103,11 +105,11 @@
           {% elif temp_val < 70 %}
             ❄️ Temperature Low: {{ temp_val }}°F - Check heating!
           {% elif humidity_val < 60 %}
-            💧 Humidity Low: {{ humidity_val }}% - Add moisture!
+            💧 Humidity Low: {{ humidity_val }} percent - Add moisture!
           {% elif humidity_val > 80 %}
-            💦 Humidity High: {{ humidity_val }}% - Check ventilation!
+            💦 Humidity High: {{ humidity_val }} percent - Check ventilation!
           {% else %}
-            ✅ All Systems Normal - Temp: {{ temp_val }}°F, Humidity: {{ humidity_val }}%
+            ✅ All Systems Normal - Temp: {{ temp_val }}°F, Humidity: {{ humidity_val }} percent
           {% endif %}
         {% else %}
           🔄 Initializing sensors...
