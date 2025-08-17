@@ -123,6 +123,7 @@ class TemperhumData:
     def __init__(self, device_path):
         self._device_path = device_path
         self._data = None
+        self.update() # Perform initial update upon instantiation
 
     def update(self):
         """Fetch new state data for the sensor."""
