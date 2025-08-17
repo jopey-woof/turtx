@@ -3,7 +3,6 @@ import json
 import logging
 import os
 import struct
-import signal
 import time
 
 from datetime import timedelta
@@ -33,9 +32,6 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     }
 )
 
-def timeout_handler(signum, frame):
-    raise TimeoutError("Operation timed out")
-
 def init_and_read_temperhum(device_path):
     """Initialize TEMPerHUM device and read data with accurate conversion"""
     try:
@@ -54,14 +50,9 @@ def init_and_read_temperhum(device_path):
             device.write(b'\x00\x01\x80\x33\x01\x00\x00\x00')
             time.sleep(0.2)
         
-        # Now try to read with timeout
-        signal.signal(signal.SIGALRM, timeout_handler)
-        signal.alarm(2)  # 2 second timeout
-        
         with open(device_path, 'rb') as device:
             # Read 8 bytes
             data = device.read(8)
-            signal.alarm(0)  # Cancel timeout
             
             if len(data) >= 8:
                 # Debug: show raw data
@@ -93,9 +84,6 @@ def init_and_read_temperhum(device_path):
                 _LOGGER.warning(f"Insufficient data from {device_path}")
                 return None
                 
-    except TimeoutError:
-        _LOGGER.error(f"Timeout reading from {device_path}")
-        return None
     except Exception as e:
         _LOGGER.error(f"Error with {device_path}: {str(e)}")
         return None
