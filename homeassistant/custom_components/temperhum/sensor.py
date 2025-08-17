@@ -112,12 +112,16 @@ async def setup_platform(
     device_path = config.get(CONF_DEVICE_PATH)
     _LOGGER.debug(f"Setting up TEMPerHUM platform for {name} at {device_path}")
 
+    async def _async_update_data_for_coordinator():
+        """Fetch data for coordinator."""
+        return await init_and_read_temperhum(device_path)
+
     # Create a data coordinator to manage polling
     coordinator = DataUpdateCoordinator(
         hass,
         _LOGGER,
         name=f"TEMPerHUM {name}",
-        update_method=functools.partial(init_and_read_temperhum, device_path),
+        update_method=_async_update_data_for_coordinator,
         update_interval=SCAN_INTERVAL,
     )
 
