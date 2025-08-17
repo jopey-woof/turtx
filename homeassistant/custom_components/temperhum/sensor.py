@@ -13,7 +13,7 @@ from homeassistant.components.sensor import PLATFORM_SCHEMA, SensorEntity
 from homeassistant.const import (
     CONF_NAME,
     CONF_UNIT_OF_MEASUREMENT,
-    TEMP_CELSIUS,
+    UnitOfTemperature,
 )
 from homeassistant.core import HomeAssistant
 import homeassistant.helpers.config_validation as cv
@@ -124,7 +124,7 @@ class TemperhumTemperatureSensor(SensorEntity):
         self._name = f"{name} Temperature"
         self._temperhum_data = temperhum_data
         self._state = None
-        self._unit_of_measurement = TEMP_CELSIUS # Default to Celsius for raw sensor
+        self._unit_of_measurement = UnitOfTemperature.CELSIUS # Default to Celsius for raw sensor
 
     @property
     def name(self):
