@@ -30,11 +30,16 @@
       friendly_name: "System Uptime"
       icon_template: mdi:clock-outline
       value_template: >
-        {% set uptime = as_timestamp(now()) - as_timestamp(states('sensor.last_boot')) %}
-        {% set days = (uptime // 86400) | int %}
-        {% set hours = ((uptime % 86400) // 3600) | int %}
-        {% set minutes = ((uptime % 3600) // 60) | int %}
-        {{ days }}d {{ hours }}h {{ minutes }}m
+        {% set last_boot = states('sensor.last_boot') %}
+        {% if last_boot != 'unavailable' and last_boot != 'unknown' %}
+          {% set uptime = as_timestamp(now()) - as_timestamp(last_boot) %}
+          {% set days = (uptime // 86400) | int %}
+          {% set hours = ((uptime % 86400) // 3600) | int %}
+          {% set minutes = ((uptime % 3600) // 60) | int %}
+          {{ days }}d {{ hours }}h {{ minutes }}m
+        {% else %}
+          Unknown
+        {% endif %}
         
     # System status sensors for dashboard
     turtle_system_status:
