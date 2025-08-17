@@ -4,7 +4,7 @@ FROM homeassistant/home-assistant:stable
 # Use hidapi-dev for development headers and hidapi for runtime library
 # Force pip to build hid from source to ensure proper linking
 RUN apk add --no-cache build-base python3-dev hidapi-dev hidapi \
-    && pip3 install --no-binary :all: hid \
+    && pip3 install --no-binary :all: --ignore-installed --no-deps hid \
     && ldconfig \
     && rm -rf /var/cache/apk/*
 
