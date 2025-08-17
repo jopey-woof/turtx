@@ -17,11 +17,11 @@
     - date
     - date_time
 
-# TEMPerHUM USB sensor data - TEMPORARILY DISABLED due to HID input interference
-# - platform: command_line
-#   name: "TEMPerHUM Raw Data"
-#   command: "python3 /home/shrimp/turtle-monitor/hardware/sensors/temperhum_dual_accurate.py"
-#   scan_interval: 60
+# TEMPerHUM USB sensor data - Re-enabled with udev rules preventing input interference
+- platform: command_line
+  name: "TEMPerHUM Raw Data"
+  command: "python3 /home/shrimp/turtle-monitor/hardware/sensors/temperhum_dual_accurate.py"
+  scan_interval: 60
 
 # Simple template sensors (minimal to avoid dependency issues)
 - platform: template
@@ -93,19 +93,59 @@
       friendly_name: "Status Message"
       icon_template: mdi:message-text
       value_template: >
-        🔄 TEMPerHUM sensor temporarily disabled - No input interference
+        {% set temp = states('sensor.turtle_temperature_fahrenheit') %}
+        {% set humidity = states('sensor.turtle_humidity_percent') %}
+        {% if temp != 'unavailable' and temp != 'unknown' and humidity != 'unavailable' and humidity != 'unknown' %}
+          {% set temp_val = temp | float %}
+          {% set humidity_val = humidity | float %}
+          {% if temp_val > 85 %}
+            🚨 Temperature Alert: {{ temp_val }}°F - Check habitat!
+          {% elif temp_val < 70 %}
+            ❄️ Temperature Low: {{ temp_val }}°F - Check heating!
+          {% elif humidity_val < 60 %}
+            💧 Humidity Low: {{ humidity_val }}% - Add moisture!
+          {% elif humidity_val > 80 %}
+            💦 Humidity High: {{ humidity_val }}% - Check ventilation!
+          {% else %}
+            ✅ All Systems Normal - Temp: {{ temp_val }}°F, Humidity: {{ humidity_val }}%
+          {% endif %}
+        {% else %}
+          🔄 Initializing sensors...
+        {% endif %}
         
-    # Real TEMPerHUM sensor data - TEMPORARILY DISABLED
+    # Real TEMPerHUM sensor data - Re-enabled with proper error handling
     turtle_temperature_fahrenheit:
       friendly_name: "Turtle Temperature" 
       icon_template: mdi:thermometer
-      value_template: "Sensor Disabled"
+      value_template: >
+        {% set result = states('sensor.temperhum_raw_data') %}
+        {% if result and result != 'unavailable' and result != 'unknown' %}
+          {% set data = result | from_json %}
+          {% if data and data.status == 'success' %}
+            {{ data.temperature_fahrenheit | float }}
+          {% else %}
+            {{ data.error if data and data.error else 'Sensor Error' }}
+          {% endif %}
+        {% else %}
+          Sensor Unavailable
+        {% endif %}
       # Remove unit_of_measurement to allow non-numeric values
       
     turtle_humidity_percent:
       friendly_name: "Turtle Humidity"
       icon_template: mdi:water-percent
-      value_template: "Sensor Disabled"
+      value_template: >
+        {% set result = states('sensor.temperhum_raw_data') %}
+        {% if result and result != 'unavailable' and result != 'unknown' %}
+          {% set data = result | from_json %}
+          {% if data and data.status == 'success' %}
+            {{ data.humidity_percent | float }}
+          {% else %}
+            {{ data.error if data and data.error else 'Sensor Error' }}
+          {% endif %}
+        {% else %}
+          Sensor Unavailable
+        {% endif %}
       # Remove unit_of_measurement to allow non-numeric values
 
 # Numeric sensors for automations (these will only have numeric values)
@@ -114,11 +154,33 @@
     turtle_temperature_numeric:
       friendly_name: "Turtle Temperature (Numeric)"
       icon_template: mdi:thermometer
-      value_template: "0"
+      value_template: >
+        {% set result = states('sensor.temperhum_raw_data') %}
+        {% if result and result != 'unavailable' and result != 'unknown' %}
+          {% set data = result | from_json %}
+          {% if data and data.status == 'success' %}
+            {{ data.temperature_fahrenheit | float }}
+          {% else %}
+            0
+          {% endif %}
+        {% else %}
+          0
+        {% endif %}
       unit_of_measurement: "°F"
       
     turtle_humidity_numeric:
       friendly_name: "Turtle Humidity (Numeric)"
       icon_template: mdi:water-percent
-      value_template: "0"
+      value_template: >
+        {% set result = states('sensor.temperhum_raw_data') %}
+        {% if result and result != 'unavailable' and result != 'unknown' %}
+          {% set data = result | from_json %}
+          {% if data and data.status == 'success' %}
+            {{ data.humidity_percent | float }}
+          {% else %}
+            0
+          {% endif %}
+        {% else %}
+          0
+        {% endif %}
       unit_of_measurement: "%"
