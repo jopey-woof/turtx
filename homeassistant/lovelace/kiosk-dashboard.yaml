@@ -15,7 +15,7 @@ views:
       - type: markdown
         content: |
           # 🐢 Eastern Box Turtle Monitor
-          ### {{ now().strftime(%A, %B %d, %Y - %I:%M %p) }}
+          ### {{ now().strftime("%A, %B %d, %Y - %I:%M %p") }}
           ---
           **System Status:** Online ✅  
           **Theme:** Enhanced Dark Mode 🌙

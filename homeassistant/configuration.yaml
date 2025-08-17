@@ -22,11 +22,7 @@ logbook:
 recorder:
 
 # Include configuration files
-sensor:
-  - !include sensors.yaml
-  - platform: temperhum
-    name: "Turtle Habitat"
-    device_path: /dev/hidraw1 # Adjust if your sensor is on a different hidraw device
+sensor: !include sensors.yaml
 binary_sensor: !include binary_sensors.yaml
 automation: !include automations.yaml
 script: !include scripts.yaml
