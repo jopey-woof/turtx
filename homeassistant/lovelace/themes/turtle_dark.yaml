@@ -1,0 +1,17 @@
+# Turtle Dark Theme - Forest greens with orange accents
+turtle_dark:
+  primary-color: "#4A7C59"
+  accent-color: "#FF8C42"
+  primary-background-color: "#0A0F07"
+  secondary-background-color: "#1A2F0B"
+  card-background-color: "#1A2F0B"
+  primary-text-color: "#FFFFFF"
+  secondary-text-color: "#E8F5E8"
+  state-icon-color: "#E8F5E8"
+  state-icon-active-color: "#FF8C42"
+  ha-card-background: "#1A2F0B"
+  ha-card-border-color: "#4A7C59"
+  app-header-background-color: "#0A0F07"
+  app-header-text-color: "#FFFFFF"
+  paper-toggle-button-checked-bar-color: "#FF8C42"
+  warning-color: "#FF8C42"
