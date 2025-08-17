@@ -3,12 +3,13 @@ version: '3.8'
 services:
   homeassistant:
     container_name: homeassistant
-    image: homeassistant/home-assistant:2024.1.0
+    image: homeassistant/home-assistant:stable
+    build: ./homeassistant
     restart: unless-stopped
     environment:
       - TZ=${TZ:-America/Los_Angeles}
     volumes:
-      - ../homeassistant:/config
+      - ./homeassistant/config:/config
       - ../hardware:/hardware:ro
       - /etc/localtime:/etc/localtime:ro
       - /dev:/dev
