@@ -2,7 +2,8 @@ FROM homeassistant/home-assistant:stable
 
 # Update apk and upgrade installed packages
 RUN apk update && apk upgrade \
-    && apk add --no-cache build-base python3-dev hidapi libusb \
+    && apk add --no-cache build-base python3-dev hidapi-dev hidapi libusb-dev libusb udev-dev udev-libs \
+    && ldconfig \
     && pip3 install hid \
     && rm -rf /var/cache/apk/*
 
