@@ -50,9 +50,8 @@ def init_and_read_temperhum(device_path):
             device.write(b'\x00\x01\x80\x33\x01\x00\x00\x00')
             time.sleep(0.2)
         
-        # Temporarily return dummy data to test component loading
         _LOGGER.debug("Returning dummy data for TEMPerHUM sensor.")
-        return {
+        dummy_data = {
             "temperature_celsius": 25.0,
             "temperature_fahrenheit": 77.0,
             "humidity_percent": 65.0,
@@ -62,6 +61,8 @@ def init_and_read_temperhum(device_path):
             "raw_humidity": 0,
             "raw_data": "dummy"
         }
+        _LOGGER.debug(f"Dummy data generated: {dummy_data}")
+        return dummy_data
 
         # Original code for reading from device (commented out for now)
         # with open(device_path, 'rb') as device:
@@ -128,6 +129,7 @@ class TemperhumData:
     def update(self):
         """Fetch new state data for the sensor."""
         self._data = init_and_read_temperhum(self._device_path)
+        _LOGGER.debug(f"TemperhumData update result: {self._data}")
         if self._data and self._data.get("status") != "success":
             _LOGGER.warning(f"TEMPerHUM device {self._device_path} returned non-success status: {self._data.get('error', 'unknown error')}")
             self._data = None # Invalidate data if not successful
@@ -160,7 +162,10 @@ class TemperhumTemperatureSensor(SensorEntity):
     def native_value(self):
         """Return the state of the sensor."""
         if self._temperhum_data._data and self._temperhum_data._data.get("status") == "success":
-            return self._temperhum_data._data["temperature_celsius"]
+            value = self._temperhum_data._data["temperature_celsius"]
+            _LOGGER.debug(f"Temperature sensor native_value: {value}")
+            return value
+        _LOGGER.debug("Temperature sensor native_value: None (data not successful)")
         return None
 
     def update(self):
