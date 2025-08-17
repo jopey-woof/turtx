@@ -20,7 +20,7 @@
 # TEMPerHUM USB sensor data - Real sensor reading
 - platform: command_line
   name: "TEMPerHUM Raw Data"
-  command: "python3 /home/shrimp/turtle-monitor/hardware/sensors/temperhum_working_byte.py"
+  command: "python3 /home/shrimp/turtle-monitor/hardware/sensors/temperhum_dual_accurate.py"
   scan_interval: 60
 
 # Simple template sensors (minimal to avoid dependency issues)
