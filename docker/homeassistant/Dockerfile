@@ -1,7 +1,8 @@
 FROM homeassistant/home-assistant:stable
 
-# Install bash and libhidapi for HID device access
-RUN apk add --no-cache bash hidapi \
+# Install build essentials, python headers, and hidapi runtime library
+RUN apk add --no-cache build-base python3-dev hidapi-libs \
+    && pip3 install hid \
     && rm -rf /var/cache/apk/*
 
 # Set the default shell to bash
