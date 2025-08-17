@@ -6,7 +6,7 @@ services:
     image: homeassistant/home-assistant:2024.1.0
     restart: unless-stopped
     environment:
-      - TZ=${TZ:-America/New_York}
+      - TZ=${TZ:-America/Los_Angeles}
     volumes:
       - ../homeassistant:/config
       - /etc/localtime:/etc/localtime:ro

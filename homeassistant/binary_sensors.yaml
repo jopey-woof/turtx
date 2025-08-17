@@ -19,6 +19,6 @@
       friendly_name: "Turtle System Online"
       icon_template: mdi:server-network
       value_template: >
-        {{ is_state(binary_sensor.internet_connection, on) and
-           is_state(binary_sensor.router_connection, on) }}
+        {{ is_state('binary_sensor.internet_connection', 'on') and
+           is_state('binary_sensor.router_connection', 'on') }}
       device_class: connectivity

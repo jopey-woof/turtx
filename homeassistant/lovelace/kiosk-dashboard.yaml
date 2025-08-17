@@ -88,7 +88,7 @@ views:
               - type: entities
                 title: "🔥 Heating & Cooling"
                 entities:
-                  - switch.example_switch
+                  - input_boolean.turtle_manual_mode
                 show_header_toggle: false
               
               - type: entities

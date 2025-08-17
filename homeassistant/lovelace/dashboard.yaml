@@ -93,7 +93,7 @@ views:
         title: "System Information"
         show_header_toggle: false
         entities:
-          - entity: sensor.home_assistant_uptime
+          - entity: sensor.uptime_display
             name: "System Uptime"
             icon: "mdi:clock"
           - entity: sensor.processor_use
@@ -102,7 +102,7 @@ views:
           - entity: sensor.memory_use_percent
             name: "Memory Usage"
             icon: "mdi:memory"
-          - entity: sensor.disk_use_percent_
+          - entity: sensor.disk_use_percent_home
             name: "Storage Usage"
             icon: "mdi:harddisk"
 

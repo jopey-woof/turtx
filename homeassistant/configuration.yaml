@@ -1,11 +1,84 @@
 homeassistant:
-  name: Home Assistant
+  name: "🐢 Turtle Monitor"
   country: US
-
+  unit_system: imperial
+  time_zone: America/Los_Angeles
+  
+# Enable required components
 http:
-
 frontend:
   themes: !include_dir_merge_named themes/
-
 api:
 config:
+mobile_app:
+person:
+zone:
+sun:
+system_health:
+logger:
+  default: info
+history:
+logbook:
+recorder:
+
+# Include configuration files
+sensor: !include sensors.yaml
+binary_sensor: !include binary_sensors.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+group: !include groups.yaml
+customize: !include customize.yaml
+
+# Input helpers for dashboard controls
+input_boolean:
+  turtle_system_armed:
+    name: "System Armed"
+    icon: mdi:shield-check
+  turtle_manual_mode:
+    name: "Manual Mode"
+    icon: mdi:account-wrench
+  turtle_maintenance_mode:
+    name: "Maintenance Mode"
+    icon: mdi:tools
+
+input_number:
+  turtle_temp_min:
+    name: "Minimum Temperature"
+    min: 65
+    max: 75
+    step: 1
+    unit_of_measurement: "°F"
+    icon: mdi:thermometer-low
+  turtle_temp_max:
+    name: "Maximum Temperature"
+    min: 80
+    max: 95
+    step: 1
+    unit_of_measurement: "°F" 
+    icon: mdi:thermometer-high
+  turtle_humidity_min:
+    name: "Minimum Humidity"
+    min: 50
+    max: 70
+    step: 5
+    unit_of_measurement: "%"
+    icon: mdi:water-percent
+  turtle_humidity_max:
+    name: "Maximum Humidity" 
+    min: 75
+    max: 90
+    step: 5
+    unit_of_measurement: "%"
+    icon: mdi:water-percent
+
+# Lovelace dashboards
+lovelace:
+  mode: storage
+  dashboards:
+    lovelace-kiosk:
+      mode: yaml
+      title: "🐢 Turtle Kiosk"
+      icon: mdi:turtle
+      show_in_sidebar: true
+      filename: lovelace/kiosk-dashboard.yaml
