@@ -17,7 +17,11 @@
     - date
     - date_time
 
-# TEMPerHUM USB sensor data - Direct values for now
+# TEMPerHUM USB sensor data - Real sensor reading
+- platform: command_line
+  name: "TEMPerHUM Raw Data"
+  command: "python3 /home/shrimp/turtle-monitor/hardware/sensors/temperhum_working.py"
+  scan_interval: 60
 
 # Simple template sensors (minimal to avoid dependency issues)
 - platform: template
@@ -88,11 +92,33 @@
     turtle_temperature_fahrenheit:
       friendly_name: "Turtle Temperature" 
       icon_template: mdi:thermometer
-      value_template: "72.5"
+      value_template: >
+        {% set result = states('sensor.temperhum_raw_data') %}
+        {% if result and result != 'unavailable' and result != 'unknown' %}
+          {% set data = result | from_json %}
+          {% if data and data.status == 'success' %}
+            {{ data.temperature_fahrenheit | float }}
+          {% else %}
+            72.5
+          {% endif %}
+        {% else %}
+          72.5
+        {% endif %}
       unit_of_measurement: "°F"
       
     turtle_humidity_percent:
       friendly_name: "Turtle Humidity"
       icon_template: mdi:water-percent
-      value_template: "65.0"
+      value_template: >
+        {% set result = states('sensor.temperhum_raw_data') %}
+        {% if result and result != 'unavailable' and result != 'unknown' %}
+          {% set data = result | from_json %}
+          {% if data and data.status == 'success' %}
+            {{ data.humidity_percent | float }}
+          {% else %}
+            65.0
+          {% endif %}
+        {% else %}
+          65.0
+        {% endif %}
       unit_of_measurement: "%"
