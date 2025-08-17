@@ -1,8 +1,8 @@
 FROM homeassistant/home-assistant:stable
 
-# Install build essentials, python headers, hidapi development and runtime libraries, and libusb development libraries
+# Install build essentials, python headers, hidapi runtime library, and libusb development libraries
 # Force pip to build hid from source to ensure proper linking
-RUN apk add --no-cache build-base python3-dev hidapi-dev hidapi libusb-dev \
+RUN apk add --no-cache build-base python3-dev hidapi libusb-dev \
     && pip3 install --no-binary :all: --ignore-installed --no-deps hid \
     && rm -rf /var/cache/apk/*
 
