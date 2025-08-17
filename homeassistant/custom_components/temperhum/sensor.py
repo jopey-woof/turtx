@@ -3,7 +3,6 @@ import json
 import logging
 import os
 import struct
-import time
 import asyncio
 import functools
 
@@ -35,18 +34,25 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     }
 )
 
-async def init_and_read_temperhum(device_path):
+async def init_and_read_temperhum(device_path: str) -> dict | None:
     """Initialize TEMPerHUM device and read data with accurate conversion"""
+    _LOGGER.debug(f"Attempting to read from device: {device_path}")
     try:
         with open(device_path, 'rb+') as device:
+            _LOGGER.debug(f"Device opened: {device_path}")
             # Send initialization sequence for TEMPerHUM - IMPORTANT for getting live data
             # Command 1: Send 'temp' command and read (discarding result as per temper.py's "magic")
-            device.write(b'\x01\x80\x33\x01\x00\x00\x00\x00') # COMMANDS['temp'] from temper.py
+            command1 = b'\x01\x80\x33\x01\x00\x00\x00\x00'
+            device.write(command1)
+            _LOGGER.debug(f"Sent command 1: {command1.hex()}")
             await asyncio.sleep(0.1)
-            _ = device.read(8) # Discard first read as per temper.py
+            response1 = device.read(8) # Discard first read as per temper.py
+            _LOGGER.debug(f"Received response 1 (discarded): {response1.hex()}")
 
             # Command 2: Send 'temp' command again and read actual data
-            device.write(b'\x01\x80\x33\x01\x00\x00\x00\x00') # COMMANDS['temp'] from temper.py
+            command2 = b'\x01\x80\x33\x01\x00\x00\x00\x00'
+            device.write(command2)
+            _LOGGER.debug(f"Sent command 2: {command2.hex()}")
             await asyncio.sleep(0.2)
             data = device.read(8) # This should be the actual sensor data
             
@@ -85,8 +91,14 @@ async def init_and_read_temperhum(device_path):
             else:
                 _LOGGER.warning(f"Insufficient data read from {device_path}: {len(data)} bytes. Expected 8.")
                 return None
+    except FileNotFoundError:
+        _LOGGER.error(f"Device not found: {device_path}. Please ensure the device is connected and the path is correct.")
+        return None
+    except PermissionError:
+        _LOGGER.error(f"Permission denied for {device_path}. Ensure Home Assistant has access to the device.")
+        return None
     except Exception as e:
-        _LOGGER.exception(f"Error with {device_path} while trying to read TEMPerHUM sensor.")
+        _LOGGER.exception(f"Unexpected error with {device_path} while trying to read TEMPerHUM sensor: {e}")
         return None
 
 async def setup_platform(
@@ -98,6 +110,7 @@ async def setup_platform(
     """Set up the TEMPerHUM sensor platform."""
     name = config.get(CONF_NAME)
     device_path = config.get(CONF_DEVICE_PATH)
+    _LOGGER.debug(f"Setting up TEMPerHUM platform for {name} at {device_path}")
 
     # Create a data coordinator to manage polling
     coordinator = DataUpdateCoordinator(
@@ -109,7 +122,9 @@ async def setup_platform(
     )
 
     # Fetch initial data so we have data when entities are added
+    _LOGGER.debug(f"Fetching initial data for {name}...")
     await coordinator.async_refresh()
+    _LOGGER.debug(f"Initial data fetched for {name}. Status: {coordinator.data.get('status') if coordinator.data else 'No Data'}")
 
     entities = [
         TemperhumTemperatureSensor(name, coordinator),
@@ -120,64 +135,67 @@ async def setup_platform(
 class TemperhumTemperatureSensor(CoordinatorEntity):
     """Representation of a TEMPerHUM temperature sensor."""
 
-    def __init__(self, name, coordinator):
+    def __init__(self, name: str, coordinator: DataUpdateCoordinator) -> None:
         super().__init__(coordinator)
         self._name = f"{name} Temperature"
         self._state = None
         self._unit_of_measurement = UnitOfTemperature.CELSIUS
 
     @property
-    def name(self):
+    def name(self) -> str:
         """Return the name of the sensor."""
         return self._name
 
     @property
-    def native_unit_of_measurement(self):
+    def native_unit_of_measurement(self) -> str:
         """Return the unit of measurement."""
         return self._unit_of_measurement
 
     @property
-    def icon(self):
+    def icon(self) -> str:
         """Return the icon to use in the frontend, if any."""
         return "mdi:thermometer"
 
     @property
-    def native_value(self):
+    def native_value(self) -> float | None:
         """Return the state of the sensor."""
         if self.coordinator.data and self.coordinator.data.get("status") == "success":
             value = self.coordinator.data["temperature_celsius"]
-            _LOGGER.debug(f"Temperature sensor native_value: {value}")
+            _LOGGER.debug(f"Temperature sensor '{self._name}' native_value: {value}")
             return value
-        _LOGGER.debug("Temperature sensor native_value: None (data not successful)")
+        _LOGGER.debug(f"Temperature sensor '{self._name}' native_value: None (data not successful or not yet fetched)")
         return None
 
 class TemperhumHumiditySensor(CoordinatorEntity):
     """Representation of a TEMPerHUM humidity sensor."""
 
-    def __init__(self, name, coordinator):
+    def __init__(self, name: str, coordinator: DataUpdateCoordinator) -> None:
         super().__init__(coordinator)
         self._name = f"{name} Humidity"
         self._state = None
         self._unit_of_measurement = "%"
 
     @property
-    def name(self):
+    def name(self) -> str:
         """Return the name of the sensor."""
         return self._name
 
     @property
-    def native_unit_of_measurement(self):
+    def native_unit_of_measurement(self) -> str:
         """Return the unit of measurement."""
         return self._unit_of_measurement
 
     @property
-    def icon(self):
+    def icon(self) -> str:
         """Return the icon to use in the frontend, if any."""
         return "mdi:water-percent"
 
     @property
-    def native_value(self):
+    def native_value(self) -> float | None:
         """Return the state of the sensor."""
         if self.coordinator.data and self.coordinator.data.get("status") == "success":
-            return self.coordinator.data["humidity_percent"]
+            value = self.coordinator.data["humidity_percent"]
+            _LOGGER.debug(f"Humidity sensor '{self._name}' native_value: {value}")
+            return value
+        _LOGGER.debug(f"Humidity sensor '{self._name}' native_value: None (data not successful or not yet fetched)")
         return None
