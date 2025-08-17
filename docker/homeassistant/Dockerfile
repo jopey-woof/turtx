@@ -5,7 +5,6 @@ FROM homeassistant/home-assistant:stable
 # Force pip to build hid from source to ensure proper linking
 RUN apk add --no-cache build-base python3-dev hidapi-dev hidapi \
     && pip3 install --no-binary :all: --ignore-installed --no-deps hid \
-    && ldconfig \
     && rm -rf /var/cache/apk/*
 
 # Set the default shell to bash
