@@ -40,7 +40,7 @@ input_number.turtle_temp_max:
   friendly_name: "Max Temperature"
   icon: mdi:thermometer-chevron-up
 
-sensor.turtle_temperature_placeholder:
+sensor.turtle_temperature_fahrenheit:
   friendly_name: "Temperature"
   icon: mdi:turtle
 
@@ -53,7 +53,7 @@ input_number.turtle_humidity_max:
   friendly_name: "Max Humidity"
   icon: mdi:water-chevron-up
 
-sensor.turtle_humidity_placeholder:
+sensor.turtle_humidity_percent:
   friendly_name: "Humidity"
   icon: mdi:water-percent
 

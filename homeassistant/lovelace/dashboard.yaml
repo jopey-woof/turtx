@@ -33,9 +33,9 @@ views:
       # Main monitoring cards
       - type: horizontal-stack
         cards:
-          # Temperature card (placeholder)
+          # Temperature card (real sensor)
           - type: gauge
-            entity: sensor.turtle_temperature_placeholder
+            entity: sensor.turtle_temperature_fahrenheit
             name: "Temperature"
             unit: "°F"
             min: 60
@@ -46,9 +46,9 @@ views:
               red: 85
             needle: true
             
-          # Humidity card (placeholder)
+          # Humidity card (real sensor)
           - type: gauge
-            entity: sensor.turtle_humidity_placeholder
+            entity: sensor.turtle_humidity_percent
             name: "Humidity"
             unit: "%"
             min: 40
@@ -189,5 +189,5 @@ views:
         hours_to_show: 24
         refresh_interval: 60
         entities:
-          - sensor.turtle_temperature_placeholder
-          - sensor.turtle_humidity_placeholder
+          - sensor.turtle_temperature_fahrenheit
+          - sensor.turtle_humidity_percent

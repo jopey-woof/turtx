@@ -35,7 +35,7 @@ views:
               - type: entities
                 title: "🌡️ Temperature"
                 entities:
-                  - entity: sensor.system_temperature
+                  - entity: sensor.turtle_temperature_fahrenheit
                     name: "Current Temperature"
                     icon: mdi:thermometer
                 show_header_toggle: false
@@ -43,7 +43,7 @@ views:
               - type: entities
                 title: "💧 Humidity" 
                 entities:
-                  - entity: sensor.memory_use_percent
+                  - entity: sensor.turtle_humidity_percent
                     name: "Current Humidity"
                     icon: mdi:water-percent
                 show_header_toggle: false

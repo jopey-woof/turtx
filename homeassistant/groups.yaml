@@ -51,7 +51,7 @@ turtle_temperature_settings:
   entities:
     - input_number.turtle_temp_min
     - input_number.turtle_temp_max
-    - sensor.turtle_temperature_placeholder
+    - sensor.turtle_temperature_fahrenheit
     - binary_sensor.turtle_temperature_ok_placeholder
 
 # Humidity settings group (placeholder for Phase 2)
@@ -61,5 +61,5 @@ turtle_humidity_settings:
   entities:
     - input_number.turtle_humidity_min
     - input_number.turtle_humidity_max
-    - sensor.turtle_humidity_placeholder
+    - sensor.turtle_humidity_percent
     - binary_sensor.turtle_humidity_ok_placeholder
