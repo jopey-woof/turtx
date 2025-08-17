@@ -54,9 +54,9 @@
     turtle_system_health:
       friendly_name: "System Health" 
       icon_template: >
-        {% set cpu = states('sensor.processor_use') | float %}
-        {% set memory = states('sensor.memory_use_percent') | float %}
-        {% set disk = states('sensor.disk_use_percent_home') | float %}
+        {% set cpu = states('sensor.processor_use') | default(0) | float %}
+        {% set memory = states('sensor.memory_use_percent') | default(0) | float %}
+        {% set disk = states('sensor.disk_use_percent_home') | default(0) | float %}
         {% if cpu > 80 or memory > 90 or disk > 90 %}
           mdi:alert-circle
         {% elif cpu > 60 or memory > 75 or disk > 75 %}
@@ -65,9 +65,9 @@
           mdi:check-circle
         {% endif %}
       value_template: >
-        {% set cpu = states('sensor.processor_use') | float %}
-        {% set memory = states('sensor.memory_use_percent') | float %}
-        {% set disk = states('sensor.disk_use_percent_home') | float %}
+        {% set cpu = states('sensor.processor_use') | default(0) | float %}
+        {% set memory = states('sensor.memory_use_percent') | default(0) | float %}
+        {% set disk = states('sensor.disk_use_percent_home') | default(0) | float %}
         {% if cpu > 80 or memory > 90 or disk > 90 %}
           Critical
         {% elif cpu > 60 or memory > 75 or disk > 75 %}
