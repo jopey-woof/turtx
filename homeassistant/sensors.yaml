@@ -17,7 +17,7 @@
     - date
     - date_time
 
-# TEMPerHUM USB sensor data - Re-enabled with udev rules preventing input interference
+# TEMPerHUM USB sensor data - Re-enabled with correct udev rules preventing input interference
 - platform: command_line
   name: "TEMPerHUM Raw Data"
   command: "python3 /home/shrimp/turtle-monitor/hardware/sensors/temperhum_dual_accurate.py"
