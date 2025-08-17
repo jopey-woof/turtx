@@ -31,14 +31,18 @@
       icon_template: mdi:clock-outline
       value_template: >
         {% set last_boot = states('sensor.last_boot') %}
-        {% if last_boot != 'unavailable' and last_boot != 'unknown' %}
+        {% if last_boot and last_boot != 'unavailable' and last_boot != 'unknown' %}
           {% set uptime = as_timestamp(now()) - as_timestamp(last_boot) %}
-          {% set days = (uptime // 86400) | int %}
-          {% set hours = ((uptime % 86400) // 3600) | int %}
-          {% set minutes = ((uptime % 3600) // 60) | int %}
-          {{ days }}d {{ hours }}h {{ minutes }}m
+          {% if uptime > 0 %}
+            {% set days = (uptime // 86400) | int %}
+            {% set hours = ((uptime % 86400) // 3600) | int %}
+            {% set minutes = ((uptime % 3600) // 60) | int %}
+            {{ days }}d {{ hours }}h {{ minutes }}m
+          {% else %}
+            Just Started
+          {% endif %}
         {% else %}
-          Unknown
+          Starting Up
         {% endif %}
         
     # System status sensors for dashboard
@@ -58,17 +62,7 @@
         
     turtle_system_health:
       friendly_name: "System Health" 
-      icon_template: >
-        {% set cpu = states('sensor.processor_use') | default(0) | float %}
-        {% set memory = states('sensor.memory_use_percent') | default(0) | float %}
-        {% set disk = states('sensor.disk_use_percent_home') | default(0) | float %}
-        {% if cpu > 80 or memory > 90 or disk > 90 %}
-          mdi:alert-circle
-        {% elif cpu > 60 or memory > 75 or disk > 75 %}
-          mdi:alert
-        {% else %}
-          mdi:check-circle
-        {% endif %}
+      icon_template: mdi:check-circle
       value_template: >
         {% set cpu = states('sensor.processor_use') | default(0) | float %}
         {% set memory = states('sensor.memory_use_percent') | default(0) | float %}
