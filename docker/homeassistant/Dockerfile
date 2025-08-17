@@ -1,8 +1,8 @@
 FROM homeassistant/home-assistant:stable
 
-# Install libhidapi for HID device access (using apk for Alpine-based images)
-RUN apk add --no-cache libhidapi-dev \
+# Install bash and libhidapi for HID device access
+RUN apk add --no-cache bash hidapi \
     && rm -rf /var/cache/apk/*
 
-# Set the default shell to bash (if bash is installed, otherwise keep ash)
+# Set the default shell to bash
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
