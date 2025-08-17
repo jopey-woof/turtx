@@ -124,4 +124,5 @@ def read_temperhum_dual():
 
 if __name__ == "__main__":
     result = read_temperhum_dual()
-    print(json.dumps(result)) 
+    print(json.dumps(result))
+    sys.stdout.flush() # Ensure output is immediately flushed 

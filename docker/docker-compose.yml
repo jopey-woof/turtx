@@ -9,6 +9,7 @@ services:
       - TZ=${TZ:-America/Los_Angeles}
     volumes:
       - ../homeassistant:/config
+      - ../hardware:/hardware:ro
       - /etc/localtime:/etc/localtime:ro
       - /dev:/dev
       - /run/dbus:/run/dbus:ro

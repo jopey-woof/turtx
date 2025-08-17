@@ -42,7 +42,7 @@
     - service: persistent_notification.create
       data:
         title: "🐢 Turtle Humidity Alert"
-        message: "Humidity is {{ trigger.to_state.state }}% - Outside safe range (60-80%)"
+        message: "Humidity is {{ trigger.to_state.state }} percent - Outside safe range (60-80 percent)"
         notification_id: turtle_humidity_alert
 
 # System health monitoring
@@ -69,5 +69,5 @@
     - service: persistent_notification.create
       data:
         title: "🐢 System Health Alert"
-        message: "System resources critical - CPU: {{ states('sensor.processor_use') }}%, Memory: {{ states('sensor.memory_use_percent') }}%, Disk: {{ states('sensor.disk_use_percent_home') }}%"
+        message: "System resources critical - CPU: {{ states('sensor.processor_use') }} percent, Memory: {{ states('sensor.memory_use_percent') }} percent, Disk: {{ states('sensor.disk_use_percent_home') }} percent"
         notification_id: turtle_system_health_alert

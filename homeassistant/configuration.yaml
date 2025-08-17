@@ -3,7 +3,7 @@ homeassistant:
   country: US
   unit_system: imperial
   time_zone: America/Los_Angeles
-  
+
 # Enable required components
 http:
 frontend:
@@ -22,7 +22,11 @@ logbook:
 recorder:
 
 # Include configuration files
-sensor: !include sensors.yaml
+sensor:
+  - !include sensors.yaml
+  - platform: temperhum
+    name: "Turtle Habitat"
+    device_path: /dev/hidraw1 # Adjust if your sensor is on a different hidraw device
 binary_sensor: !include binary_sensors.yaml
 automation: !include automations.yaml
 script: !include scripts.yaml
