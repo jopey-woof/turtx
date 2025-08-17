@@ -17,10 +17,10 @@
     - date
     - date_time
 
-# TEMPerHUM USB sensor data
+# TEMPerHUM USB sensor data - Placeholder for now
 - platform: command_line
   name: "TEMPerHUM Raw Data"
-  command: "python3 /home/shrimp/turtle-monitor/hardware/sensors/temperHUM_reader.py"
+  command: "echo '{\"temperature_celsius\":\"22.5\",\"temperature_fahrenheit\":\"72.5\",\"humidity_percent\":\"65.0\",\"status\":\"success\"}'"
   scan_interval: 30
   value_template: "{{ value }}"
 
