@@ -19,6 +19,11 @@ services:
       - /dev/video0:/dev/video0  # Camera
       - /dev/ttyUSB0:/dev/ttyUSB0  # Temperature sensor
       - /dev/ttyUSB1:/dev/ttyUSB1  # Zigbee coordinator (if separate)
+      # TEMPerHUM HID devices
+      - /dev/hidraw1:/dev/hidraw1  # TEMPerHUM sensor 1
+      - /dev/hidraw2:/dev/hidraw2  # TEMPerHUM sensor 2
+      - /dev/hidraw3:/dev/hidraw3  # TEMPerHUM sensor 3
+      - /dev/hidraw4:/dev/hidraw4  # TEMPerHUM sensor 4
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8123"]
       interval: 30s
