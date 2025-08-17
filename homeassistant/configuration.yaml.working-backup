@@ -1,0 +1,10 @@
+homeassistant:
+  name: Home Assistant
+  country: US
+
+http:
+
+frontend:
+
+api:
+config:

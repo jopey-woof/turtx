@@ -44,30 +44,27 @@ class KeyboardToggle:
             env = os.environ.copy()
             env["DISPLAY"] = ":0"
             
-            # Start keyboard
+            # Start keyboard with fixed position and no focus stealing
             subprocess.Popen([
                 "onboard", 
                 "--layout=Compact", 
                 "--theme=Nightshade", 
-                "--size=600x200"
+                "--size=600x200",
+                "--xid=0",  # Don't take focus
+                "--window-icon=keyboard"  # Set proper window class
             ], env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             
-            time.sleep(2)
+            time.sleep(1)
             
-            # Position at bottom left and force to front
+            # Position at bottom left ONLY - no focus commands
             subprocess.run(["wmctrl", "-r", "Onboard", "-e", "0,10,400,600,200"], 
-                         stderr=subprocess.DEVNULL, timeout=2)
-            time.sleep(0.2)
-            subprocess.run(["wmctrl", "-r", "Onboard", "-b", "add,above"], 
-                         stderr=subprocess.DEVNULL, timeout=2)
-            time.sleep(0.2)
-            subprocess.run(["wmctrl", "-r", "Onboard", "-a"], 
                          stderr=subprocess.DEVNULL, timeout=2)
             
             self.keyboard_visible = True
             self.button.config(bg="#8b4513")  # Brown when active
             
-        except:
+        except Exception as e:
+            print(f"Keyboard show error: {e}")
             pass
     
     def hide_keyboard(self):
@@ -75,7 +72,8 @@ class KeyboardToggle:
             subprocess.run(["pkill", "-f", "onboard"], stderr=subprocess.DEVNULL)
             self.keyboard_visible = False
             self.button.config(bg="#4a7c59")  # Back to green
-        except:
+        except Exception as e:
+            print(f"Keyboard hide error: {e}")
             pass
     
     def run(self):

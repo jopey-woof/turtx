@@ -1,0 +1,211 @@
+# Turtle Monitoring System - Home Assistant Configuration
+# Phase 1: Basic Foundation Configuration
+
+# Basic Home Assistant Configuration
+homeassistant:
+  name: Turtle Monitor
+  latitude: !secret home_latitude
+  longitude: !secret home_longitude
+  elevation: !secret home_elevation
+  unit_system: imperial
+  time_zone: !secret timezone
+  country: US
+  
+  # Customize entities with turtle theme
+  customize: !include customize.yaml
+
+# Configure a default setup of Home Assistant
+default_config:
+
+# Enable lovelace frontend
+frontend:
+  themes: !include_dir_merge_named themes/
+
+# Enable configuration UI
+config:
+
+# Enable Home Assistant Cloud (optional)
+# cloud:
+
+# Enable system health checks
+system_health:
+
+# Text to speech
+tts:
+  - platform: google_translate
+
+# Enable person tracking
+person:
+
+# Enable scenes
+scene: !include scenes.yaml
+
+# Enable scripts
+script: !include scripts.yaml
+
+# Enable automations
+automation: !include automations.yaml
+
+# Sensors configuration
+sensor: !include sensors.yaml
+
+# Binary sensors
+binary_sensor: !include binary_sensors.yaml
+
+# Input booleans for manual controls
+input_boolean:
+  turtle_system_armed:
+    name: "Turtle System Armed"
+    icon: mdi:shield-check
+    
+  turtle_manual_mode:
+    name: "Manual Override Mode"
+    icon: mdi:account-wrench
+
+  turtle_maintenance_mode:
+    name: "Maintenance Mode"
+    icon: mdi:tools
+
+# Input numbers for thresholds
+input_number:
+  turtle_temp_min:
+    name: "Minimum Temperature"
+    min: 60
+    max: 85
+    step: 1
+    unit_of_measurement: "°F"
+    icon: mdi:thermometer-chevron-down
+    
+  turtle_temp_max:
+    name: "Maximum Temperature"
+    min: 70
+    max: 95
+    step: 1
+    unit_of_measurement: "°F"
+    icon: mdi:thermometer-chevron-up
+    
+  turtle_humidity_min:
+    name: "Minimum Humidity"
+    min: 40
+    max: 70
+    step: 5
+    unit_of_measurement: "%"
+    icon: mdi:water-percent
+    
+  turtle_humidity_max:
+    name: "Maximum Humidity"
+    min: 70
+    max: 90
+    step: 5
+    unit_of_measurement: "%"
+    icon: mdi:water-percent
+
+# HTTP configuration for kiosk access
+http:
+  trusted_proxies:
+    - 127.0.0.1
+    - 172.17.0.0/16
+  use_x_forwarded_for: true
+  
+# Recorder configuration (limit database size)
+recorder:
+  purge_keep_days: 30
+  commit_interval: 1
+  db_url: !secret database_url
+  include:
+    domains:
+      - sensor
+      - binary_sensor
+      - automation
+      - switch
+      - climate
+      - camera
+      - person
+      - device_tracker
+    entity_globs:
+      - sensor.turtle_*
+      - binary_sensor.turtle_*
+      - switch.turtle_*
+      - camera.turtle_*
+
+# History
+history:
+  include:
+    domains:
+      - sensor
+      - binary_sensor
+      - switch
+      - camera
+    entity_globs:
+      - sensor.turtle_*
+      - binary_sensor.turtle_*
+      - switch.turtle_*
+
+# Logbook
+logbook:
+  include:
+    domains:
+      - automation
+      - switch
+      - binary_sensor
+      - camera
+    entity_globs:
+      - sensor.turtle_*
+      - automation.turtle_*
+
+# Logger configuration
+logger:
+  default: info
+  logs:
+    homeassistant.core: info
+    homeassistant.components.automation: info
+    homeassistant.components.sensor: info
+    homeassistant.components.binary_sensor: info
+
+# Notifications
+notify:
+  - name: turtle_email
+    platform: smtp
+    server: !secret email_smtp_host
+    port: !secret email_smtp_port
+    sender: !secret email_username
+    username: !secret email_username
+    password: !secret email_password
+    recipient: !secret email_recipient
+    
+# Mobile app notifications (configured through mobile app)
+mobile_app:
+
+# Enable Home Assistant iOS/Android app
+ios:
+
+# Group entities
+group: !include groups.yaml
+
+# Zones for location tracking
+zone:
+  - name: Home
+    latitude: !secret home_latitude
+    longitude: !secret home_longitude
+    radius: 100
+    icon: mdi:home
+# Auto-login configuration for turtle kiosk
+auth_providers:
+  - type: trusted_networks
+    trusted_networks:
+      - 127.0.0.1
+      - ::1
+      - 192.168.0.0/16
+      - 172.16.0.0/12
+      - 10.0.0.0/8
+    allow_bypass_login: true
+  - type: homeassistant
+
+
+# Kiosk Mode Plugin for Auto-Login and Interface Optimization
+lovelace:
+  mode: yaml
+  resources:
+    - url: /local/kiosk-mode.js
+      type: module
+

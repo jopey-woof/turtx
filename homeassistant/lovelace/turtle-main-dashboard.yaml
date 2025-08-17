@@ -1,0 +1,160 @@
+# Turtle Main Dashboard - Kiosk Interface
+# Optimized for 1024x600 touchscreen display
+
+title: 🐢 Turtle Habitat Monitor
+views:
+  - title: 🏠 Turtle Home
+    path: home
+    type: custom:grid-layout
+    layout:
+      grid-template-columns: 1fr 1fr
+      grid-template-rows: auto auto auto
+      grid-gap: 16px
+    cards:
+      # Environmental Monitoring Section
+      - type: vertical-stack
+        title: 🌡️ Environmental Monitoring
+        cards:
+          - type: entities
+            title: Temperature & Humidity
+            show_header_toggle: false
+            entities:
+              - entity: sensor.turtle_temperature_fahrenheit
+                name: Temperature
+                icon: mdi:thermometer
+              - entity: sensor.turtle_humidity_percent
+                name: Humidity
+                icon: mdi:water-percent
+            card_mod:
+              style: |
+                ha-card {
+                  background: #1A2F0B;
+                  border: 2px solid #4A7C59;
+                  border-radius: 15px;
+                }
+                .entity-row {
+                  padding: 8px;
+                  margin: 4px 0;
+                  background: rgba(74, 124, 89, 0.2);
+                  border-radius: 8px;
+                }
+                .entity-row .name {
+                  color: #E8F5E8;
+                  font-weight: bold;
+                }
+                .entity-row .state {
+                  color: #4A7C59;
+                  font-size: 1.2em;
+                }
+
+      # System Status Section
+      - type: vertical-stack
+        title: 💻 System Status
+        cards:
+          - type: entities
+            title: System Health
+            show_header_toggle: false
+            entities:
+              - entity: sensor.turtle_system_status
+                name: System Mode
+              - entity: sensor.turtle_system_health
+                name: Health Status
+              - entity: sensor.uptime_display
+                name: Uptime
+            card_mod:
+              style: |
+                ha-card {
+                  background: #1A2F0B;
+                  border: 2px solid #4A7C59;
+                  border-radius: 15px;
+                }
+
+      # Status Messages Section (Replaced input_text with sensor)
+      - type: vertical-stack
+        title: 📢 Status Messages
+        cards:
+          - type: entities
+            title: Current Status
+            show_header_toggle: false
+            entities:
+              - entity: sensor.turtle_status_message
+                name: Status
+            card_mod:
+              style: |
+                ha-card {
+                  background: #1A2F0B;
+                  border: 2px solid #4A7C59;
+                  border-radius: 15px;
+                }
+                .entity-row {
+                  padding: 12px;
+                  margin: 4px 0;
+                  background: rgba(74, 124, 89, 0.3);
+                  border-radius: 8px;
+                  min-height: 60px;
+                }
+                .entity-row .name {
+                  color: #E8F5E8;
+                  font-weight: bold;
+                  font-size: 1.1em;
+                }
+                .entity-row .state {
+                  color: #4A7C59;
+                  font-size: 1.1em;
+                  word-wrap: break-word;
+                }
+
+      # Smart plug controls (will be active once Zigbee is integrated)
+      - type: entities
+        title: 🔌 Smart Plug Controls
+        show_header_toggle: false
+        entities:
+          - entity: sensor.turtle_status_message
+            name: Status
+        card_mod:
+          style: |
+            ha-card {
+              background: #1A2F0B;
+              border: 2px solid #4A7C59;
+              border-radius: 15px;
+            }
+
+      # Camera Feed Section
+      - type: picture-entity
+        title: 📹 Live Camera Feed
+        entity: camera.turtle_camera
+        camera_view: live
+        card_mod:
+          style: |
+            ha-card {
+              background: #1A2F0B;
+              border: 2px solid #4A7C59;
+              border-radius: 15px;
+              overflow: hidden;
+            }
+            .camera-feed {
+              border-radius: 15px;
+            }
+
+      # Quick Controls Section
+      - type: entities
+        title: ⚡ Quick Controls
+        show_header_toggle: false
+        entities:
+          - entity: input_boolean.turtle_maintenance_mode
+            name: Maintenance Mode
+          - entity: input_boolean.turtle_manual_mode
+            name: Manual Override
+        card_mod:
+          style: |
+            ha-card {
+              background: #1A2F0B;
+              border: 2px solid #4A7C59;
+              border-radius: 15px;
+            }
+            .entity-row {
+              padding: 8px;
+              margin: 4px 0;
+              background: rgba(74, 124, 89, 0.2);
+              border-radius: 8px;
+            } 
