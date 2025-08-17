@@ -1,0 +1,15 @@
+# TEMPerHUM Sensor - Prevent Input Interference
+# This rule prevents the TEMPerHUM sensor from being treated as a keyboard input device
+
+# TEMPerHUM USB sensor (vendor ID 0x0c45, product ID 0x7401)
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="0c45", ATTRS{idProduct}=="7401", MODE="0666", GROUP="dialout", ENV{ID_INPUT}="0", ENV{ID_INPUT_KEYBOARD}="0"
+
+# Alternative vendor/product IDs for TEMPerHUM
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="0c45", ATTRS{idProduct}=="7402", MODE="0666", GROUP="dialout", ENV{ID_INPUT}="0", ENV{ID_INPUT_KEYBOARD}="0"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="0c45", ATTRS{idProduct}=="7403", MODE="0666", GROUP="dialout", ENV{ID_INPUT}="0", ENV{ID_INPUT_KEYBOARD}="0"
+
+# Generic HID device prevention for temperature sensors
+SUBSYSTEM=="hidraw", KERNEL=="hidraw*", ATTRS{idVendor}=="0c45", MODE="0666", GROUP="dialout", ENV{ID_INPUT}="0", ENV{ID_INPUT_KEYBOARD}="0"
+
+# Prevent any HID device with temperature sensor characteristics from being treated as input
+SUBSYSTEM=="hidraw", KERNEL=="hidraw*", ATTRS{idVendor}=="0c45", ENV{ID_INPUT}="0", ENV{ID_INPUT_KEYBOARD}="0", ENV{ID_INPUT_MOUSE}="0" 
