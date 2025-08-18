@@ -73,7 +73,8 @@ async def init_and_read_temperhum(device_path: str) -> dict | None:
                 # ((raw_humidity * 32) / 1000.0) seems to yield incorrect values based on
                 # previous test. For now, we will return the raw humidity value to verify
                 # the reading, and investigate the proper conversion later.
-                humidity_percent = float(raw_humidity) # Store raw value for debugging
+                # Based on temperhum_actual.py, the correct conversion for humidity is raw_humidity / 100.0
+                humidity_percent = raw_humidity / 100.0
 
                 _LOGGER.debug(f"Parsed - Temp Raw: {raw_temp}, Humidity Raw: {raw_humidity}")
                 _LOGGER.debug(f"Converted - Temp C: {temperature_celsius:.2f}, Humidity Raw Val: {humidity_percent:.2f}")
