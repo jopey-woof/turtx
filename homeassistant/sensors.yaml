@@ -9,6 +9,7 @@
     - type: memory_use_percent
     - type: processor_use
     - type: last_boot
+    - type: load_1m # Added load_1m resource
 
 # Time and date sensors
 - platform: time_date
@@ -30,7 +31,7 @@
       friendly_name: "System Uptime"
       icon_template: mdi:clock-outline
       value_template: >
-        {% set last_boot = states('sensor.last_boot') %}
+        {% set last_boot = states('sensor.system_monitor_last_boot') %} # Corrected entity ID
         {% if last_boot and last_boot != 'unavailable' and last_boot != 'unknown' %}
           {% set uptime = as_timestamp(now()) - as_timestamp(last_boot) %}
           {% set days = (uptime // 86400) | int %}
