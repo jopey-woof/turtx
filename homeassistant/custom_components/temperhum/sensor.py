@@ -45,7 +45,7 @@ async def init_and_read_temperhum(device_path: str) -> dict | None:
             command1 = b'\x01\x80\x33\x01\x00\x00\x00\x00'
             device.write(command1)
             _LOGGER.debug(f"Sent command 1: {command1.hex()}")
-            await asyncio.sleep(0.1)
+            await asyncio.sleep(0.5) # Increased sleep to give device more time
             response1 = device.read(8) # Discard first read as per temper.py
             _LOGGER.debug(f"Received response 1 (discarded): {response1.hex()}")
 
@@ -53,7 +53,7 @@ async def init_and_read_temperhum(device_path: str) -> dict | None:
             command2 = b'\x01\x80\x33\x01\x00\x00\x00\x00'
             device.write(command2)
             _LOGGER.debug(f"Sent command 2: {command2.hex()}")
-            await asyncio.sleep(0.2)
+            await asyncio.sleep(0.5) # Increased sleep for reliable data acquisition
             data = device.read(8) # This should be the actual sensor data
             
             # Log the raw data immediately after reading
@@ -64,25 +64,21 @@ async def init_and_read_temperhum(device_path: str) -> dict | None:
                 # Based on temper.py for FM75 type devices (our TEMPerHUM 3553:a001)
                 # Temperature is little-endian signed short at offset 2 (bytes 2 and 3)
                 raw_temp = struct.unpack('<h', data[2:4])[0]
-                temperature_celsius = raw_temp / 256.0
+                temperature_celsius = float(raw_temp) / 256.0 # Explicitly cast to float
 
                 # Humidity is little-endian unsigned short at offset 4 (bytes 4 and 5)
                 raw_humidity = struct.unpack('<H', data[4:6])[0]
                 
-                # The humidity conversion formula from temper.py's FM75 type
-                # ((raw_humidity * 32) / 1000.0) seems to yield incorrect values based on
-                # previous test. For now, we will return the raw humidity value to verify
-                # the reading, and investigate the proper conversion later.
                 # Based on temperhum_actual.py, the correct conversion for humidity is raw_humidity / 100.0
-                humidity_percent = raw_humidity / 100.0
+                humidity_percent = float(raw_humidity) / 100.0 # Explicitly cast to float
 
                 _LOGGER.debug(f"Parsed - Temp Raw: {raw_temp}, Humidity Raw: {raw_humidity}")
-                _LOGGER.debug(f"Converted - Temp C: {temperature_celsius:.2f}, Humidity Raw Val: {humidity_percent:.2f}")
+                _LOGGER.debug(f"Converted - Temp C: {temperature_celsius:.2f}, Humidity %: {humidity_percent:.2f}") # Updated log message
 
                 return {
                     "temperature_celsius": temperature_celsius,
                     "temperature_fahrenheit": (temperature_celsius * 1.8) + 32.0,
-                    "humidity_percent": humidity_percent, # Return raw for now
+                    "humidity_percent": humidity_percent,
                     "status": "success",
                     "device": device_path,
                     "raw_temp": raw_temp,
@@ -90,13 +86,13 @@ async def init_and_read_temperhum(device_path: str) -> dict | None:
                     "raw_data": raw_hex_debug
                 }
             else:
-                _LOGGER.warning(f"Insufficient data read from {device_path}: {len(data)} bytes. Expected 8.")
+                _LOGGER.warning(f"Insufficient data read from {device_path}: {len(data)} bytes. Expected 8. Data: {raw_hex_debug}") # Added data to warning
                 return None
     except FileNotFoundError:
         _LOGGER.error(f"Device not found: {device_path}. Please ensure the device is connected and the path is correct.")
         return None
     except PermissionError:
-        _LOGGER.error(f"Permission denied for {device_path}. Ensure Home Assistant has access to the device.")
+        _LOGGER.error(f"Permission denied for {device_path}. Ensure Home Assistant has access to the device. Check udev rules.") # Added udev hint
         return None
     except Exception as e:
         _LOGGER.exception(f"Unexpected error with {device_path} while trying to read TEMPerHUM sensor: {e}")
