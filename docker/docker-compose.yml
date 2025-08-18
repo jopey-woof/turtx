@@ -9,8 +9,7 @@ services:
     environment:
       - TZ=${TZ:-America/Los_Angeles}
     volumes:
-      - ../homeassistant/config:/config
-      - ../homeassistant/custom_components:/config/custom_components
+      - ../homeassistant:/config
       - ../hardware:/hardware:ro
       - /etc/localtime:/etc/localtime:ro
       - /dev:/dev
