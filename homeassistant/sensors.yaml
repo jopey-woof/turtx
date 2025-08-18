@@ -152,3 +152,12 @@
           0
         {% endif %}
       unit_of_measurement: "%"
+
+# TEMPerHUM Sensors (Actual Hardware Readings)
+- platform: temperhum
+  name: "Turtle Habitat"
+  device_path: /dev/hidraw1
+
+- platform: temperhum
+  name: "Turtle Basking"
+  device_path: /dev/hidraw2
