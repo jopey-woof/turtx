@@ -1,0 +1,15 @@
+# TEMPerHUM USB Sensor udev Rules
+# These rules ensure proper permissions for TEMPerHUM HID devices
+
+# TEMPerHUM USB sensors (vendor ID: 3553, product ID: a001)
+SUBSYSTEM=="input", ATTRS{idVendor}=="3553", ATTRS{idProduct}=="a001", MODE="0666", GROUP="input"
+
+# Generic HID devices that might be TEMPerHUM sensors
+SUBSYSTEM=="input", ATTRS{name}=="*TEMPerHUM*", MODE="0666", GROUP="input"
+SUBSYSTEM=="input", ATTRS{name}=="*PCSensor*", MODE="0666", GROUP="input"
+
+# USB HID devices with keyboard capabilities
+SUBSYSTEM=="input", ATTRS{bustype}=="0003", ATTRS{capabilities/ev}=="*120013*", MODE="0666", GROUP="input"
+
+# Ensure shrimp user can access input devices
+SUBSYSTEM=="input", KERNEL=="event*", MODE="0666", GROUP="input" 
