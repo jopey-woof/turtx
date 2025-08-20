@@ -1,164 +1,83 @@
-# Turtle Monitoring System - Sensors Configuration
-# Phase 1: Basic system sensors only (Fixed for Phase 2A)
+# Turtle Habitat Sensors Configuration
+# MQTT-based sensor integration for TEMPerHUM USB sensors
 
-# System monitoring sensors
-- platform: systemmonitor
-  resources:
-    - type: disk_use_percent
-      arg: /home
-    - type: memory_use_percent
-    - type: processor_use
-    - type: last_boot
-    - type: load_1m # Added load_1m resource
+# Sensor 1 - Temperature (Celsius)
+- platform: mqtt
+  name: "Turtle Habitat Temperature 1 (°C)"
+  unique_id: turtle_temperhum_temp1_c
+  state_topic: "turtle/sensors/temperhum/sensor_1"
+  value_template: "{{ value_json.temperature_c }}"
+  unit_of_measurement: "°C"
+  device_class: temperature
+  availability_topic: "turtle/sensors/temperhum/sensor_1"
+  availability_template: "{{ value_json.timestamp is defined }}"
+  json_attributes_topic: "turtle/sensors/temperhum/sensor_1"
+  json_attributes_template: "{{ {'humidity': value_json.humidity, 'interval': value_json.interval, 'timestamp': value_json.timestamp} | tojson }}"
 
-# Time and date sensors
-- platform: time_date
-  display_options:
-    - time
-    - date
-    - date_time
+# Sensor 1 - Temperature (Fahrenheit)
+- platform: mqtt
+  name: "Turtle Habitat Temperature 1 (°F)"
+  unique_id: turtle_temperhum_temp1_f
+  state_topic: "turtle/sensors/temperhum/sensor_1"
+  value_template: "{{ value_json.temperature_f }}"
+  unit_of_measurement: "°F"
+  device_class: temperature
+  availability_topic: "turtle/sensors/temperhum/sensor_1"
+  availability_template: "{{ value_json.timestamp is defined }}"
 
-# Simple template sensors (minimal to avoid dependency issues)
-- platform: template
-  sensors:
-    system_temperature:
-      friendly_name: "System Temperature"
-      icon_template: mdi:thermometer
-      value_template: "72"
-      unit_of_measurement: "°F"
-      
-    uptime_display:
-      friendly_name: "System Uptime"
-      icon_template: mdi:clock-outline
-      value_template: >
-        {% set last_boot = states('sensor.system_monitor_last_boot') %} # Corrected entity ID
-        {% if last_boot and last_boot != 'unavailable' and last_boot != 'unknown' %}
-          {% set uptime = as_timestamp(now()) - as_timestamp(last_boot) %}
-          {% set days = (uptime // 86400) | int %}
-          {% set remaining_seconds = uptime - (days * 86400) %}
-          {% set hours = (remaining_seconds // 3600) | int %}
-          {% set remaining_after_hours = remaining_seconds - (hours * 3600) %}
-          {% set minutes = (remaining_after_hours // 60) | int %}
-          {{ days }}d {{ hours }}h {{ minutes }}m
-        {% else %}
-          Just Started
-        {% endif %}
-        
-    # System status sensors for dashboard
-    turtle_system_status:
-      friendly_name: "System Status"
-      icon_template: mdi:turtle
-      value_template: >
-        {% if is_state('input_boolean.turtle_maintenance_mode', 'on') %}
-          Maintenance
-        {% elif is_state('input_boolean.turtle_manual_mode', 'on') %}
-          Manual
-        {% elif is_state('input_boolean.turtle_system_armed', 'on') %}
-          Armed
-        {% else %}
-          Disarmed
-        {% endif %}
-        
-    turtle_system_health:
-      friendly_name: "System Health" 
-      icon_template: mdi:check-circle
-      value_template: >
-        {% set cpu = states('sensor.processor_use') %}
-        {% set memory = states('sensor.memory_use_percent') %}
-        {% set disk = states('sensor.disk_use_percent_home') %}
-        {% if cpu == 'unknown' or memory == 'unknown' or disk == 'unknown' %}
-          Starting
-        {% else %}
-          {% set cpu_val = cpu | float %}
-          {% set memory_val = memory | float %}
-          {% set disk_val = disk | float %}
-          {% if cpu_val > 80 or memory_val > 90 or disk_val > 90 %}
-            Critical
-          {% elif cpu_val > 60 or memory_val > 75 or disk_val > 75 %}
-            Warning
-          {% else %}
-            Good
-          {% endif %}
-        {% endif %}
-        
-    # Status message sensor (replaces input_text)
-    turtle_status_message:
-      friendly_name: "Status Message"
-      icon_template: mdi:message-text
-      value_template: >
-        {% set temp = states('sensor.turtle_temperature_fahrenheit') %}
-        {% set humidity = states('sensor.turtle_humidity_percent') %}
-        {% if temp != 'unavailable' and temp != 'unknown' and humidity != 'unavailable' and humidity != 'unknown' %}
-          {% set temp_val = temp | float %}
-          {% set humidity_val = humidity | float %}
-          {% if temp_val > 85 %}
-            🚨 Temperature Alert: {{ temp_val }}°F - Check habitat!
-          {% elif temp_val < 70 %}
-            ❄️ Temperature Low: {{ temp_val }}°F - Check heating!
-          {% elif humidity_val < 60 %}
-            💧 Humidity Low: {{ humidity_val }} percent - Add moisture!
-          {% elif humidity_val > 80 %}
-            💦 Humidity High: {{ humidity_val }} percent - Check ventilation!
-          {% else %}
-            ✅ All Systems Normal - Temp: {{ temp_val }}°F, Humidity: {{ humidity_val }} percent
-          {% endif %}
-        {% else %}
-          🔄 Initializing sensors...
-        {% endif %}
-        
-    # Real TEMPerHUM sensor data - Using native custom component output
-    turtle_temperature_fahrenheit:
-      friendly_name: "Turtle Temperature" 
-      icon_template: mdi:thermometer
-      value_template: >
-        {% if states('sensor.turtle_habitat_temperature') != 'unavailable' %}
-          {{ states('sensor.turtle_habitat_temperature') | float * 9/5 + 32 | round(1) }}
-        {% else %}
-          Sensor Unavailable
-        {% endif %}
-      unit_of_measurement: "°F"
-      
-    turtle_humidity_percent:
-      friendly_name: "Turtle Humidity"
-      icon_template: mdi:water-percent
-      value_template: >
-        {% if states('sensor.turtle_habitat_humidity') != 'unavailable' %}
-          {{ states('sensor.turtle_habitat_humidity') | float | round(1) }}
-        {% else %}
-          Sensor Unavailable
-        {% endif %}
-      unit_of_measurement: "%"
+# Sensor 1 - Humidity
+- platform: mqtt
+  name: "Turtle Habitat Humidity 1"
+  unique_id: turtle_temperhum_humidity1
+  state_topic: "turtle/sensors/temperhum/sensor_1"
+  value_template: "{{ value_json.humidity }}"
+  unit_of_measurement: "%"
+  device_class: humidity
+  availability_topic: "turtle/sensors/temperhum/sensor_1"
+  availability_template: "{{ value_json.timestamp is defined }}"
 
-# Numeric sensors for automations (these will only have numeric values)
-- platform: template
-  sensors:
-    turtle_temperature_numeric:
-      friendly_name: "Turtle Temperature (Numeric)"
-      icon_template: mdi:thermometer
-      value_template: >
-        {% if states('sensor.turtle_habitat_temperature') != 'unavailable' %}
-          {{ states('sensor.turtle_habitat_temperature') | float * 9/5 + 32 | round(1) }}
-        {% else %}
-          0
-        {% endif %}
-      unit_of_measurement: "°F"
-      
-    turtle_humidity_numeric:
-      friendly_name: "Turtle Humidity (Numeric)"
-      icon_template: mdi:water-percent
-      value_template: >
-        {% if states('sensor.turtle_habitat_humidity') != 'unavailable' %}
-          {{ states('sensor.turtle_habitat_humidity') | float | round(1) }}
-        {% else %}
-          0
-        {% endif %}
-      unit_of_measurement: "%"
+# Sensor 2 - Temperature (Celsius)
+- platform: mqtt
+  name: "Turtle Habitat Temperature 2 (°C)"
+  unique_id: turtle_temperhum_temp2_c
+  state_topic: "turtle/sensors/temperhum/sensor_2"
+  value_template: "{{ value_json.temperature_c }}"
+  unit_of_measurement: "°C"
+  device_class: temperature
+  availability_topic: "turtle/sensors/temperhum/sensor_2"
+  availability_template: "{{ value_json.timestamp is defined }}"
+  json_attributes_topic: "turtle/sensors/temperhum/sensor_2"
+  json_attributes_template: "{{ {'humidity': value_json.humidity, 'interval': value_json.interval, 'timestamp': value_json.timestamp} | tojson }}"
 
-# TEMPerHUM Sensors (Actual Hardware Readings)
-- platform: temperhum
-  name: "Turtle Habitat"
-  device_path: /dev/hidraw1
+# Sensor 2 - Temperature (Fahrenheit)
+- platform: mqtt
+  name: "Turtle Habitat Temperature 2 (°F)"
+  unique_id: turtle_temperhum_temp2_f
+  state_topic: "turtle/sensors/temperhum/sensor_2"
+  value_template: "{{ value_json.temperature_f }}"
+  unit_of_measurement: "°F"
+  device_class: temperature
+  availability_topic: "turtle/sensors/temperhum/sensor_2"
+  availability_template: "{{ value_json.timestamp is defined }}"
 
-- platform: temperhum
-  name: "Turtle Basking"
-  device_path: /dev/hidraw2
+# Sensor 2 - Humidity
+- platform: mqtt
+  name: "Turtle Habitat Humidity 2"
+  unique_id: turtle_temperhum_humidity2
+  state_topic: "turtle/sensors/temperhum/sensor_2"
+  value_template: "{{ value_json.humidity }}"
+  unit_of_measurement: "%"
+  device_class: humidity
+  availability_topic: "turtle/sensors/temperhum/sensor_2"
+  availability_template: "{{ value_json.timestamp is defined }}"
+
+# TEMPerHUM Manager Status
+- platform: mqtt
+  name: "TEMPerHUM Manager Status"
+  unique_id: turtle_temperhum_manager_status
+  state_topic: "turtle/sensors/temperhum/status"
+  value_template: "{{ value_json.status }}"
+  availability_topic: "turtle/sensors/temperhum/status"
+  availability_template: "{{ value_json.timestamp is defined }}"
+  json_attributes_topic: "turtle/sensors/temperhum/status"
+  json_attributes_template: "{{ {'sensors_active': value_json.sensors_active, 'last_update': value_json.timestamp} | tojson }}"

@@ -19,7 +19,7 @@ You are helping build an IoT turtle monitoring system that runs on Ubuntu Server
 The system includes:
 - Beelink Mini PC running Ubuntu Server 22.04 LTS
 - 10.1" touchscreen (1024x600) for kiosk interface
-- TEMPerHUM USB sensor
+- USB temperature/humidity sensors
 - Arducam 1080P USB camera
 - Sonoff Zigbee dongle
 - 4x Zigbee smart plugs with energy monitoring

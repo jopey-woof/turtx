@@ -147,7 +147,7 @@ Required secrets:
 **Target Environment:**
 - **Host**: Beelink Mini PC (Ubuntu Server 22.04 LTS)
 - **Display**: 10.1" touchscreen (1024x600 IPS)
-- **Sensors**: TEMPerHUM USB (temperature & humidity)
+- **Sensors**: TEMPerHUM USB (temperature & humidity) - **PENDING**
 - **Camera**: Arducam 1080P USB with day/night vision
 - **Zigbee**: Sonoff Zigbee USB Dongle Plus
 - **Smart Control**: 4x Zigbee smart plugs with energy monitoring

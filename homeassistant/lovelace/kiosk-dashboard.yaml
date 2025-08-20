@@ -48,12 +48,12 @@ views:
                     icon: mdi:water-percent
                 show_header_toggle: false
               
-              - type: entities
-                title: "📊 System Health"
-                entities:
-                  - sensor.processor_use
-                  - sensor.disk_use_percent_home
-                show_header_toggle: false
+              #- type: entities
+              #  title: "📊 System Health"
+              #  entities:
+              #    - sensor.system_monitor_processor_use
+              #    - sensor.system_monitor_disk_use_percent_home
+              #  show_header_toggle: false
           
           # COLUMN 2: Camera & Visual
           - type: vertical-stack
@@ -91,28 +91,25 @@ views:
                   - input_boolean.turtle_manual_mode
                 show_header_toggle: false
               
-              - type: entities
-                title: "⚡ System Status"
-                entities:
-                  - entity: sensor.uptime_display
-                    name: "⏱️ Uptime"
-                    icon: mdi:clock-outline
-                  - entity: sensor.last_boot
-                    name: "🔄 Last Boot"
-                    icon: mdi:restart
-                show_header_toggle: false
+              #- type: entities
+              #  title: "⚡ System Status"
+              #  entities:
+              #    - entity: sensor.system_monitor_last_boot
+              #      name: "🔄 Last Boot"
+              #      icon: mdi:restart
+              #  show_header_toggle: false
       
       # Bottom Status Bar
-      - type: horizontal-stack
-        cards:
-          - type: sensor
-            entity: sensor.processor_use
-            name: "CPU Usage"
-            
-          - type: sensor  
-            entity: sensor.memory_use_percent
-            name: "Memory"
-            
-          - type: sensor
-            entity: sensor.disk_use_percent_home
-            name: "Storage"
+      #- type: horizontal-stack
+      #  cards:
+      #    - type: sensor
+      #      entity: sensor.system_monitor_processor_use
+      #      name: "CPU Usage"
+      #      
+      #    - type: sensor  
+      #      entity: sensor.system_monitor_memory_use_percent
+      #      name: "Memory"
+      #      
+      #    - type: sensor
+      #      entity: sensor.system_monitor_disk_use_percent_home
+      #      name: "Storage"

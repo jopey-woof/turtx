@@ -19,7 +19,7 @@ I am developing a turtle monitoring system that will be deployed on a remote mac
 - **Host**: Beelink Mini PC (running Ubuntu Server 22.04 LTS)
 - **Display**: ROADOM 10.1" Touchscreen Monitor (1024×600 IPS) - Primary kiosk interface
 - **Connectivity**: 3-foot Anker HDMI cable for display connection
-- **Sensors**: TEMPerHUM PC USB sensor (temperature & humidity monitoring)
+- **Sensors**: USB temperature/humidity sensors (to be integrated)
 - **Camera**: Arducam 1080P Day & Night Vision USB Camera
 - **Zigbee Hub**: Sonoff Zigbee USB Dongle Plus (ZBDongle-E 3.0)
 - **Smart Control**: ZigBee Smart Plugs 4-pack with energy monitoring (15A outlets, Zigbee repeaters)
@@ -117,7 +117,7 @@ I am developing a turtle monitoring system that will be deployed on a remote mac
 ### Life-Critical Hardware Integration
 6. **Mission-Critical USB Device Management**: Configure bulletproof udev rules and permissions for ALL USB devices (sensors, camera) with automatic recovery and failover
 7. **Zigbee Network Resilience**: Configure Sonoff dongle with mesh repair, coordinator backup, and automatic device re-pairing
-8. **Environmental Sensor Reliability**: TEMPerHUM sensor integration with 30-second max recovery, calibration validation, and backup readings
+8. **Environmental Sensor Reliability**: USB temperature/humidity sensor integration with 30-second max recovery, calibration validation, and backup readings
 9. **Climate Control Integration**: Smart plug configuration with 15-second max recovery, power state verification, and emergency manual override
 10. **Camera Surveillance System**: Arducam integration with multi-layer recovery, stream redundancy, and 60-second maximum downtime
 

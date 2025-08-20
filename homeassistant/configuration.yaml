@@ -17,8 +17,6 @@ sun:
 system_health:
 logger:
   default: debug
-  logs:
-    custom_components.temperhum: debug
 history:
 logbook:
 recorder:

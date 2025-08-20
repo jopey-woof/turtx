@@ -1,8 +1,0 @@
-# TEMPerHUM USB Sensor udev rules
-# Gives Home Assistant container access to TEMPerHUM HID devices
-
-# TEMPerHUM HID devices (3553:A001)
-SUBSYSTEM=="hidraw", ATTRS{idVendor}=="3553", ATTRS{idProduct}=="a001", MODE="0666", GROUP="dialout"
-
-# Alternative vendor/product ID format
-SUBSYSTEM=="hidraw", ATTRS{idVendor}=="0x3553", ATTRS{idProduct}=="0xa001", MODE="0666", GROUP="dialout" 
