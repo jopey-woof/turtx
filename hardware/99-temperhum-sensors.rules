@@ -1,0 +1,17 @@
+# TemperhUM Sensor udev rules
+# Allow access to HID devices for sensor control
+
+# Generic HID keyboard devices
+KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0666"
+
+# USB HID devices
+SUBSYSTEM=="usb", ATTRS{idVendor}=="*", ATTRS{idProduct}=="*", MODE="0666"
+
+# Input devices
+KERNEL=="input*", SUBSYSTEM=="input", MODE="0666"
+
+# Specific TemperhUM device patterns (if known)
+# KERNEL=="hidraw*", ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="7523", MODE="0666"
+
+# Allow access to uinput for virtual device creation
+KERNEL=="uinput", MODE="0666" 

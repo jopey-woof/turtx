@@ -20,6 +20,30 @@ services:
       #- /dev/video0:/dev/video0  # Camera
       #- /dev/ttyUSB0:/dev/ttyUSB0  # Temperature sensor
       #- /dev/ttyUSB1:/dev/ttyUSB1  # Zigbee coordinator (if separate)
+    depends_on:
+      - mqtt
+    labels:
+      - "turtle.service=homeassistant"
+      - "turtle.critical=true"
+
+  # MQTT Broker for TEMPerHUM sensor integration
+  mqtt:
+    container_name: mqtt
+    image: eclipse-mosquitto:2.0
+    restart: unless-stopped
+    ports:
+      - "1883:1883"  # MQTT
+      - "9001:9001"  # WebSocket
+    volumes:
+      - ./mqtt/config:/mosquitto/config:ro
+      - ./mqtt/data:/mosquitto/data
+      - ./mqtt/log:/mosquitto/log
+    environment:
+      - TZ=${TZ:-America/Los_Angeles}
+    labels:
+      - "turtle.service=mqtt"
+      - "turtle.critical=true"
+
   # Optional: Watchtower for automatic updates (disabled by default for critical system)
   # watchtower:
   #   container_name: watchtower
@@ -66,4 +90,10 @@ networks:
 volumes:
   homeassistant_config:
     name: turtle_ha_config
+    driver: local
+  mqtt_data:
+    name: turtle_mqtt_data
+    driver: local
+  mqtt_log:
+    name: turtle_mqtt_log
     driver: local

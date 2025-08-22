@@ -1,198 +1,215 @@
-# 🐢 Eastern Box Turtle Monitoring System
+# 🐢 Turtle Enclosure Monitoring System
 
-A comprehensive IoT monitoring system for eastern box turtle habitat management, built with Home Assistant, Docker, and touchscreen kiosk interface.
+A comprehensive IoT monitoring system for turtle enclosures, featuring temperature/humidity monitoring, automated environmental control, and a beautiful kiosk interface.
 
-## 🎯 Project Overview
+## 🚀 Quick Start
 
-This system monitors and controls the environmental conditions of an eastern box turtle enclosure using:
-- **10.1" Touchscreen Kiosk** - Primary interface for monitoring and control
-- **Home Assistant** - Core automation and monitoring platform  
-- **Docker** - Containerized deployment for reliability
-- **Zigbee Smart Plugs** - Climate control device management
-- **Environmental Sensors** - Temperature and humidity monitoring
-- **USB Camera** - Live habitat surveillance
-- **Email & Mobile Alerts** - Critical condition notifications
-
-## 🚀 Quick Start - Phase 1 Only
-
-**⚠️ IMPORTANT: Build sequentially. Complete Phase 1 before adding hardware.**
-
-### Prerequisites
-- Ubuntu Server 22.04 LTS (Beelink Mini PC)
-- SSH access to remote machine
-- Internet connection
-- 10.1" touchscreen display connected
-
-### 1. Clone Repository
+### TEMPerHUM Sensor Setup (New!)
 ```bash
-ssh shrimp@10.0.20.69
-cd /home/shrimp
-git clone https://github.com/YOUR_USERNAME/turtle-monitor.git
-cd turtle-monitor
+# Clone the repository
+git clone https://github.com/jopey-woof/turtx.git
+cd turtx
+
+# Install TEMPerHUM sensors (one-command setup)
+./setup/install-temperhum.sh --deploy
+
+# Test the installation
+./setup/test-temperhum.sh
 ```
 
-### 2. Configure Secrets
+### Complete System Setup
 ```bash
-# Interactive secrets setup - you'll be prompted for passwords
-./setup/setup-secrets.sh
-```
-
-### 3. Deploy Phase 1 Foundation  
-```bash
-# Make scripts executable
-chmod +x setup/*.sh kiosk/*.sh
-
-# Run bootstrap setup
+# Bootstrap the entire system
 ./setup/bootstrap.sh
+
+# Apply the turtle theme
+./setup/apply-theme.sh
 ```
 
-### 4. Validate Phase 1 ✅
-Follow the comprehensive validation checklist in [Phase 1 Deployment Guide](docs/PHASE1-DEPLOYMENT.md)
+## 🎯 Features
 
-**🛑 DO NOT proceed to Phase 2 until Phase 1 is 100% validated and stable for 48+ hours.**
+### 🌡️ Temperature & Humidity Monitoring
+- **TEMPerHUM USB Sensors**: Programmatic control and automatic data collection
+- **Interval-Based Identification**: Smart sensor differentiation (1S vs 2S intervals)
+- **Real-time Data**: Continuous monitoring with MQTT integration
+- **Home Assistant Integration**: Automatic sensor discovery and dashboard creation
 
-## 📁 Repository Structure
+### 🖥️ Kiosk Interface
+- **Touchscreen Optimized**: Designed for 1024x600 displays
+- **Dark Theme**: Easy on the eyes with turtle-inspired colors
+- **Auto-login**: Seamless user experience
+- **Virtual Keyboard**: Touch-friendly input
+
+### 🔧 Automation
+- **Environmental Control**: Automated temperature and humidity management
+- **Alert System**: Notifications for critical conditions
+- **Data Logging**: Historical data collection and analysis
+- **System Monitoring**: Health checks and automatic recovery
+
+## 📁 Project Structure
 
 ```
 turtle-monitor/
-├── setup/                     # System setup scripts
-│   ├── bootstrap.sh           # Main Phase 1 setup
-│   ├── setup-secrets.sh       # Interactive secrets configuration  
-│   ├── install-docker.sh      # Docker installation
-│   └── install-display.sh     # Kiosk display setup
-├── docker/
-│   └── docker-compose.yml     # Home Assistant container config
-├── homeassistant/             # Home Assistant configurations
-│   ├── configuration.yaml     # Main HA configuration
-│   ├── automations.yaml       # System automations
-│   ├── sensors.yaml          # Sensor definitions
-│   ├── scripts.yaml          # System control scripts
-│   └── lovelace/             # Dashboard configurations
-│       ├── dashboard.yaml    # Turtle-themed kiosk dashboard
-│       └── themes/
-│           └── turtle-theme.yaml  # Custom turtle theme
-├── kiosk/                     # Kiosk mode configurations
-│   ├── start-kiosk.sh        # Kiosk startup script
-│   └── kiosk.service         # Systemd service configuration
-└── docs/                      # Documentation
-    └── PHASE1-DEPLOYMENT.md   # Detailed Phase 1 guide
+├── setup/                         # System setup and installation scripts
+│   ├── bootstrap.sh              # Initial system setup
+│   ├── install-temperhum.sh      # TEMPerHUM sensor installation
+│   └── test-temperhum.sh         # Sensor testing and validation
+├── hardware/                      # Hardware device configurations
+│   ├── temperhum_manager.py      # TEMPerHUM sensor manager
+│   ├── temperhum-manager.service # Systemd service
+│   ├── 99-temperhum.rules        # Udev rules for USB devices
+│   └── validate_temperhum.py     # Local validation script
+├── homeassistant/                 # Home Assistant configurations
+│   ├── configuration.yaml        # Main HA config
+│   ├── sensors.yaml              # TEMPerHUM sensor definitions
+│   └── lovelace/
+│       └── dashboard.yaml        # Kiosk dashboard
+├── kiosk/                         # Kiosk mode configurations
+│   ├── kiosk.service            # Systemd service
+│   └── start-kiosk.sh           # Kiosk startup script
+└── docs/                          # Documentation
+    ├── TEMPERHUM-IMPLEMENTATION.md    # Technical implementation guide
+    ├── TEMPERHUM-SETUP-GUIDE.md       # End-user setup guide
+    └── TEMPERHUM-IMPLEMENTATION-SUMMARY.md # Implementation summary
 ```
 
-## 🔐 Security & Secrets Management
+## 🔧 TEMPerHUM Sensor Integration
 
-**🚨 CRITICAL: Never commit real secrets to Git**
+### Key Features
+- ✅ **Programmatic HID Control**: Automated sensor activation and configuration
+- ✅ **Interval-Based Identification**: Uses different intervals (1S, 2S) to distinguish sensors
+- ✅ **Robust Data Parsing**: Handles malformed data and banner text
+- ✅ **MQTT Auto-Discovery**: Automatic Home Assistant integration
+- ✅ **Systemd Service**: Reliable background operation
+- ✅ **Zero-Touch Installation**: Complete automated setup
 
-- **Environment Template**: `environment.template` shows required variables
-- **Interactive Setup**: `setup/setup-secrets.sh` prompts for real values
-- **Secure Storage**: Secrets stored in `.env` (git-ignored) with 600 permissions
-- **Template Files**: All config files use placeholders, templates included
+### Installation
+The TEMPerHUM sensor integration provides a complete, automated solution:
 
-Required secrets:
-- Home Assistant admin credentials  
-- Email notification credentials (Gmail app password)
-- WiFi network credentials
-- Mobile app webhook IDs
+1. **One-Command Installation**: `./setup/install-temperhum.sh --deploy`
+2. **Automatic Configuration**: Sensors are configured to different intervals for identification
+3. **Home Assistant Integration**: Sensors appear automatically in HA
+4. **Comprehensive Testing**: Validation scripts ensure everything works
 
-## 🏗️ Development Phases
+### Data Format
+Sensors output data in the format: `XX.XX[C]XX.XX[%RH]XS`
+- `XX.XX`: Temperature in Celsius
+- `XX.XX`: Humidity percentage  
+- `XS`: Interval in seconds (1S, 2S, etc.)
 
-### ✅ Phase 1: Foundation (Current)
-- [x] Basic kiosk display system
-- [x] Home Assistant core installation
-- [x] Docker container orchestration  
-- [x] Touchscreen interface
-- [x] Basic turtle-themed dashboard
-- [x] Email notification system
-- [x] System health monitoring
-- [x] Auto-start services
+### MQTT Topics
+- **Sensor Data**: `turtle/sensors/temperhum/sensor_1` and `sensor_2`
+- **Status**: `turtle/sensors/temperhum/status`
+- **Availability**: Automatic availability tracking
 
-### 🔄 Phase 2: Hardware Integration (Next)
-- [ ] Arducam USB camera integration
-- [ ] Sonoff Zigbee coordinator setup
-- [ ] Smart plug device pairing
-- [ ] Environmental monitoring automations
-- [ ] Camera live feed integration
+## 🖥️ Kiosk Interface
 
-### 🔄 Phase 3: Advanced Features
-- [ ] Advanced automations & alerts
-- [ ] Mobile app configuration
-- [ ] Historical data visualization  
-- [ ] Equipment failure detection
-- [ ] Emergency control systems
+### Features
+- **Dark Theme**: Easy on the eyes with nature-inspired colors
+- **Touch Optimized**: Designed for 1024x600 touchscreen displays
+- **Auto-login**: Seamless user experience
+- **Responsive Design**: Adapts to different screen sizes
 
-### 🔄 Phase 4: Reliability & Recovery
-- [ ] Multi-layer recovery systems
-- [ ] Hardware health monitoring
-- [ ] Automated failover systems
-- [ ] Comprehensive testing
+### Setup
+```bash
+# Apply the turtle theme
+./setup/apply-theme.sh
 
-## 🎨 Design Philosophy
+# Start kiosk mode
+sudo systemctl start kiosk.service
+```
 
-**Turtle-Themed Interface:**
-- Earth tone color palette (forest green, warm browns, shell amber)
-- Organic, curved design elements
-- Custom turtle and nature-themed icons
-- Touch-optimized controls (1024x600 display)
-- Delightful user experience connecting users to nature
+## 🔧 System Requirements
 
-**Reliability-First Architecture:**
-- Sequential development preventing intractable problems
-- Comprehensive validation at each phase
-- Life-critical system design (turtle's health depends on it)
-- Multi-layer recovery with specific downtime limits
-- Hardware monitoring and automatic failover
+### Hardware
+- **Ubuntu Server 24.04+**: Base operating system
+- **TEMPerHUM USB Sensors**: Temperature/humidity monitoring
+- **Touchscreen Display**: 1024x600 or higher resolution
+- **USB Camera**: Arducam 1080P for monitoring
+- **Zigbee Dongle**: Sonoff for smart device control
 
-## 📊 System Specifications
+### Software
+- **Python 3.8+**: Core application runtime
+- **Home Assistant**: Home automation platform
+- **Mosquitto**: MQTT broker for sensor data
+- **Docker**: Containerized deployment
 
-**Target Environment:**
-- **Host**: Beelink Mini PC (Ubuntu Server 22.04 LTS)
-- **Display**: 10.1" touchscreen (1024x600 IPS)
-- **Camera**: Arducam 1080P USB with day/night vision
-- **Zigbee**: Sonoff Zigbee USB Dongle Plus
-- **Smart Control**: 4x Zigbee smart plugs with energy monitoring
-- **Primary Thermostat**: Vivarium Electronics VE-200 (existing)
+## 📚 Documentation
 
-**Software Stack:**
-- **Home Assistant**: 2024.1.0+ (latest stable)
-- **Docker**: Latest stable version
-- **OS**: Ubuntu Server 22.04 LTS
-- **Browser**: Latest Chromium (kiosk mode)
-- **Desktop**: Openbox (minimal)
+### TEMPerHUM Sensor Documentation
+- **[Implementation Guide](docs/TEMPERHUM-IMPLEMENTATION.md)**: Technical details and architecture
+- **[Setup Guide](docs/TEMPERHUM-SETUP-GUIDE.md)**: End-user installation instructions
+- **[Implementation Summary](docs/TEMPERHUM-IMPLEMENTATION-SUMMARY.md)**: Complete overview
 
-## 📞 Support & Troubleshooting
+### System Documentation
+- **[Deployment Guide](docs/PHASE1-DEPLOYMENT.md)**: Complete system deployment
+- **[Hardware Setup](docs/HARDWARE.md)**: Hardware configuration and testing
 
-**Phase 1 Issues:**
-1. Check service logs: `sudo journalctl -u kiosk.service -f`
-2. Verify Home Assistant: `docker-compose logs homeassistant`
-3. Test display: `export DISPLAY=:0 && chromium-browser http://localhost:8123`
-4. Validate secrets: Check `.env` file has correct values
+## 🧪 Testing
 
-**Getting Help:**
-- Review [Phase 1 Deployment Guide](docs/PHASE1-DEPLOYMENT.md)
-- Check troubleshooting section for common issues
-- Verify all validation steps pass before proceeding
+### TEMPerHUM Sensor Testing
+```bash
+# Local validation
+python3 hardware/validate_temperhum.py
 
-## 🎯 Success Criteria - Phase 1
+# Remote testing
+./setup/test-temperhum.sh
+```
 
-Before proceeding to hardware integration:
+### System Testing
+```bash
+# Validate Phase 1 deployment
+./setup/validate-phase1.sh
 
-✅ **Automatic Boot**: Kiosk displays Home Assistant after reboot  
-✅ **Touchscreen Control**: All interface elements work via touch  
-✅ **Email Notifications**: Test alerts delivered successfully  
-✅ **System Stability**: 48+ hours continuous operation  
-✅ **Service Recovery**: Auto-restart after process termination  
-✅ **Complete Validation**: All checklist items in deployment guide  
+# Test kiosk functionality
+./kiosk/test-keyboard.sh
+```
 
-## ⚠️ Important Notes
+## 🔍 Troubleshooting
 
-- **Sequential Development**: Complete each phase before proceeding
-- **Life-Critical System**: A living creature depends on this system
-- **No Shortcuts**: Validate everything thoroughly before adding complexity
-- **Security First**: Never expose secrets in version control
-- **Touch-Optimized**: All controls sized for finger navigation
-- **Current Versions**: Always use latest stable software releases
+### TEMPerHUM Sensors
+```bash
+# Check service status
+sudo systemctl status temperhum-manager.service
+
+# View logs
+sudo journalctl -u temperhum-manager.service -f
+
+# Test MQTT connectivity
+mosquitto_sub -t 'turtle/sensors/temperhum/#' -v
+
+# Check device detection
+lsusb | grep -i temperhum
+```
+
+### General System
+```bash
+# Check Home Assistant status
+docker ps | grep homeassistant
+
+# View system logs
+sudo journalctl -u kiosk.service -f
+
+# Test network connectivity
+ping 10.0.20.69
+```
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🐢 About
+
+This project was created to provide comprehensive monitoring and automation for turtle enclosures, ensuring optimal environmental conditions for turtle health and well-being.
 
 ---
 
-**🐢 Built with love for our shelled friends**
-
-This system prioritizes the health and safety of eastern box turtles through reliable, automated environmental monitoring and control.
+**🐢 Happy turtle monitoring!**

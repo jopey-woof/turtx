@@ -1,0 +1,4 @@
+# TemperhUM Sensor Manager Dependencies
+paho-mqtt>=1.6.1
+evdev>=1.6.1
+python-evdev>=1.6.1 

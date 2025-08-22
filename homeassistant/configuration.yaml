@@ -21,6 +21,19 @@ history:
 logbook:
 recorder:
 
+# MQTT Configuration for TEMPerHUM sensors
+mqtt:
+  broker: localhost
+  port: 1883
+  discovery: true
+  discovery_prefix: homeassistant
+  birth_message:
+    topic: "homeassistant/status"
+    payload: "online"
+  will_message:
+    topic: "homeassistant/status"
+    payload: "offline"
+
 # Include configuration files
 sensor:
   - !include sensors.yaml
