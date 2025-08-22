@@ -28,6 +28,10 @@ secrets/
 .vscode/tasks.json
 .cursor/
 
+# Python virtual environment
+.venv/
+hardware/temperhum_env/
+
 # Backup files
 *.backup
 *.bak

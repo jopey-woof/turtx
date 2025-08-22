@@ -1,17 +1,3 @@
-# TemperhUM Sensor Dependencies
-# Core HID control libraries
 evdev>=1.6.1
-python-uinput>=0.11.2
-hidapi>=0.14.0
 
-# MQTT for Home Assistant integration
-paho-mqtt>=1.6.1
-
-# Data processing and validation
-pydantic>=2.0.0
-
-# Logging and monitoring
-colorlog>=6.7.0
-
-# System utilities
-psutil>=5.9.0 
+hidapi

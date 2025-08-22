@@ -4,19 +4,6 @@ A comprehensive IoT monitoring system for turtle enclosures, featuring temperatu
 
 ## 🚀 Quick Start
 
-### TEMPerHUM Sensor Setup (New!)
-```bash
-# Clone the repository
-git clone https://github.com/jopey-woof/turtx.git
-cd turtx
-
-# Install TEMPerHUM sensors (one-command setup)
-./setup/install-temperhum.sh --deploy
-
-# Test the installation
-./setup/test-temperhum.sh
-```
-
 ### Complete System Setup
 ```bash
 # Bootstrap the entire system
@@ -73,35 +60,6 @@ turtle-monitor/
     └── TEMPERHUM-IMPLEMENTATION-SUMMARY.md # Implementation summary
 ```
 
-## 🔧 TEMPerHUM Sensor Integration
-
-### Key Features
-- ✅ **Programmatic HID Control**: Automated sensor activation and configuration
-- ✅ **Interval-Based Identification**: Uses different intervals (1S, 2S) to distinguish sensors
-- ✅ **Robust Data Parsing**: Handles malformed data and banner text
-- ✅ **MQTT Auto-Discovery**: Automatic Home Assistant integration
-- ✅ **Systemd Service**: Reliable background operation
-- ✅ **Zero-Touch Installation**: Complete automated setup
-
-### Installation
-The TEMPerHUM sensor integration provides a complete, automated solution:
-
-1. **One-Command Installation**: `./setup/install-temperhum.sh --deploy`
-2. **Automatic Configuration**: Sensors are configured to different intervals for identification
-3. **Home Assistant Integration**: Sensors appear automatically in HA
-4. **Comprehensive Testing**: Validation scripts ensure everything works
-
-### Data Format
-Sensors output data in the format: `XX.XX[C]XX.XX[%RH]XS`
-- `XX.XX`: Temperature in Celsius
-- `XX.XX`: Humidity percentage  
-- `XS`: Interval in seconds (1S, 2S, etc.)
-
-### MQTT Topics
-- **Sensor Data**: `turtle/sensors/temperhum/sensor_1` and `sensor_2`
-- **Status**: `turtle/sensors/temperhum/status`
-- **Availability**: Automatic availability tracking
-
 ## 🖥️ Kiosk Interface
 
 ### Features
@@ -136,25 +94,11 @@ sudo systemctl start kiosk.service
 
 ## 📚 Documentation
 
-### TEMPerHUM Sensor Documentation
-- **[Implementation Guide](docs/TEMPERHUM-IMPLEMENTATION.md)**: Technical details and architecture
-- **[Setup Guide](docs/TEMPERHUM-SETUP-GUIDE.md)**: End-user installation instructions
-- **[Implementation Summary](docs/TEMPERHUM-IMPLEMENTATION-SUMMARY.md)**: Complete overview
-
 ### System Documentation
 - **[Deployment Guide](docs/PHASE1-DEPLOYMENT.md)**: Complete system deployment
 - **[Hardware Setup](docs/HARDWARE.md)**: Hardware configuration and testing
 
 ## 🧪 Testing
-
-### TEMPerHUM Sensor Testing
-```bash
-# Local validation
-python3 hardware/validate_temperhum.py
-
-# Remote testing
-./setup/test-temperhum.sh
-```
 
 ### System Testing
 ```bash
@@ -166,21 +110,6 @@ python3 hardware/validate_temperhum.py
 ```
 
 ## 🔍 Troubleshooting
-
-### TEMPerHUM Sensors
-```bash
-# Check service status
-sudo systemctl status temperhum-manager.service
-
-# View logs
-sudo journalctl -u temperhum-manager.service -f
-
-# Test MQTT connectivity
-mosquitto_sub -t 'turtle/sensors/temperhum/#' -v
-
-# Check device detection
-lsusb | grep -i temperhum
-```
 
 ### General System
 ```bash
