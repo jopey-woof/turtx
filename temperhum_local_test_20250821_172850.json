@@ -1,0 +1,56 @@
+{
+  "timestamp": "2025-08-21T17:27:51.111479",
+  "system_info": {
+    "python_version": "3.11.2 (main, Apr 28 2025, 14:11:48) [GCC 12.2.0]",
+    "platform": "Linux"
+  },
+  "tests": {
+    "usb_detection": {
+      "success": true,
+      "devices": [
+        "Bus 001 Device 005: ID 3553:a001 PCsensor TEMPerHUM",
+        "Bus 001 Device 004: ID 3553:a001 PCsensor TEMPerHUM"
+      ]
+    },
+    "input_detection": {
+      "success": true,
+      "devices": [
+        "/dev/input/event25",
+        "/dev/input/event26",
+        "/dev/input/event3",
+        "/dev/input/event4"
+      ]
+    },
+    "temper_py": {
+      "success": false
+    },
+    "evtest_capture": {
+      "success": false,
+      "data": []
+    },
+    "interactive": {
+      "success": true,
+      "data": [
+        {
+          "sensor": 1,
+          "method": "TXT button",
+          "output": "www.pcsensor.com",
+          "timestamp": "2025-08-21T17:28:50.466963"
+        },
+        {
+          "sensor": "both",
+          "method": "Caps Lock",
+          "output": "temperhum v4.1",
+          "timestamp": "2025-08-21T17:28:50.499894"
+        },
+        {
+          "sensor": 2,
+          "method": "TXT button",
+          "output": "caps lock:on/off/++",
+          "timestamp": "2025-08-21T17:28:50.539022"
+        }
+      ]
+    }
+  },
+  "parsed_data": []
+}

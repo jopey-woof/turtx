@@ -1,0 +1,172 @@
+{
+  "timestamp": "2025-08-21T17:34:32.940110",
+  "test_session": "dual_sensor_analysis",
+  "findings": {
+    "devices": [
+      "Bus 001 Device 005: ID 3553:a001 PCsensor TEMPerHUM",
+      "Bus 001 Device 004: ID 3553:a001 PCsensor TEMPerHUM"
+    ],
+    "triggering_methods": [
+      {
+        "method": "Caps Lock Hold (3 seconds)",
+        "description": "Hold Caps Lock key for 3 seconds",
+        "output": "WWW.PCSENSOR.COM",
+        "timestamp": "2025-08-21T17:35:17.570700",
+        "success": true
+      },
+      {
+        "method": "Caps Lock Toggle",
+        "description": "Press Caps Lock once to toggle",
+        "output": "CAPS LOCK:ON/OFF/++",
+        "timestamp": "2025-08-21T17:35:17.684475",
+        "success": true
+      },
+      {
+        "method": "TXT Button (Sensor 1)",
+        "description": "Press TXT button on first sensor",
+        "output": "TYPE:INNER-H3",
+        "timestamp": "2025-08-21T17:35:17.782800",
+        "success": true
+      },
+      {
+        "method": "TXT Button (Sensor 2)",
+        "description": "Press TXT button on second sensor",
+        "output": "28.32 [C]\t36.65 [%RH]\t1S",
+        "timestamp": "2025-08-21T17:35:17.909274",
+        "success": true
+      },
+      {
+        "method": "Num Lock Hold (3 seconds)",
+        "description": "Hold Num Lock key for 3 seconds",
+        "output": "28.25 [C]\t36.74 [%RH]\t1S",
+        "timestamp": "2025-08-21T17:35:18.754792",
+        "success": true
+      },
+      {
+        "method": "Num Lock Toggle",
+        "description": "Press Num Lock once to toggle",
+        "output": "28.31 [C]\t36.91 [%RH]\t1S",
+        "timestamp": "2025-08-21T17:35:20.762425",
+        "success": true
+      }
+    ],
+    "sensor_separation": {
+      "sensor_1": {
+        "output": "28.24 [C]\t36.97 [%RH]\t1S",
+        "timestamp": "2025-08-21T17:35:22.779407"
+      },
+      "sensor_2": {
+        "output": "28.29 [C]\t36.98 [%RH]\t1S",
+        "timestamp": "2025-08-21T17:35:24.789585"
+      }
+    },
+    "continuous_capture": [
+      {
+        "timestamp": "2025-08-21T17:35:26.803551",
+        "data": "28.18 [C]\t37.12 [%RH]\t1S",
+        "elapsed": 1.0136187076568604
+      },
+      {
+        "timestamp": "2025-08-21T17:35:27.810824",
+        "data": "28.24 [C]\t37.19 [%RH]\t1S",
+        "elapsed": 2.0209004878997803
+      },
+      {
+        "timestamp": "2025-08-21T17:35:28.808571",
+        "data": "28.25 [C]\t37.10 [%RH]\t1S",
+        "elapsed": 3.018643617630005
+      },
+      {
+        "timestamp": "2025-08-21T17:35:29.818273",
+        "data": "28.18 [C]\t37.15 [%RH]\t1S",
+        "elapsed": 4.028339385986328
+      },
+      {
+        "timestamp": "2025-08-21T17:35:30.815471",
+        "data": "28.24 [C]\t37.27 [%RH]\t1S",
+        "elapsed": 5.0255372524261475
+      },
+      {
+        "timestamp": "2025-08-21T17:35:31.837563",
+        "data": "28.26 [C]\t37.16 [%RH]\t1S",
+        "elapsed": 6.0476295948028564
+      },
+      {
+        "timestamp": "2025-08-21T17:35:32.831164",
+        "data": "28.19 [C]\t37.14 [%RH]\t1S",
+        "elapsed": 7.04125189781189
+      },
+      {
+        "timestamp": "2025-08-21T17:35:33.838519",
+        "data": "28.16 [C]\t37.32 [%RH]\t1S",
+        "elapsed": 8.04858660697937
+      },
+      {
+        "timestamp": "2025-08-21T17:35:34.843292",
+        "data": "28.28 [C]\t37.35 [%RH]\t1S",
+        "elapsed": 9.053359985351562
+      },
+      {
+        "timestamp": "2025-08-21T17:35:35.844252",
+        "data": "28.26 [C]\t37.36 [%RH]\t1S",
+        "elapsed": 10.054320096969604
+      }
+    ],
+    "analysis": {
+      "parsed_data": [],
+      "unparsed_data": [
+        {
+          "timestamp": "2025-08-21T17:35:26.803551",
+          "elapsed": 1.0136187076568604,
+          "raw_data": "28.18 [C]\t37.12 [%RH]\t1S"
+        },
+        {
+          "timestamp": "2025-08-21T17:35:27.810824",
+          "elapsed": 2.0209004878997803,
+          "raw_data": "28.24 [C]\t37.19 [%RH]\t1S"
+        },
+        {
+          "timestamp": "2025-08-21T17:35:28.808571",
+          "elapsed": 3.018643617630005,
+          "raw_data": "28.25 [C]\t37.10 [%RH]\t1S"
+        },
+        {
+          "timestamp": "2025-08-21T17:35:29.818273",
+          "elapsed": 4.028339385986328,
+          "raw_data": "28.18 [C]\t37.15 [%RH]\t1S"
+        },
+        {
+          "timestamp": "2025-08-21T17:35:30.815471",
+          "elapsed": 5.0255372524261475,
+          "raw_data": "28.24 [C]\t37.27 [%RH]\t1S"
+        },
+        {
+          "timestamp": "2025-08-21T17:35:31.837563",
+          "elapsed": 6.0476295948028564,
+          "raw_data": "28.26 [C]\t37.16 [%RH]\t1S"
+        },
+        {
+          "timestamp": "2025-08-21T17:35:32.831164",
+          "elapsed": 7.04125189781189,
+          "raw_data": "28.19 [C]\t37.14 [%RH]\t1S"
+        },
+        {
+          "timestamp": "2025-08-21T17:35:33.838519",
+          "elapsed": 8.04858660697937,
+          "raw_data": "28.16 [C]\t37.32 [%RH]\t1S"
+        },
+        {
+          "timestamp": "2025-08-21T17:35:34.843292",
+          "elapsed": 9.053359985351562,
+          "raw_data": "28.28 [C]\t37.35 [%RH]\t1S"
+        },
+        {
+          "timestamp": "2025-08-21T17:35:35.844252",
+          "elapsed": 10.054320096969604,
+          "raw_data": "28.26 [C]\t37.36 [%RH]\t1S"
+        }
+      ],
+      "total_captured": 10
+    }
+  }
+}

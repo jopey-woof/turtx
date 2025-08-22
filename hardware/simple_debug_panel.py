@@ -75,12 +75,15 @@ class SimpleDebugPanel:
     
     def identify_sensor(self, raw_data):
         """Identify which sensor the data comes from."""
-        # Sensor 1 typically shows banner text
-        if any(keyword in raw_data.lower() for keyword in ['type:inner', 'inner-temp', 'inner-hum']):
-            return 'sensor_1'
-        # Sensor 2 shows actual data
-        elif self.parse_temperhum_data(raw_data):
-            return 'sensor_2'
+        # Since both sensors produce identical format, we need a different approach
+        # For now, we'll treat all parsed data as "active sensors" and show combined stats
+        
+        # Check if this is actual sensor data (temperature/humidity)
+        if self.parse_temperhum_data(raw_data):
+            return 'sensor_data'  # Could be from either sensor
+        # Banner text and headers
+        elif any(keyword in raw_data.lower() for keyword in ['www.pcsensor.com', 'temperhum v4.1', 'inner-temp', 'inner-hum', 'caps lock', 'num lock']):
+            return 'banner'  # Header/banner information
         else:
             return 'unknown'
     
@@ -88,17 +91,32 @@ class SimpleDebugPanel:
         """Update sensor status and readings."""
         now = datetime.now()
         
-        if sensor_id in self.sensors:
+        if sensor_id == 'sensor_data' and parsed_data:
+            # Update both sensors since we can't distinguish them
+            for sensor in self.sensors.values():
+                sensor['status'] = 'active'
+                sensor['temperature'] = parsed_data['temperature']
+                sensor['humidity'] = parsed_data['humidity']
+                sensor['readings_count'] += 1
+                sensor['last_reading'] = raw_data
+                sensor['last_update'] = now
+            self.last_activity = now
+        elif sensor_id == 'banner':
+            # Banner text - mark sensors as active but no readings
+            for sensor in self.sensors.values():
+                sensor['status'] = 'active'
+                sensor['last_reading'] = raw_data
+                sensor['last_update'] = now
+            self.last_activity = now
+        elif sensor_id in self.sensors:
+            # Direct sensor update (for future use)
             sensor = self.sensors[sensor_id]
-            
-            # Update status
             if parsed_data:
                 sensor['status'] = 'active'
                 sensor['temperature'] = parsed_data['temperature']
                 sensor['humidity'] = parsed_data['humidity']
                 sensor['readings_count'] += 1
             else:
-                # Banner text or other output
                 sensor['status'] = 'active'
                 sensor['temperature'] = None
                 sensor['humidity'] = None
@@ -139,7 +157,11 @@ class SimpleDebugPanel:
                     self.update_sensor_status(sensor_id, line, parsed)
                     
                     # Show immediate feedback
-                    if sensor_id != 'unknown':
+                    if sensor_id == 'sensor_data' and parsed:
+                        print(f"✅ Sensor Data: {parsed['temperature']:.1f}°C, {parsed['humidity']:.1f}%")
+                    elif sensor_id == 'banner':
+                        print(f"📝 Banner: {line}")
+                    elif sensor_id != 'unknown':
                         sensor = self.sensors[sensor_id]
                         if parsed:
                             print(f"✅ {sensor['name']}: {parsed['temperature']:.1f}°C, {parsed['humidity']:.1f}%")
@@ -242,9 +264,16 @@ class SimpleDebugPanel:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"debug_session_{timestamp}.json"
         
+        # Convert datetime objects to strings for JSON serialization
+        sensors_for_json = {}
+        for sensor_id, sensor in self.sensors.items():
+            sensors_for_json[sensor_id] = sensor.copy()
+            if sensor['last_update']:
+                sensors_for_json[sensor_id]['last_update'] = sensor['last_update'].isoformat()
+        
         session_data = {
             'timestamp': datetime.now().isoformat(),
-            'sensors': self.sensors,
+            'sensors': sensors_for_json,
             'captured_data': self.captured_data,
             'summary': {
                 'total_captured': len(self.captured_data),

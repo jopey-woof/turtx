@@ -1,0 +1,8 @@
+{
+  "timestamp": "2025-08-21T18:08:40.686480",
+  "sensors": {
+    "sensor_1": {
+      "name": "Sensor 1 (Inner)",
+      "status": "active",
+      "last_reading": "inner-temp\tinner-hum\tinterval",
+      "last_update": 
