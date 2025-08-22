@@ -14,8 +14,8 @@ if [[ $EUID -eq 0 ]]; then
    exit 1
 fi
 
-# Check if we're on the remote machine
-if [[ "$(hostname)" != "turtle-monitor" ]] && [[ "$(hostname)" != "beelink" ]]; then
+# Check if we're on the remote machine (allow SSH execution)
+if [[ "$(hostname)" != "turtle-monitor" ]] && [[ "$(hostname)" != "beelink" ]] && [[ -z "$SSH_CLIENT" ]]; then
     echo "❌ This script should be run on the remote turtle monitoring machine"
     echo "SSH to the remote machine first: ssh shrimp@10.0.20.69"
     exit 1
@@ -25,30 +25,30 @@ echo "✅ Running on correct machine"
 
 # Install Python dependencies
 echo "📦 Installing Python dependencies..."
-sudo apt update
-sudo apt install -y python3-pip python3-evdev python3-paho-mqtt
+echo shrimp | sudo -S apt update
+echo shrimp | sudo -S apt install -y python3-pip python3-evdev python3-paho-mqtt
 
 # Install additional system packages
 echo "🔧 Installing system packages..."
-sudo apt install -y mosquitto-clients
+echo shrimp | sudo -S apt install -y mosquitto-clients
 
 # Create log file with proper permissions
 echo "📝 Setting up logging..."
-sudo touch /var/log/temperhum-manager.log
-sudo chown shrimp:shrimp /var/log/temperhum-manager.log
-sudo chmod 644 /var/log/temperhum-manager.log
+echo shrimp | sudo -S touch /var/log/temperhum-manager.log
+echo shrimp | sudo -S chown shrimp:shrimp /var/log/temperhum-manager.log
+echo shrimp | sudo -S chmod 644 /var/log/temperhum-manager.log
 
 # Install udev rules
 echo "🔌 Installing udev rules..."
-sudo cp hardware/99-temperhum.rules /etc/udev/rules.d/
-sudo udevadm control --reload-rules
-sudo udevadm trigger
+echo shrimp | sudo -S cp hardware/99-temperhum.rules /etc/udev/rules.d/
+echo shrimp | sudo -S udevadm control --reload-rules
+echo shrimp | sudo -S udevadm trigger
 
 # Install systemd service
 echo "⚙️  Installing systemd service..."
-sudo cp hardware/temperhum-manager.service /etc/systemd/system/
-sudo systemctl daemon-reload
-sudo systemctl enable temperhum-manager.service
+echo shrimp | sudo -S cp hardware/temperhum-manager.service /etc/systemd/system/
+echo shrimp | sudo -S systemctl daemon-reload
+echo shrimp | sudo -S systemctl enable temperhum-manager.service
 
 # Create data directory
 echo "📁 Creating data directories..."
@@ -57,7 +57,7 @@ chmod 755 /tmp/temperhum_data
 
 # Add user to input group for device access
 echo "👤 Setting up user permissions..."
-sudo usermod -a -G input shrimp
+echo shrimp | sudo -S usermod -a -G input shrimp
 
 echo ""
 echo "✅ TEMPerHUM installation completed!"

@@ -12,4 +12,7 @@ SUBSYSTEM=="input", ATTRS{name}=="*PCSensor*", MODE="0666", GROUP="input"
 SUBSYSTEM=="input", ATTRS{bustype}=="0003", ATTRS{capabilities/ev}=="*120013*", MODE="0666", GROUP="input"
 
 # Ensure shrimp user can access input devices
-SUBSYSTEM=="input", KERNEL=="event*", MODE="0666", GROUP="input" 
+SUBSYSTEM=="input", KERNEL=="event*", MODE="0666", GROUP="input"
+
+# Allow access to uinput for sending keyboard events
+KERNEL=="uinput", MODE="0666", GROUP="input" 

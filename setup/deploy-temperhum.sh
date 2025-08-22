@@ -54,7 +54,7 @@ echo -e "${GREEN}✅ Files deployed successfully${NC}"
 
 # Step 3: Install dependencies and configure system
 echo -e "${BLUE}🔧 Installing and configuring system...${NC}"
-ssh $REMOTE_HOST "cd $REMOTE_DIR && ./setup/install-temperhum.sh"
+ssh $REMOTE_HOST "cd $REMOTE_DIR && bash -c 'source ./setup/install-temperhum.sh'"
 
 # Step 4: Test the installation
 echo -e "${BLUE}🧪 Testing installation...${NC}"

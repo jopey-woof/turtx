@@ -8,8 +8,7 @@ Wants=mosquitto.service
 Type=simple
 User=shrimp
 Group=shrimp
-WorkingDirectory=/home/shrimp/turtle-monitor
-ExecStart=/usr/bin/python3 /home/shrimp/turtle-monitor/hardware/temperhum_manager.py
+ExecStart=/usr/bin/python3 /home/shrimp/turtle-monitor/hardware/temperhum_fixed.py
 Restart=always
 RestartSec=10
 StandardOutput=journal
@@ -19,12 +18,8 @@ StandardError=journal
 Environment=PYTHONUNBUFFERED=1
 Environment=DISPLAY=:0
 
-# Security settings
-NoNewPrivileges=true
-PrivateTmp=true
-ProtectSystem=strict
-ProtectHome=true
-ReadWritePaths=/var/log /tmp /home/shrimp/turtle-monitor
+# Security settings (simplified for compatibility)
+ReadWritePaths=/var/log /tmp
 
 # Resource limits
 LimitNOFILE=65536
