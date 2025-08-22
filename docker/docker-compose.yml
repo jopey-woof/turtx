@@ -18,8 +18,12 @@ services:
     devices:
       # USB devices will be mapped here
       #- /dev/video0:/dev/video0  # Camera
-      #- /dev/ttyUSB0:/dev/ttyUSB0  # Temperature sensor
-      #- /dev/ttyUSB1:/dev/ttyUSB1  # Zigbee coordinator (if separate)
+      #- /dev/ttyUSB0:/dev/ttyUSB0  # Zigbee coordinator (if separate)
+      # TemperhUM USB sensors (HID devices)
+      - /dev/hidraw0:/dev/hidraw0  # Sensor 1 output interface
+      - /dev/hidraw1:/dev/hidraw1  # Sensor 1 control interface
+      - /dev/hidraw2:/dev/hidraw2  # Sensor 2 output interface
+      - /dev/hidraw3:/dev/hidraw3  # Sensor 2 control interface
     depends_on:
       - mqtt
     labels:
