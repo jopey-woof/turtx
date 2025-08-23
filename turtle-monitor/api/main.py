@@ -20,7 +20,8 @@ from fastapi import FastAPI, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
+from fastapi import Path
 import uvicorn
 
 # Configure logging
@@ -450,7 +451,7 @@ async def get_latest_readings():
     }
 
 @app.get("/api/history/{hours}")
-async def get_historical_data(hours: int = Field(ge=1, le=168, description="Hours of history to retrieve (1-168)")):
+async def get_historical_data(hours: int = Path(ge=1, le=168, description="Hours of history to retrieve (1-168)")):
     """Get historical sensor data"""
     if not api_instance:
         raise HTTPException(status_code=503, detail="API not initialized")
