@@ -130,24 +130,24 @@ class TurtleMonitorAPI:
             logger.error(f"Failed to initialize database: {e}")
             raise
     
-    def setup_mqtt(self):
-        """Setup MQTT client and connection"""
-        try:
-            self.mqtt_client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
-            self.mqtt_client.on_connect = self.on_mqtt_connect
-            self.mqtt_client.on_message = self.on_mqtt_message
-            self.mqtt_client.on_disconnect = self.on_mqtt_disconnect
-            
-            # Connect to MQTT broker
-            self.mqtt_client.connect(MQTT_BROKER, MQTT_PORT, 60)
-            self.mqtt_client.loop_start()
-            
-            logger.info(f"MQTT client setup complete, connecting to {MQTT_BROKER}:{MQTT_PORT}")
-            
-        except Exception as e:
-            logger.error(f"Failed to setup MQTT client: {e}")
+            def setup_mqtt(self):
+            """Setup MQTT client and connection"""
+            try:
+                self.mqtt_client = mqtt.Client()
+                self.mqtt_client.on_connect = self.on_mqtt_connect
+                self.mqtt_client.on_message = self.on_mqtt_message
+                self.mqtt_client.on_disconnect = self.on_mqtt_disconnect
+                
+                # Connect to MQTT broker
+                self.mqtt_client.connect(MQTT_BROKER, MQTT_PORT, 60)
+                self.mqtt_client.loop_start()
+                
+                logger.info(f"MQTT client setup complete, connecting to {MQTT_BROKER}:{MQTT_PORT}")
+                
+            except Exception as e:
+                logger.error(f"Failed to setup MQTT client: {e}")
     
-    def on_mqtt_connect(self, client, userdata, flags, rc, properties=None):
+    def on_mqtt_connect(self, client, userdata, flags, rc):
         """MQTT connection callback"""
         if rc == 0:
             self.mqtt_connected = True
@@ -160,7 +160,7 @@ class TurtleMonitorAPI:
         else:
             logger.error(f"Failed to connect to MQTT broker, return code {rc}")
     
-    def on_mqtt_disconnect(self, client, userdata, rc, properties=None):
+    def on_mqtt_disconnect(self, client, userdata, rc):
         """MQTT disconnection callback"""
         self.mqtt_connected = False
         logger.warning(f"Disconnected from MQTT broker, return code {rc}")
