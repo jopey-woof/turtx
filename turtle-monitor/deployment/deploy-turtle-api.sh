@@ -172,9 +172,9 @@ create_directories() {
 deploy_services() {
     log_info "Building and starting Docker services..."
     
-    # Change to deployment directory (use relative path)
+    # Change to deployment directory (use absolute path to be sure)
     log_info "Current directory before cd: $(pwd)"
-    cd deployment || {
+    cd /home/shrimp/turtx/turtle-monitor/deployment || {
         log_error "Failed to change to deployment directory"
         exit 1
     }
