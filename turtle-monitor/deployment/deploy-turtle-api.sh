@@ -177,10 +177,10 @@ deploy_services() {
     
     # Build and start services
     log_info "Building turtle-api service..."
-    docker-compose -f docker-compose.yml build turtle-api
+    docker-compose -f deployment/docker-compose.yml build turtle-api
     
     log_info "Starting all services..."
-    docker-compose -f docker-compose.yml up -d
+    docker-compose -f deployment/docker-compose.yml up -d
     
     log_success "Services started successfully"
 }
@@ -279,7 +279,7 @@ show_summary() {
     log_info "🐢 Turtle Monitor API Deployment Summary"
     echo "================================================"
     echo "✅ Services Status:"
-    docker-compose -f docker-compose.yml ps
+    docker-compose -f deployment/docker-compose.yml ps
     echo ""
     echo "🌐 Access URLs:"
     echo "   Frontend: http://localhost:8000"
@@ -298,10 +298,10 @@ show_summary() {
     echo "   Backups: $BACKUP_DIR"
     echo ""
     echo "🔧 Management Commands:"
-    echo "   View logs: docker-compose -f docker-compose.yml logs -f"
-    echo "   Restart: docker-compose -f docker-compose.yml restart"
-    echo "   Stop: docker-compose -f docker-compose.yml down"
-    echo "   Update: git pull && docker-compose -f docker-compose.yml up -d --build"
+    echo "   View logs: docker-compose -f deployment/docker-compose.yml logs -f"
+    echo "   Restart: docker-compose -f deployment/docker-compose.yml restart"
+    echo "   Stop: docker-compose -f deployment/docker-compose.yml down"
+    echo "   Update: git pull && docker-compose -f deployment/docker-compose.yml up -d --build"
     echo ""
 }
 
@@ -310,8 +310,8 @@ rollback() {
     log_error "Deployment failed. Starting rollback..."
     
     # Stop services
-    cd /home/shrimp/turtle-monitor/deployment
-    docker-compose -f docker-compose.yml down 2>/dev/null || true
+    cd /home/shrimp/turtle-monitor
+    docker-compose -f deployment/docker-compose.yml down 2>/dev/null || true
     
     # Remove created containers and images
     docker rm -f turtle-monitor-api turtle-monitor-mqtt 2>/dev/null || true
