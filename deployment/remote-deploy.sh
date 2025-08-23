@@ -153,8 +153,9 @@ deploy_to_remote() {
         # Make deployment script executable
         chmod +x deploy-turtle-api.sh
         
-        # Run deployment
+        # Run deployment from the correct directory
         log_info "Running turtle API deployment..."
+        cd /home/shrimp/turtx/turtle-monitor/deployment
         ./deploy-turtle-api.sh
         
         log_success "Remote deployment completed successfully!"
