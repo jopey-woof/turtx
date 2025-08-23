@@ -9,7 +9,7 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - MQTT_BROKER=host.docker.internal
+      - MQTT_BROKER=localhost
       - MQTT_PORT=1883
       - DATABASE_PATH=/data/turtle_monitor.db
     volumes:
