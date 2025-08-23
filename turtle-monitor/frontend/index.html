@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🐢 Turtle Monitor</title>
+    <title>Turtle Monitor</title>
     <style>
         /* Turtle-themed CSS with organic design */
         :root {
@@ -186,6 +186,8 @@
             font-size: 3rem;
             margin-bottom: 20px;
             animation: gentleBounce 3s ease-in-out infinite;
+            color: var(--shell-amber);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
 
         @keyframes gentleBounce {
@@ -359,7 +361,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🐢 Turtle Monitor</h1>
+            <h1>TURTLE MONITOR</h1>
             <p>Real-time enclosure monitoring system</p>
         </div>
 
@@ -372,10 +374,10 @@
         </div>
 
         <div class="sensor-grid">
-            <!-- Shell Sensor Card -->
+            <!-- Basking Sensor Card -->
             <div class="sensor-card">
-                <div class="sensor-icon">🐢</div>
-                <div class="sensor-title">Shell Sensor</div>
+                <div class="sensor-icon">SUN</div>
+                <div class="sensor-title">Basking Area</div>
                 
                 <div class="reading">
                     <div class="reading-label">Temperature</div>
@@ -392,10 +394,10 @@
                 </div>
             </div>
 
-            <!-- Enclosure Sensor Card -->
+            <!-- Cooling Sensor Card -->
             <div class="sensor-card">
-                <div class="sensor-icon">🏠</div>
-                <div class="sensor-title">Enclosure Sensor</div>
+                <div class="sensor-icon">SHADE</div>
+                <div class="sensor-title">Cooling Area</div>
                 
                 <div class="reading">
                     <div class="reading-label">Temperature</div>
@@ -424,6 +426,8 @@
                 this.retryCount = 0;
                 this.isOnline = false;
                 this.lastData = null;
+                this.errorCount = 0;
+                this.maxErrors = 10;
                 
                 this.init();
             }
@@ -440,11 +444,37 @@
                         this.startPolling();
                     }
                 });
+
+                // Prevent navigation away from this page
+                window.addEventListener('beforeunload', (e) => {
+                    e.preventDefault();
+                    e.returnValue = '';
+                });
+
+                // Handle errors gracefully
+                window.addEventListener('error', (e) => {
+                    console.error('Global error caught:', e.error);
+                    this.handleError(new Error('Page error occurred'));
+                });
+
+                // Handle unhandled promise rejections
+                window.addEventListener('unhandledrejection', (e) => {
+                    console.error('Unhandled promise rejection:', e.reason);
+                    this.handleError(new Error('Promise error occurred'));
+                });
             }
 
             async fetchData() {
                 try {
-                    const response = await fetch(`${this.apiBase}/api/latest`);
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+                    
+                    const response = await fetch(`${this.apiBase}/api/latest`, {
+                        signal: controller.signal
+                    });
+                    
+                    clearTimeout(timeoutId);
+                    
                     if (!response.ok) {
                         throw new Error(`HTTP ${response.status}`);
                     }
@@ -452,6 +482,7 @@
                     const data = await response.json();
                     this.handleDataUpdate(data);
                     this.retryCount = 0;
+                    this.errorCount = 0; // Reset error count on success
                     
                 } catch (error) {
                     console.error('Failed to fetch data:', error);
@@ -476,14 +507,14 @@
             }
 
             updateSensorReadings(readings) {
-                // Shell sensor (sensor1)
+                // Basking sensor (sensor1)
                 if (readings.sensor1) {
                     this.updateReading('shellTemp', readings.sensor1.temperature, '°F');
                     this.updateReading('shellHumidity', readings.sensor1.humidity, '%');
                     this.updateStatus('shellStatus', readings.sensor1.status);
                 }
                 
-                // Enclosure sensor (sensor2)
+                // Cooling sensor (sensor2)
                 if (readings.sensor2) {
                     this.updateReading('enclosureTemp', readings.sensor2.temperature, '°F');
                     this.updateReading('enclosureHumidity', readings.sensor2.humidity, '%');
@@ -517,7 +548,7 @@
                 // Determine color based on sensor type and value
                 if (elementId.includes('Temp')) {
                     if (elementId.includes('shell')) {
-                        // Shell temperature: 70-90°F
+                        // Basking temperature: 70-90°F
                         if (value >= 70 && value <= 90) {
                             element.classList.add('normal');
                         } else if (value < 65 || value > 95) {
@@ -526,7 +557,7 @@
                             element.classList.add('warning');
                         }
                     } else {
-                        // Enclosure temperature: 70-85°F
+                        // Cooling temperature: 70-85°F
                         if (value >= 70 && value <= 85) {
                             element.classList.add('normal');
                         } else if (value < 65 || value > 90) {
@@ -570,7 +601,17 @@
                 this.isOnline = false;
                 this.updateConnectionStatus(false, 'Connection Lost');
                 
+                this.errorCount++;
                 this.retryCount++;
+                
+                // If too many errors, stop polling to prevent crashes
+                if (this.errorCount >= this.maxErrors) {
+                    console.error('Too many errors, stopping polling to prevent crashes');
+                    this.stopPolling();
+                    this.updateConnectionStatus(false, 'System Error - Contact Admin');
+                    return;
+                }
+                
                 if (this.retryCount >= this.maxRetries) {
                     console.error('Max retries exceeded');
                     this.retryCount = 0;
