@@ -120,9 +120,19 @@ validate_prerequisites() {
 check_git_repository() {
     log_info "Checking git repository status..."
     
+    # Check if we're in a git repository or can find one
     if [ ! -d ".git" ]; then
-        log_error "Not in a git repository. Please run this script from the turtle-monitor directory."
-        exit 1
+        # Try to find the git repository in parent directories
+        if [ -d "../.git" ]; then
+            log_info "Found git repository in parent directory, changing to turtle-monitor directory..."
+            cd ..
+        elif [ -d "../../.git" ]; then
+            log_info "Found git repository in grandparent directory, changing to turtle-monitor directory..."
+            cd ../..
+        else
+            log_error "Not in a git repository. Please run this script from the turtle-monitor directory."
+            exit 1
+        fi
     fi
     
     # Check if there are uncommitted changes
@@ -148,12 +158,12 @@ create_directories() {
     log_info "Creating necessary directories..."
     
     # Create data directories
-    mkdir -p /home/turtle/turtle-monitor/data
-    mkdir -p /home/turtle/turtle-monitor/logs
+    mkdir -p /home/shrimp/turtle-monitor/data
+    mkdir -p /home/shrimp/turtle-monitor/logs
     
     # Set proper permissions
-    chmod 755 /home/turtle/turtle-monitor/data
-    chmod 755 /home/turtle/turtle-monitor/logs
+    chmod 755 /home/shrimp/turtle-monitor/data
+    chmod 755 /home/shrimp/turtle-monitor/logs
     
     log_success "Directories created successfully"
 }
@@ -163,7 +173,7 @@ deploy_services() {
     log_info "Building and starting Docker services..."
     
     # Change to deployment directory
-    cd /home/turtle/turtle-monitor/deployment
+    cd /home/shrimp/turtle-monitor/deployment
     
     # Build and start services
     log_info "Building turtle-api service..."
