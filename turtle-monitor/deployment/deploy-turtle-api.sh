@@ -173,10 +173,14 @@ deploy_services() {
     log_info "Building and starting Docker services..."
     
     # Change to deployment directory (use relative path)
+    log_info "Current directory before cd: $(pwd)"
     cd deployment || {
         log_error "Failed to change to deployment directory"
         exit 1
     }
+    log_info "Current directory after cd: $(pwd)"
+    log_info "Checking if docker-compose.yml exists:"
+    ls -la docker-compose.yml || log_error "docker-compose.yml not found"
     
     # Build and start services
     log_info "Building turtle-api service..."
