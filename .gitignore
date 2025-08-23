@@ -1,3 +1,5 @@
+# Turtle Monitor System - Production Ready
+
 # Home Assistant
 homeassistant/secrets.yaml
 homeassistant/.storage/
@@ -5,6 +7,11 @@ homeassistant/home-assistant.log
 homeassistant/home-assistant_v2.db*
 homeassistant/known_devices.yaml
 homeassistant/ip_bans.yaml
+
+# Turtle Monitor API
+turtle-monitor/api/data/
+turtle-monitor/api/logs/
+turtle-monitor/api/.env
 
 # Docker
 .env
@@ -28,11 +35,50 @@ secrets/
 .vscode/tasks.json
 .cursor/
 
-# Python virtual environment
-.venv/
-hardware/temperhum_env/
-
 # Backup files
 *.backup
 *.bak
+*~
+
+# Archive (old files)
+archive/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Node.js (if any frontend build tools)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Temporary files
+*.swp
+*.swo
 *~
