@@ -206,13 +206,9 @@ wait_for_services() {
         if curl -f http://localhost:8000/api/health >/dev/null 2>&1; then
             log_success "Turtle API is healthy"
             
-            # Check mosquitto health
-            if docker exec turtle-monitor-mqtt mosquitto_pub -h localhost -t test -m healthcheck >/dev/null 2>&1; then
-                log_success "Mosquitto is healthy"
-                return 0
-            else
-                log_warning "Mosquitto health check failed"
-            fi
+            # Note: MQTT health check skipped - using existing MQTT service from /home/shrimp/turtx/docker/
+            log_info "Using existing MQTT service from main docker setup"
+            return 0
         else
             log_warning "Turtle API health check failed"
         fi
