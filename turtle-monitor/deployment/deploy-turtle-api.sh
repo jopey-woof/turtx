@@ -172,8 +172,8 @@ create_directories() {
 deploy_services() {
     log_info "Building and starting Docker services..."
     
-    # Change to deployment directory
-    cd /home/shrimp/turtle-monitor/deployment
+    # Change to deployment directory (use relative path)
+    cd deployment
     
     # Build and start services
     log_info "Building turtle-api service..."
