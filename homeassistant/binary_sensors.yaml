@@ -1,0 +1,56 @@
+# Turtle Monitoring System - Binary Sensor Configuration
+# Phase 1: Basic binary sensor definitions
+
+# System status binary sensors
+- platform: template
+  binary_sensors:
+    turtle_system_online:
+      friendly_name: "System Online"
+      icon: mdi:turtle
+      value_template: "{{ states('sensor.turtle_system_status') == 'Online' }}"
+
+    turtle_system_healthy:
+      friendly_name: "System Healthy"
+      icon: mdi:heart-pulse
+      value_template: "{{ states('sensor.turtle_system_health') in ['Excellent', 'Good'] }}"
+
+    turtle_alerts_active:
+      friendly_name: "Alerts Active"
+      icon: mdi:alert-circle
+      value_template: "{{ states('sensor.turtle_system_health') == 'Warning' }}"
+
+    turtle_temperature_ok:
+      friendly_name: "Temperature OK"
+      icon: mdi:thermometer-check
+      value_template: >
+        {% set temp = states('sensor.turtle_temperature_fahrenheit') | float(default=0) %}
+        {% set min_temp = states('input_number.turtle_temp_min') | float(default=70) %}
+        {% set max_temp = states('input_number.turtle_temp_max') | float(default=85) %}
+        {{ temp >= min_temp and temp <= max_temp }}
+
+    turtle_humidity_ok:
+      friendly_name: "Humidity OK"
+      icon: mdi:water-check
+      value_template: >
+        {% set humidity = states('sensor.turtle_humidity_percent') | float(default=0) %}
+        {% set min_humidity = states('input_number.turtle_humidity_min') | float(default=60) %}
+        {% set max_humidity = states('input_number.turtle_humidity_max') | float(default=80) %}
+        {{ humidity >= min_humidity and humidity <= max_humidity }}
+
+# Network connectivity sensors
+- platform: ping
+  hosts:
+    router: 192.168.1.1
+    internet: 8.8.8.8
+
+- platform: template
+  binary_sensors:
+    internet_connection:
+      friendly_name: "Internet Connection"
+      icon: mdi:internet
+      value_template: "{{ states('binary_sensor.internet') == 'on' }}"
+
+    router_connection:
+      friendly_name: "Router Connection"
+      icon: mdi:router
+      value_template: "{{ states('binary_sensor.router') == 'on' }}" 

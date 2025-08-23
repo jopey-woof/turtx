@@ -5,13 +5,18 @@
 title: "🐢 Turtle Monitor"
 background: "var(--turtle-bg-image)"
 
+# Import custom CSS for enhanced aesthetics
+resources:
+  - type: css
+    url: /local/turtle-dashboard.css
+
 views:
   - title: "Home"
     path: "home"
     icon: "mdi:turtle"
     theme: "turtle_theme"
     cards:
-      # Top status row
+      # Top status row with improved styling
       - type: horizontal-stack
         cards:
           - type: entity
@@ -19,21 +24,26 @@ views:
             name: "System Status"
             icon: "mdi:turtle"
             state_color: true
+            show_state: true
             
           - type: entity
             entity: sensor.turtle_system_health
             name: "System Health"
+            icon: "mdi:heart-pulse"
             state_color: true
+            show_state: true
             
           - type: entity
             entity: binary_sensor.turtle_system_online
             name: "Online"
+            icon: "mdi:connection"
             state_color: true
+            show_state: true
 
-      # Main monitoring cards
+      # Main monitoring cards with improved aesthetics
       - type: horizontal-stack
         cards:
-          # Temperature card (real sensor)
+          # Temperature card with consistent Fahrenheit display
           - type: gauge
             entity: sensor.turtle_temperature_fahrenheit
             name: "Temperature"
@@ -45,8 +55,9 @@ views:
               yellow: 75
               red: 85
             needle: true
+            title_color: "#4CAF50"
             
-          # Humidity card (real sensor)
+          # Humidity card with improved styling
           - type: gauge
             entity: sensor.turtle_humidity_percent
             name: "Humidity"
@@ -58,8 +69,26 @@ views:
               yellow: 50
               red: 45
             needle: true
+            title_color: "#2196F3"
 
-      # Quick controls row
+      # Temperature and Humidity status indicators
+      - type: horizontal-stack
+        cards:
+          - type: entity
+            entity: binary_sensor.turtle_temperature_ok
+            name: "Temperature OK"
+            icon: "mdi:thermometer-check"
+            state_color: true
+            show_state: false
+            
+          - type: entity
+            entity: binary_sensor.turtle_humidity_ok
+            name: "Humidity OK"
+            icon: "mdi:water-check"
+            state_color: true
+            show_state: false
+
+      # Quick controls row with improved styling
       - type: horizontal-stack
         cards:
           - type: button
@@ -70,6 +99,7 @@ views:
               action: toggle
             hold_action:
               action: more-info
+            show_state: true
             
           - type: button
             entity: input_boolean.turtle_manual_mode
@@ -79,6 +109,7 @@ views:
               action: toggle
             hold_action:
               action: more-info
+            show_state: true
               
           - type: button
             entity: script.turtle_system_health_check
@@ -88,10 +119,11 @@ views:
               action: call-service
               service: script.turtle_system_health_check
 
-      # System information card
+      # System information card with improved layout
       - type: entities
         title: "System Information"
         show_header_toggle: false
+        theme: "turtle_theme"
         entities:
           - entity: sensor.uptime_display
             name: "System Uptime"
@@ -110,6 +142,7 @@ views:
       - type: entities
         title: "Emergency Controls (Phase 2)"
         show_header_toggle: false
+        theme: "turtle_theme"
         entities:
           - entity: script.turtle_emergency_cooling_placeholder
             name: "Emergency Cooling"
@@ -118,76 +151,98 @@ views:
             name: "Emergency Heating"
             icon: "mdi:fire-alert"
 
-  # Settings view
+  # Settings view with improved organization
   - title: "Settings"
     path: "settings"
     icon: "mdi:cog"
     theme: "turtle_theme"
     cards:
-      # Temperature settings
+      # Temperature settings with current values display
       - type: entities
         title: "Temperature Settings"
         show_header_toggle: false
+        theme: "turtle_theme"
         entities:
           - entity: input_number.turtle_temp_min
             name: "Minimum Temperature"
+            icon: "mdi:thermometer-low"
           - entity: input_number.turtle_temp_max
             name: "Maximum Temperature"
+            icon: "mdi:thermometer-high"
+          - entity: sensor.turtle_temperature_fahrenheit
+            name: "Current Temperature"
+            icon: "mdi:thermometer"
 
-      # Humidity settings
+      # Humidity settings with current values display
       - type: entities
         title: "Humidity Settings"
         show_header_toggle: false
+        theme: "turtle_theme"
         entities:
           - entity: input_number.turtle_humidity_min
             name: "Minimum Humidity"
+            icon: "mdi:water-percent"
           - entity: input_number.turtle_humidity_max
             name: "Maximum Humidity"
+            icon: "mdi:water-percent"
+          - entity: sensor.turtle_humidity_percent
+            name: "Current Humidity"
+            icon: "mdi:water-percent"
 
-      # System controls
+      # System controls with improved styling
       - type: entities
         title: "System Controls"
         show_header_toggle: false
+        theme: "turtle_theme"
         entities:
           - entity: script.turtle_system_maintenance_mode
             name: "Enter Maintenance Mode"
+            icon: "mdi:tools"
           - entity: script.turtle_system_exit_maintenance
             name: "Exit Maintenance Mode"
+            icon: "mdi:tools-off"
           - entity: script.turtle_clear_notifications
             name: "Clear Notifications"
+            icon: "mdi:bell-off"
           - entity: script.turtle_system_restart
             name: "Restart System"
+            icon: "mdi:restart"
 
-  # Status view
+  # Status view with improved data visualization
   - title: "Status"
     path: "status"
     icon: "mdi:information"
     theme: "turtle_theme"
     cards:
-      # Network status
+      # Network status with improved indicators
       - type: entities
         title: "Network Status"
         show_header_toggle: false
+        theme: "turtle_theme"
         entities:
           - entity: binary_sensor.internet_connection
             name: "Internet Connection"
+            icon: "mdi:internet"
           - entity: binary_sensor.router_connection
             name: "Router Connection"
+            icon: "mdi:router"
 
-      # System resources
+      # System resources with improved graphs
       - type: history-graph
-        title: "System Resources"
+        title: "System Resources (12 Hours)"
         hours_to_show: 12
         refresh_interval: 30
+        theme: "turtle_theme"
         entities:
           - sensor.processor_use
           - sensor.memory_use_percent
 
-      # Environmental data (Phase 2 placeholders)
+      # Environmental data with improved visualization
       - type: history-graph
-        title: "Environmental Data (Phase 2)"
+        title: "Environmental Data (24 Hours)"
         hours_to_show: 24
         refresh_interval: 60
+        theme: "turtle_theme"
         entities:
           - sensor.turtle_temperature_fahrenheit
           - sensor.turtle_humidity_percent

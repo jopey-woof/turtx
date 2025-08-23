@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Turtle Monitor</title>
     <style>
-        /* Turtle-themed CSS with organic design */
+        /* Turtle-themed CSS with cute, professional design */
         :root {
             --shell-amber: #D4A574;
             --forest-green: #2D5016;
@@ -16,6 +16,9 @@
             --alert-red: #DC143C;
             --success-green: #228B22;
             --warning-orange: #FF8C00;
+            --soft-blue: #87CEEB;
+            --gentle-purple: #DDA0DD;
+            --warm-yellow: #F0E68C;
         }
 
         * {
@@ -26,14 +29,19 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, var(--forest-green) 0%, var(--warm-brown) 100%);
+            background: linear-gradient(135deg, 
+                #2D5016 0%, 
+                #4A7C59 25%, 
+                #6B8E23 50%, 
+                #8B4513 75%, 
+                #D4A574 100%);
             color: var(--sand-beige);
             overflow: hidden;
             height: 100vh;
             position: relative;
         }
 
-        /* Turtle shell pattern background */
+        /* Cute turtle shell pattern background */
         body::before {
             content: '';
             position: absolute;
@@ -42,17 +50,20 @@
             right: 0;
             bottom: 0;
             background-image: 
-                radial-gradient(circle at 20% 20%, var(--shell-amber) 2px, transparent 2px),
-                radial-gradient(circle at 80% 40%, var(--earth-tan) 1px, transparent 1px),
-                radial-gradient(circle at 40% 80%, var(--shell-amber) 1.5px, transparent 1.5px);
-            background-size: 60px 60px, 40px 40px, 50px 50px;
-            opacity: 0.1;
-            animation: shellFloat 20s ease-in-out infinite;
+                radial-gradient(circle at 20% 20%, rgba(212, 165, 116, 0.3) 3px, transparent 3px),
+                radial-gradient(circle at 80% 40%, rgba(222, 184, 135, 0.2) 2px, transparent 2px),
+                radial-gradient(circle at 40% 80%, rgba(212, 165, 116, 0.25) 2.5px, transparent 2.5px),
+                radial-gradient(circle at 60% 60%, rgba(240, 230, 140, 0.15) 1.5px, transparent 1.5px);
+            background-size: 80px 80px, 60px 60px, 70px 70px, 50px 50px;
+            opacity: 0.4;
+            animation: shellFloat 25s ease-in-out infinite;
         }
 
         @keyframes shellFloat {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-10px) rotate(1deg); }
+            0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
+            25% { transform: translateY(-8px) rotate(0.5deg) scale(1.02); }
+            50% { transform: translateY(-12px) rotate(1deg) scale(1.05); }
+            75% { transform: translateY(-8px) rotate(0.5deg) scale(1.02); }
         }
 
         .container {
@@ -69,75 +80,98 @@
         .header {
             text-align: center;
             margin-bottom: 30px;
-            animation: fadeInDown 1s ease-out;
+            animation: fadeInDown 1.2s ease-out;
         }
 
         .header h1 {
-            font-size: 3rem;
-            color: var(--shell-amber);
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            font-size: 3.5rem;
+            background: linear-gradient(45deg, #D4A574, #F0E68C, #DEB887);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
             margin-bottom: 10px;
+            font-weight: 700;
+            letter-spacing: 2px;
         }
 
         .header p {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             color: var(--sand-beige);
-            opacity: 0.9;
+            opacity: 0.95;
+            font-weight: 300;
         }
 
         .status-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(139, 69, 19, 0.3);
-            padding: 15px 25px;
-            border-radius: 25px;
+            background: linear-gradient(135deg, 
+                rgba(139, 69, 19, 0.4) 0%, 
+                rgba(212, 165, 116, 0.3) 50%, 
+                rgba(139, 69, 19, 0.4) 100%);
+            padding: 18px 30px;
+            border-radius: 30px;
             margin-bottom: 30px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(212, 165, 116, 0.3);
-            animation: slideInTop 1s ease-out 0.2s both;
+            backdrop-filter: blur(15px);
+            border: 2px solid rgba(212, 165, 116, 0.4);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            animation: slideInTop 1s ease-out 0.3s both;
         }
 
         .connection-status {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
 
         .status-dot {
-            width: 12px;
-            height: 12px;
+            width: 14px;
+            height: 14px;
             border-radius: 50%;
             animation: pulse 2s infinite;
+            box-shadow: 0 0 10px currentColor;
         }
 
-        .status-dot.online { background-color: var(--success-green); }
-        .status-dot.offline { background-color: var(--alert-red); }
+        .status-dot.online { 
+            background-color: var(--success-green);
+            box-shadow: 0 0 15px var(--success-green);
+        }
+        .status-dot.offline { 
+            background-color: var(--alert-red);
+            box-shadow: 0 0 15px var(--alert-red);
+        }
 
         .last-update {
-            font-size: 0.9rem;
-            opacity: 0.8;
+            font-size: 1rem;
+            opacity: 0.9;
+            font-weight: 500;
         }
 
         .sensor-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 30px;
+            gap: 35px;
             flex: 1;
-            animation: fadeInUp 1s ease-out 0.4s both;
+            animation: fadeInUp 1s ease-out 0.5s both;
         }
 
         .sensor-card {
-            background: linear-gradient(145deg, rgba(139, 69, 19, 0.4), rgba(212, 165, 116, 0.2));
-            border-radius: 30px;
-            padding: 30px;
+            background: linear-gradient(145deg, 
+                rgba(139, 69, 19, 0.5) 0%, 
+                rgba(212, 165, 116, 0.3) 30%, 
+                rgba(222, 184, 135, 0.2) 70%, 
+                rgba(139, 69, 19, 0.4) 100%);
+            border-radius: 35px;
+            padding: 35px;
             text-align: center;
-            backdrop-filter: blur(15px);
-            border: 2px solid rgba(212, 165, 116, 0.3);
+            backdrop-filter: blur(20px);
+            border: 3px solid rgba(212, 165, 116, 0.5);
             position: relative;
             overflow: hidden;
-            transition: all 0.3s ease;
-            animation: cardFloat 6s ease-in-out infinite;
+            transition: all 0.4s ease;
+            animation: cardFloat 8s ease-in-out infinite;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
         }
 
         .sensor-card:nth-child(1) { animation-delay: 0s; }
@@ -150,10 +184,14 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: conic-gradient(from 0deg, transparent, rgba(212, 165, 116, 0.1), transparent);
-            animation: rotate 10s linear infinite;
+            background: conic-gradient(from 0deg, 
+                transparent, 
+                rgba(212, 165, 116, 0.2), 
+                rgba(240, 230, 140, 0.1), 
+                transparent);
+            animation: rotate 12s linear infinite;
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.4s ease;
         }
 
         .sensor-card:hover::before {
@@ -161,13 +199,16 @@
         }
 
         .sensor-card:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            border-color: rgba(212, 165, 116, 0.8);
         }
 
         @keyframes cardFloat {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-8px); }
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            25% { transform: translateY(-6px) rotate(0.5deg); }
+            50% { transform: translateY(-10px) rotate(1deg); }
+            75% { transform: translateY(-6px) rotate(0.5deg); }
         }
 
         @keyframes rotate {
@@ -176,109 +217,159 @@
         }
 
         .sensor-title {
-            font-size: 1.8rem;
-            color: var(--shell-amber);
-            margin-bottom: 20px;
+            font-size: 2rem;
+            background: linear-gradient(45deg, #D4A574, #F0E68C);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 25px;
             font-weight: 600;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
         }
 
         .sensor-icon {
-            font-size: 3rem;
-            margin-bottom: 20px;
-            animation: gentleBounce 3s ease-in-out infinite;
-            color: var(--shell-amber);
+            font-size: 3.5rem;
+            margin-bottom: 25px;
+            animation: gentleBounce 4s ease-in-out infinite;
+            background: linear-gradient(45deg, #D4A574, #F0E68C, #DEB887);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
 
         @keyframes gentleBounce {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-5px); }
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-8px) scale(1.05); }
         }
 
         .reading {
-            margin: 15px 0;
-            padding: 20px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 20px;
-            border: 1px solid rgba(212, 165, 116, 0.2);
-            transition: all 0.3s ease;
+            margin: 20px 0;
+            padding: 25px;
+            background: linear-gradient(135deg, 
+                rgba(255,255,255,0.15) 0%, 
+                rgba(255,255,255,0.08) 100%);
+            border-radius: 25px;
+            border: 2px solid rgba(212, 165, 116, 0.3);
+            transition: all 0.4s ease;
+            backdrop-filter: blur(10px);
         }
 
         .reading:hover {
-            background: rgba(255,255,255,0.15);
-            transform: scale(1.05);
+            background: linear-gradient(135deg, 
+                rgba(255,255,255,0.2) 0%, 
+                rgba(255,255,255,0.12) 100%);
+            transform: scale(1.08);
+            border-color: rgba(212, 165, 116, 0.6);
         }
 
         .reading-label {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             color: var(--sand-beige);
-            margin-bottom: 8px;
-            opacity: 0.9;
+            margin-bottom: 10px;
+            opacity: 0.95;
+            font-weight: 500;
         }
 
         .reading-value {
-            font-size: 2.5rem;
+            font-size: 3rem;
             font-weight: bold;
-            color: var(--shell-amber);
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
-            transition: all 0.3s ease;
+            background: linear-gradient(45deg, #D4A574, #F0E68C);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            transition: all 0.4s ease;
         }
 
         .reading-value.alert {
-            color: var(--alert-red);
-            animation: alertPulse 1s ease-in-out infinite;
+            background: linear-gradient(45deg, #DC143C, #FF6B6B);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: alertPulse 1.2s ease-in-out infinite;
         }
 
         .reading-value.warning {
-            color: var(--warning-orange);
+            background: linear-gradient(45deg, #FF8C00, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .reading-value.normal {
-            color: var(--success-green);
+            background: linear-gradient(45deg, #228B22, #32CD32);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         @keyframes alertPulse {
             0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
+            50% { transform: scale(1.15); }
         }
 
         .status-indicator {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.9rem;
+            gap: 10px;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-size: 1rem;
             font-weight: 600;
-            margin-top: 15px;
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(212, 165, 116, 0.3);
+            margin-top: 20px;
+            background: linear-gradient(135deg, 
+                rgba(255,255,255,0.15) 0%, 
+                rgba(255,255,255,0.08) 100%);
+            border: 2px solid rgba(212, 165, 116, 0.4);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
         }
 
-        .status-indicator.normal { color: var(--success-green); }
-        .status-indicator.hot { color: var(--alert-red); }
-        .status-indicator.cold { color: var(--warning-orange); }
-        .status-indicator.dry { color: var(--warning-orange); }
-        .status-indicator.humid { color: var(--alert-red); }
+        .status-indicator:hover {
+            transform: scale(1.05);
+            border-color: rgba(212, 165, 116, 0.7);
+        }
+
+        .status-indicator.normal { 
+            color: var(--success-green);
+            box-shadow: 0 0 15px rgba(34, 139, 34, 0.3);
+        }
+        .status-indicator.hot { 
+            color: var(--alert-red);
+            box-shadow: 0 0 15px rgba(220, 20, 60, 0.3);
+        }
+        .status-indicator.cold { 
+            color: var(--warning-orange);
+            box-shadow: 0 0 15px rgba(255, 140, 0, 0.3);
+        }
+        .status-indicator.dry { 
+            color: var(--warning-orange);
+            box-shadow: 0 0 15px rgba(255, 140, 0, 0.3);
+        }
+        .status-indicator.humid { 
+            color: var(--alert-red);
+            box-shadow: 0 0 15px rgba(220, 20, 60, 0.3);
+        }
 
         .loading {
             display: flex;
             justify-content: center;
             align-items: center;
             height: 200px;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             color: var(--sand-beige);
         }
 
         .loading::after {
             content: '';
-            width: 20px;
-            height: 20px;
-            border: 2px solid var(--shell-amber);
-            border-top: 2px solid transparent;
+            width: 25px;
+            height: 25px;
+            border: 3px solid var(--shell-amber);
+            border-top: 3px solid transparent;
             border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-left: 10px;
+            animation: spin 1.2s linear infinite;
+            margin-left: 15px;
         }
 
         @keyframes spin {
@@ -287,26 +378,29 @@
         }
 
         .error-message {
-            background: rgba(220, 20, 60, 0.3);
-            border: 1px solid var(--alert-red);
-            border-radius: 15px;
-            padding: 20px;
+            background: linear-gradient(135deg, 
+                rgba(220, 20, 60, 0.4) 0%, 
+                rgba(255, 107, 107, 0.3) 100%);
+            border: 2px solid var(--alert-red);
+            border-radius: 20px;
+            padding: 25px;
             text-align: center;
-            margin: 20px 0;
-            animation: shake 0.5s ease-in-out;
+            margin: 25px 0;
+            animation: shake 0.6s ease-in-out;
+            backdrop-filter: blur(10px);
         }
 
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
         }
 
         /* Animation keyframes */
         @keyframes fadeInDown {
             from {
                 opacity: 0;
-                transform: translateY(-30px);
+                transform: translateY(-40px);
             }
             to {
                 opacity: 1;
@@ -317,7 +411,7 @@
         @keyframes slideInTop {
             from {
                 opacity: 0;
-                transform: translateY(-20px);
+                transform: translateY(-25px);
             }
             to {
                 opacity: 1;
@@ -328,7 +422,7 @@
         @keyframes fadeInUp {
             from {
                 opacity: 0;
-                transform: translateY(30px);
+                transform: translateY(40px);
             }
             to {
                 opacity: 1;
@@ -337,23 +431,27 @@
         }
 
         @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.1); }
         }
 
         /* Responsive design */
         @media (max-width: 768px) {
             .sensor-grid {
                 grid-template-columns: 1fr;
-                gap: 20px;
+                gap: 25px;
             }
             
             .header h1 {
-                font-size: 2rem;
+                font-size: 2.5rem;
             }
             
             .reading-value {
-                font-size: 2rem;
+                font-size: 2.5rem;
+            }
+            
+            .sensor-card {
+                padding: 25px;
             }
         }
     </style>
@@ -361,7 +459,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>TURTLE MONITOR</h1>
+            <h1>🐢 TURTLE MONITOR</h1>
             <p>Real-time enclosure monitoring system</p>
         </div>
 
@@ -376,7 +474,7 @@
         <div class="sensor-grid">
             <!-- Basking Sensor Card -->
             <div class="sensor-card">
-                <div class="sensor-icon">SUN</div>
+                <div class="sensor-icon">☀️</div>
                 <div class="sensor-title">Basking Area</div>
                 
                 <div class="reading">
@@ -396,7 +494,7 @@
 
             <!-- Cooling Sensor Card -->
             <div class="sensor-card">
-                <div class="sensor-icon">SHADE</div>
+                <div class="sensor-icon">🌿</div>
                 <div class="sensor-title">Cooling Area</div>
                 
                 <div class="reading">

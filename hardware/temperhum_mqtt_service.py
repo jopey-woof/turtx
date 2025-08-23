@@ -22,8 +22,15 @@ class TemperhUMMQTTService:
     """Production MQTT service for TemperhUM sensors"""
     
     def __init__(self, config_file: str = None):
+        # If no config file specified, look for it in the same directory as this script
+        if config_file is None:
+            script_dir = os.path.dirname(os.path.abspath(__file__))
+            config_file = os.path.join(script_dir, 'temperhum_config.json')
+        
         self.config = self.load_config(config_file)
         temperature_unit = self.config.get('service', {}).get('temperature_unit', 'celsius')
+        print(f"Loading config from: {config_file}")
+        print(f"Temperature unit: {temperature_unit}")
         self.controller = TemperhUMController(
             verbose=self.config.get('debug', False),
             temperature_unit=temperature_unit

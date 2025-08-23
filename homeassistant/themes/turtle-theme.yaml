@@ -1,14 +1,14 @@
-# 🐢 Authentic Eastern Box Turtle Theme - With Orange Spots!
-# Matching your turtle's beautiful orange markings
+# 🐢 Authentic Eastern Box Turtle Theme - Enhanced Aesthetics!
+# Matching your turtle's beautiful orange markings with improved visual design
 
-turtle_dark:
+turtle_theme:
   # Primary Colors - Forest & Authentic Turtle Colors
   primary-color: "#4A7C59"                    # Forest green
   accent-color: "#FF8C42"                     # Bright turtle orange!
   dark-primary-color: "#2D5016"               # Deep forest
   light-primary-color: "#6B8E6B"              # Light green
   
-  # Background Colors - Deep forest habitat
+  # Background Colors - Deep forest habitat with subtle gradients
   primary-background-color: "#0A0F07"         # Almost black with green tint
   secondary-background-color: "#1A2F0B"       # Dark forest background
   card-background-color: "#1A2F0B"            # Dark forest cards
@@ -102,3 +102,13 @@ turtle_dark:
   turtle-orange-spots: "#FF8C42"              # YOUR TURTLE'S ORANGE SPOTS! 🐢🧡✨
   turtle-soft-mint: "#E8F5E8"                 # Soft text
   turtle-deep-forest: "#0A0F07"               # Deep backgrounds
+  
+  # Enhanced Aesthetics - Custom CSS Properties
+  --turtle-bg-image: "linear-gradient(135deg, #0A0F07 0%, #1A2F0B 50%, #2D5016 100%)"
+  --turtle-card-shadow: "0 4px 8px rgba(0, 0, 0, 0.3)"
+  --turtle-border-radius: "12px"
+  --turtle-transition: "all 0.3s ease"
+  --turtle-gauge-green: "#4CAF50"
+  --turtle-gauge-yellow: "#FFC107"
+  --turtle-gauge-red: "#F44336"
+  --turtle-gauge-blue: "#2196F3"

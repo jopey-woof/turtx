@@ -1,0 +1,76 @@
+# Turtle Monitoring System - Sensor Configuration
+# Phase 1: Basic sensor definitions for turtle monitoring
+
+# MQTT Temperature Sensors (auto-discovered from TemperhUM service)
+# These will be automatically created by the MQTT discovery
+
+# Template sensors for unit conversion and display
+- platform: template
+  sensors:
+    turtle_temperature_fahrenheit:
+      friendly_name: "Temperature (°F)"
+      unit_of_measurement: "°F"
+      icon: mdi:thermometer
+      value_template: >
+        {% if states('sensor.turtle_shell_temperature') != 'unavailable' %}
+          {{ (states('sensor.turtle_shell_temperature') | float * 9/5 + 32) | round(1) }}
+        {% else %}
+          {{ states('sensor.turtle_shell_temperature') }}
+        {% endif %}
+      availability_template: "{{ states('sensor.turtle_shell_temperature') != 'unavailable' }}"
+
+    turtle_humidity_percent:
+      friendly_name: "Humidity (%)"
+      unit_of_measurement: "%"
+      icon: mdi:water-percent
+      value_template: "{{ states('sensor.turtle_shell_humidity') }}"
+      availability_template: "{{ states('sensor.turtle_shell_humidity') != 'unavailable' }}"
+
+    turtle_temperature_celsius:
+      friendly_name: "Temperature (°C)"
+      unit_of_measurement: "°C"
+      icon: mdi:thermometer
+      value_template: "{{ states('sensor.turtle_shell_temperature') }}"
+      availability_template: "{{ states('sensor.turtle_shell_temperature') != 'unavailable' }}"
+
+# System status sensors
+- platform: template
+  sensors:
+    turtle_system_status:
+      friendly_name: "System Status"
+      icon: mdi:turtle
+      value_template: >
+        {% if states('sensor.turtle_temperature_fahrenheit') != 'unavailable' and states('sensor.turtle_humidity_percent') != 'unavailable' %}
+          Online
+        {% else %}
+          Offline
+        {% endif %}
+
+    turtle_system_health:
+      friendly_name: "System Health"
+      icon: mdi:heart-pulse
+      value_template: >
+        {% set temp = states('sensor.turtle_temperature_fahrenheit') | float(default=0) %}
+        {% set humidity = states('sensor.turtle_humidity_percent') | float(default=0) %}
+        {% if temp >= 70 and temp <= 85 and humidity >= 60 and humidity <= 80 %}
+          Excellent
+        {% elif temp >= 65 and temp <= 90 and humidity >= 50 and humidity <= 85 %}
+          Good
+        {% else %}
+          Warning
+        {% endif %}
+
+# System resource sensors (if systemmonitor integration is available)
+- platform: systemmonitor
+  resources:
+    - type: disk_use_percent
+      arg: /home
+    - type: memory_use_percent
+    - type: processor_use
+    - type: load_1m
+    - type: load_5m
+    - type: load_15m
+
+# Uptime sensor
+- platform: uptime
+  name: "System Uptime" 

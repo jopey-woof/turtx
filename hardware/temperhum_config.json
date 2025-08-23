@@ -17,13 +17,13 @@
   },
   "sensors": {
     "sensor1": {
-      "name": "Turtle Shell",
-      "location": "shell",
+      "name": "Basking Side",
+      "location": "basking",
       "update_interval": 30
     },
     "sensor2": {
-      "name": "Turtle Enclosure",
-      "location": "enclosure", 
+      "name": "Chilling Side",
+      "location": "chilling", 
       "update_interval": 30
     }
   },

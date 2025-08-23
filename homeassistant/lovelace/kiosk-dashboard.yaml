@@ -1,5 +1,5 @@
-# 🐢 Turtle Kiosk Dashboard - Phase 2A (Simple version)
-# Optimized for 1024x600 touchscreen with enhanced dark mode
+# 🐢 Turtle Kiosk Dashboard - Enhanced Design
+# Optimized for 1024x600 touchscreen with cute, professional design
 
 title: "🐢 Turtle Monitor"
 theme: turtle_dark
@@ -11,42 +11,155 @@ views:
     panel: false
     cards:
       
-      # Welcome Header
+      # Welcome Header with enhanced styling
       - type: markdown
         content: |
           # 🐢 Eastern Box Turtle Monitor
           ### {{ now().strftime("%A, %B %d, %Y - %I:%M %p") }}
           ---
           **System Status:** Online ✅  
-          **Theme:** Enhanced Dark Mode 🌙
+          **Theme:** Enhanced Cute Design 🌸
+        card_mod:
+          style: |
+            ha-card {
+              background: linear-gradient(135deg, 
+                rgba(45, 80, 22, 0.8) 0%, 
+                rgba(74, 124, 89, 0.6) 50%, 
+                rgba(139, 69, 19, 0.7) 100%);
+              border: 2px solid rgba(212, 165, 116, 0.5);
+              border-radius: 20px;
+              backdrop-filter: blur(15px);
+              box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            }
+            h1 {
+              background: linear-gradient(45deg, #D4A574, #F0E68C, #DEB887);
+              -webkit-background-clip: text;
+              -webkit-text-fill-color: transparent;
+              background-clip: text;
+              font-weight: 700;
+              letter-spacing: 2px;
+            }
+            h3 {
+              color: #F5DEB3;
+              font-weight: 300;
+            }
       
-      # Main Dashboard Grid - 3 Columns for 1024px Width
+      # Main Dashboard Grid - Enhanced 3 Column Layout
       - type: grid
         square: false
         columns: 3
         cards:
           
-          # COLUMN 1: Environmental Sensors
+          # COLUMN 1: Environmental Sensors with cute design
           - type: vertical-stack
             cards:
               - type: markdown
                 content: "## 🌡️ Environment"
+                card_mod:
+                  style: |
+                    ha-card {
+                      background: linear-gradient(135deg, 
+                        rgba(139, 69, 19, 0.5) 0%, 
+                        rgba(212, 165, 116, 0.3) 50%, 
+                        rgba(139, 69, 19, 0.4) 100%);
+                      border: 2px solid rgba(212, 165, 116, 0.4);
+                      border-radius: 15px;
+                      backdrop-filter: blur(10px);
+                    }
+                    h2 {
+                      background: linear-gradient(45deg, #D4A574, #F0E68C);
+                      -webkit-background-clip: text;
+                      -webkit-text-fill-color: transparent;
+                      background-clip: text;
+                      text-align: center;
+                      font-weight: 600;
+                    }
               
               - type: entities
                 title: "🌡️ Temperature"
                 entities:
-                  - entity: sensor.turtle_habitat_temperature
-                    name: "Current Temperature"
+                  - entity: sensor.turtle_sensors_sensor1_temperature
+                    name: "☀️ Basking Side"
+                    icon: mdi:thermometer
+                  - entity: sensor.turtle_sensors_sensor2_temperature
+                    name: "🌿 Chilling Side"
                     icon: mdi:thermometer
                 show_header_toggle: false
+                card_mod:
+                  style: |
+                    ha-card {
+                      background: linear-gradient(135deg, 
+                        rgba(255,255,255,0.15) 0%, 
+                        rgba(255,255,255,0.08) 100%);
+                      border: 2px solid rgba(212, 165, 116, 0.3);
+                      border-radius: 15px;
+                      backdrop-filter: blur(10px);
+                    }
+                    .entity-row {
+                      padding: 12px;
+                      margin: 6px 0;
+                      background: rgba(212, 165, 116, 0.1);
+                      border-radius: 10px;
+                      border: 1px solid rgba(212, 165, 116, 0.2);
+                      transition: all 0.3s ease;
+                    }
+                    .entity-row:hover {
+                      background: rgba(212, 165, 116, 0.2);
+                      transform: scale(1.02);
+                    }
+                    .entity-row .name {
+                      color: #E8F5E8;
+                      font-weight: 600;
+                      font-size: 1.1em;
+                    }
+                    .entity-row .state {
+                      color: #D4A574;
+                      font-size: 1.3em;
+                      font-weight: bold;
+                    }
               
               - type: entities
                 title: "💧 Humidity" 
                 entities:
-                  - entity: sensor.turtle_habitat_humidity
-                    name: "Current Humidity"
+                  - entity: sensor.turtle_sensors_sensor1_humidity
+                    name: "☀️ Basking Side"
+                    icon: mdi:water-percent
+                  - entity: sensor.turtle_sensors_sensor2_humidity
+                    name: "🌿 Chilling Side"
                     icon: mdi:water-percent
                 show_header_toggle: false
+                card_mod:
+                  style: |
+                    ha-card {
+                      background: linear-gradient(135deg, 
+                        rgba(255,255,255,0.15) 0%, 
+                        rgba(255,255,255,0.08) 100%);
+                      border: 2px solid rgba(212, 165, 116, 0.3);
+                      border-radius: 15px;
+                      backdrop-filter: blur(10px);
+                    }
+                    .entity-row {
+                      padding: 12px;
+                      margin: 6px 0;
+                      background: rgba(212, 165, 116, 0.1);
+                      border-radius: 10px;
+                      border: 1px solid rgba(212, 165, 116, 0.2);
+                      transition: all 0.3s ease;
+                    }
+                    .entity-row:hover {
+                      background: rgba(212, 165, 116, 0.2);
+                      transform: scale(1.02);
+                    }
+                    .entity-row .name {
+                      color: #E8F5E8;
+                      font-weight: 600;
+                      font-size: 1.1em;
+                    }
+                    .entity-row .state {
+                      color: #87CEEB;
+                      font-size: 1.3em;
+                      font-weight: bold;
+                    }
               
               - type: entities
                 title: "📊 System Health"
@@ -54,16 +167,75 @@ views:
                   - sensor.processor_use
                   - sensor.disk_use_percent_home
                 show_header_toggle: false
+                card_mod:
+                  style: |
+                    ha-card {
+                      background: linear-gradient(135deg, 
+                        rgba(255,255,255,0.15) 0%, 
+                        rgba(255,255,255,0.08) 100%);
+                      border: 2px solid rgba(212, 165, 116, 0.3);
+                      border-radius: 15px;
+                      backdrop-filter: blur(10px);
+                    }
+                    .entity-row {
+                      padding: 12px;
+                      margin: 6px 0;
+                      background: rgba(212, 165, 116, 0.1);
+                      border-radius: 10px;
+                      border: 1px solid rgba(212, 165, 116, 0.2);
+                    }
+                    .entity-row .name {
+                      color: #E8F5E8;
+                      font-weight: 600;
+                    }
+                    .entity-row .state {
+                      color: #F0E68C;
+                      font-weight: bold;
+                    }
           
-          # COLUMN 2: Camera & Visual
+          # COLUMN 2: Camera & Visual with enhanced design
           - type: vertical-stack
             cards:
               - type: markdown
                 content: "## 📷 Live View"
+                card_mod:
+                  style: |
+                    ha-card {
+                      background: linear-gradient(135deg, 
+                        rgba(139, 69, 19, 0.5) 0%, 
+                        rgba(212, 165, 116, 0.3) 50%, 
+                        rgba(139, 69, 19, 0.4) 100%);
+                      border: 2px solid rgba(212, 165, 116, 0.4);
+                      border-radius: 15px;
+                      backdrop-filter: blur(10px);
+                    }
+                    h2 {
+                      background: linear-gradient(45deg, #D4A574, #F0E68C);
+                      -webkit-background-clip: text;
+                      -webkit-text-fill-color: transparent;
+                      background-clip: text;
+                      text-align: center;
+                      font-weight: 600;
+                    }
               
               - type: picture
                 image: /local/icons/turtle-placeholder.svg
                 title: "🐢 Turtle Camera"
+                card_mod:
+                  style: |
+                    ha-card {
+                      background: linear-gradient(135deg, 
+                        rgba(255,255,255,0.15) 0%, 
+                        rgba(255,255,255,0.08) 100%);
+                      border: 2px solid rgba(212, 165, 116, 0.3);
+                      border-radius: 15px;
+                      backdrop-filter: blur(10px);
+                      text-align: center;
+                    }
+                    .picture {
+                      border-radius: 10px;
+                      overflow: hidden;
+                    }
               
               - type: horizontal-stack
                 cards:
@@ -72,24 +244,96 @@ views:
                     icon: mdi:camera
                     tap_action:
                       action: none
+                    card_mod:
+                      style: |
+                        ha-card {
+                          background: linear-gradient(135deg, 
+                            rgba(212, 165, 116, 0.3) 0%, 
+                            rgba(240, 230, 140, 0.2) 100%);
+                          border: 2px solid rgba(212, 165, 116, 0.4);
+                          border-radius: 12px;
+                          backdrop-filter: blur(10px);
+                        }
+                        .button {
+                          color: #E8F5E8;
+                          font-weight: 600;
+                        }
                   
                   - type: button
                     name: "🎥 Record"
                     icon: mdi:record-rec
                     tap_action:
                       action: none
+                    card_mod:
+                      style: |
+                        ha-card {
+                          background: linear-gradient(135deg, 
+                            rgba(212, 165, 116, 0.3) 0%, 
+                            rgba(240, 230, 140, 0.2) 100%);
+                          border: 2px solid rgba(212, 165, 116, 0.4);
+                          border-radius: 12px;
+                          backdrop-filter: blur(10px);
+                        }
+                        .button {
+                          color: #E8F5E8;
+                          font-weight: 600;
+                        }
           
-          # COLUMN 3: Controls
+          # COLUMN 3: Controls with enhanced design
           - type: vertical-stack
             cards:
               - type: markdown
                 content: "## 🎮 Controls"
+                card_mod:
+                  style: |
+                    ha-card {
+                      background: linear-gradient(135deg, 
+                        rgba(139, 69, 19, 0.5) 0%, 
+                        rgba(212, 165, 116, 0.3) 50%, 
+                        rgba(139, 69, 19, 0.4) 100%);
+                      border: 2px solid rgba(212, 165, 116, 0.4);
+                      border-radius: 15px;
+                      backdrop-filter: blur(10px);
+                    }
+                    h2 {
+                      background: linear-gradient(45deg, #D4A574, #F0E68C);
+                      -webkit-background-clip: text;
+                      -webkit-text-fill-color: transparent;
+                      background-clip: text;
+                      text-align: center;
+                      font-weight: 600;
+                    }
               
               - type: entities
                 title: "🔥 Heating & Cooling"
                 entities:
                   - input_boolean.turtle_manual_mode
                 show_header_toggle: false
+                card_mod:
+                  style: |
+                    ha-card {
+                      background: linear-gradient(135deg, 
+                        rgba(255,255,255,0.15) 0%, 
+                        rgba(255,255,255,0.08) 100%);
+                      border: 2px solid rgba(212, 165, 116, 0.3);
+                      border-radius: 15px;
+                      backdrop-filter: blur(10px);
+                    }
+                    .entity-row {
+                      padding: 12px;
+                      margin: 6px 0;
+                      background: rgba(212, 165, 116, 0.1);
+                      border-radius: 10px;
+                      border: 1px solid rgba(212, 165, 116, 0.2);
+                    }
+                    .entity-row .name {
+                      color: #E8F5E8;
+                      font-weight: 600;
+                    }
+                    .entity-row .state {
+                      color: #F0E68C;
+                      font-weight: bold;
+                    }
               
               - type: entities
                 title: "⚡ System Status"
@@ -101,18 +345,103 @@ views:
                     name: "🔄 Last Boot"
                     icon: mdi:restart
                 show_header_toggle: false
+                card_mod:
+                  style: |
+                    ha-card {
+                      background: linear-gradient(135deg, 
+                        rgba(255,255,255,0.15) 0%, 
+                        rgba(255,255,255,0.08) 100%);
+                      border: 2px solid rgba(212, 165, 116, 0.3);
+                      border-radius: 15px;
+                      backdrop-filter: blur(10px);
+                    }
+                    .entity-row {
+                      padding: 12px;
+                      margin: 6px 0;
+                      background: rgba(212, 165, 116, 0.1);
+                      border-radius: 10px;
+                      border: 1px solid rgba(212, 165, 116, 0.2);
+                    }
+                    .entity-row .name {
+                      color: #E8F5E8;
+                      font-weight: 600;
+                    }
+                    .entity-row .state {
+                      color: #87CEEB;
+                      font-weight: bold;
+                    }
       
-      # Bottom Status Bar
+      # Bottom Status Bar with enhanced design
       - type: horizontal-stack
         cards:
           - type: sensor
             entity: sensor.processor_use
             name: "CPU Usage"
+            card_mod:
+              style: |
+                ha-card {
+                  background: linear-gradient(135deg, 
+                    rgba(255,255,255,0.15) 0%, 
+                    rgba(255,255,255,0.08) 100%);
+                  border: 2px solid rgba(212, 165, 116, 0.3);
+                  border-radius: 12px;
+                  backdrop-filter: blur(10px);
+                  text-align: center;
+                }
+                .name {
+                  color: #E8F5E8;
+                  font-weight: 600;
+                }
+                .state {
+                  color: #F0E68C;
+                  font-weight: bold;
+                  font-size: 1.2em;
+                }
             
           - type: sensor  
             entity: sensor.memory_use_percent
             name: "Memory"
+            card_mod:
+              style: |
+                ha-card {
+                  background: linear-gradient(135deg, 
+                    rgba(255,255,255,0.15) 0%, 
+                    rgba(255,255,255,0.08) 100%);
+                  border: 2px solid rgba(212, 165, 116, 0.3);
+                  border-radius: 12px;
+                  backdrop-filter: blur(10px);
+                  text-align: center;
+                }
+                .name {
+                  color: #E8F5E8;
+                  font-weight: 600;
+                }
+                .state {
+                  color: #87CEEB;
+                  font-weight: bold;
+                  font-size: 1.2em;
+                }
             
           - type: sensor
             entity: sensor.disk_use_percent_home
             name: "Storage"
+            card_mod:
+              style: |
+                ha-card {
+                  background: linear-gradient(135deg, 
+                    rgba(255,255,255,0.15) 0%, 
+                    rgba(255,255,255,0.08) 100%);
+                  border: 2px solid rgba(212, 165, 116, 0.3);
+                  border-radius: 12px;
+                  backdrop-filter: blur(10px);
+                  text-align: center;
+                }
+                .name {
+                  color: #E8F5E8;
+                  font-weight: 600;
+                }
+                .state {
+                  color: #D4A574;
+                  font-weight: bold;
+                  font-size: 1.2em;
+                }

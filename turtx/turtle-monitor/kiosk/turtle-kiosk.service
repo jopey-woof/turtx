@@ -1,0 +1,50 @@
+[Unit]
+Description=Turtle Monitor Kiosk
+After=network.target homeassistant.service
+Wants=homeassistant.service
+
+[Service]
+Type=simple
+User=shrimp
+Group=shrimp
+Environment=DISPLAY=:0
+Environment=HOME=/home/shrimp
+Environment=USER=shrimp
+WorkingDirectory=/home/shrimp/turtx/turtle-monitor/kiosk
+ExecStartPre=/bin/bash -c 'mkdir -p /home/shrimp/.chrome-kiosk/Default'
+ExecStartPre=/bin/bash -c 'if [ ! -f /home/shrimp/.chrome-kiosk/Default/Preferences ]; then echo "Creating Chrome preferences..."; cat > /home/shrimp/.chrome-kiosk/Default/Preferences << EOF
+{
+  "browser": {
+    "show_home_button": false,
+    "window_placement": {
+      "maximized": true
+    },
+    "check_default_browser": false,
+    "should_reset_check_default_browser": false
+  },
+  "distribution": {
+    "suppress_first_run_default_browser_prompt": true,
+    "suppress_first_run_ui": true
+  },
+  "first_run_complete": true,
+  "suppress_first_run_default_browser_prompt": true,
+  "suppress_first_run_ui": true,
+  "session": {
+    "restore_on_startup": 4,
+    "startup_urls": ["http://localhost:8123"]
+  },
+  "startup": {
+    "startup_urls": ["http://localhost:8123"]
+  }
+}
+EOF
+fi'
+ExecStart=/home/shrimp/turtx/turtle-monitor/kiosk/start-kiosk.sh
+Restart=always
+RestartSec=10
+KillMode=mixed
+KillSignal=SIGTERM
+TimeoutStopSec=30
+
+[Install]
+WantedBy=multi-user.target 
