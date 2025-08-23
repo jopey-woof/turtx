@@ -16,7 +16,7 @@ NC='\033[0m' # No Color
 
 # Configuration
 PROJECT_NAME="turtle-monitor"
-BACKUP_DIR="/home/turtle/backups"
+BACKUP_DIR="/home/shrimp/backups"
 LOG_FILE="/tmp/turtle-deploy.log"
 TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
 
@@ -63,9 +63,9 @@ create_backup() {
     fi
     
     # Backup existing turtle monitor data if it exists
-    if [ -d "/home/turtle/turtle-monitor" ]; then
+    if [ -d "/home/shrimp/turtle-monitor" ]; then
         tar -czf "$BACKUP_DIR/turtle-monitor-backup-$TIMESTAMP.tar.gz" \
-            -C /home/turtle turtle-monitor 2>/dev/null || true
+            -C /home/shrimp turtle-monitor 2>/dev/null || true
         log_success "Backup created: turtle-monitor-backup-$TIMESTAMP.tar.gz"
     fi
     
@@ -80,9 +80,9 @@ create_backup() {
 validate_prerequisites() {
     log_info "Validating prerequisites..."
     
-    # Check if running as turtle user
-    if [ "$USER" != "turtle" ]; then
-        log_error "This script must be run as the turtle user"
+    # Check if running as shrimp user
+    if [ "$USER" != "shrimp" ]; then
+        log_error "This script must be run as the shrimp user"
         exit 1
     fi
     
