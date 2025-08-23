@@ -9,16 +9,13 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - MQTT_BROKER=mosquitto
+      - MQTT_BROKER=host.docker.internal
       - MQTT_PORT=1883
       - DATABASE_PATH=/data/turtle_monitor.db
     volumes:
       - turtle_data:/data
       - ../frontend:/app/frontend:ro
-    networks:
-      - turtle_network
-    depends_on:
-      - mosquitto
+    network_mode: host
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
@@ -27,37 +24,9 @@ services:
       retries: 3
       start_period: 40s
 
-  mosquitto:
-    image: eclipse-mosquitto:2.0
-    container_name: turtle-monitor-mqtt
-    ports:
-      - "1883:1883"
-      - "9001:9001"
-    volumes:
-      - ../config/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
-      - mqtt_data:/mosquitto/data
-      - mqtt_logs:/mosquitto/log
-    networks:
-      - turtle_network
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "mosquitto_pub", "-h", "localhost", "-t", "test", "-m", "healthcheck"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 10s
+  # Note: MQTT service is provided by the existing docker setup at /home/shrimp/turtx/docker/
+  # The turtle-api service connects to the existing MQTT broker on localhost:1883
 
 volumes:
   turtle_data:
-    driver: local
-  mqtt_data:
-    driver: local
-  mqtt_logs:
-    driver: local
-
-networks:
-  turtle_network:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 172.20.0.0/16 
+    driver: local 
