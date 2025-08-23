@@ -173,7 +173,10 @@ deploy_services() {
     log_info "Building and starting Docker services..."
     
     # Change to deployment directory (use relative path)
-    cd deployment
+    cd deployment || {
+        log_error "Failed to change to deployment directory"
+        exit 1
+    }
     
     # Build and start services
     log_info "Building turtle-api service..."
