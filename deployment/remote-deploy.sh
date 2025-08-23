@@ -15,9 +15,9 @@ CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
 # Configuration
-REMOTE_USER="turtle"
+REMOTE_USER="shrimp"
 REMOTE_HOST="10.0.20.69"
-REMOTE_PATH="/home/turtle/turtx"
+REMOTE_PATH="/home/shrimp/turtx"
 COMMIT_MESSAGE="Update turtle monitoring system"
 
 # Logging function
@@ -128,8 +128,14 @@ deploy_to_remote() {
             echo -e "${YELLOW}ℹ️  $1${NC}"
         }
         
-        # Navigate to project directory
-        cd /home/turtle/turtx
+        # Navigate to project directory or clone if it doesn't exist
+        if [ ! -d "/home/shrimp/turtx" ]; then
+            log_info "Project directory not found, cloning from GitHub..."
+            cd /home/shrimp
+            git clone https://github.com/jopey-woof/turtx.git
+        fi
+        
+        cd /home/shrimp/turtx
         
         # Pull latest changes
         log_info "Pulling latest changes from GitHub..."
