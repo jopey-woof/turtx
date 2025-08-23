@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐢 Turtle Monitor</title>
+    <style>
+        /* Turtle-themed CSS with organic design */
+        :root {
+            --shell-amber: #D4A574;
+            --forest-green: #2D5016;
+            --warm-brown: #8B4513;
+            --earth-tan: #DEB887;
+            --moss-green: #6B8E23;
+            --sand-beige: #F5DEB3;
+            --alert-red: #DC143C;
+            --success-green: #228B22;
+            --warning-orange: #FF8C00;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--forest-green) 0%, var(--warm-brown) 100%);
+            color: var(--sand-beige);
+            overflow: hidden;
+            height: 100vh;
+            position: relative;
+        }
+
+        /* Turtle shell pattern background */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 20% 20%, var(--shell-amber) 2px, transparent 2px),
+                radial-gradient(circle at 80% 40%, var(--earth-tan) 1px, transparent 1px),
+                radial-gradient(circle at 40% 80%, var(--shell-amber) 1.5px, transparent 1.5px);
+            background-size: 60px 60px, 40px 40px, 50px 50px;
+            opacity: 0.1;
+            animation: shellFloat 20s ease-in-out infinite;
+        }
+
+        @keyframes shellFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(1deg); }
+        }
+
+        .container {
+            max-width: 1024px;
+            margin: 0 auto;
+            padding: 20px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            color: var(--shell-amber);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: var(--sand-beige);
+            opacity: 0.9;
+        }
+
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(139, 69, 19, 0.3);
+            padding: 15px 25px;
+            border-radius: 25px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(212, 165, 116, 0.3);
+            animation: slideInTop 1s ease-out 0.2s both;
+        }
+
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.online { background-color: var(--success-green); }
+        .status-dot.offline { background-color: var(--alert-red); }
+
+        .last-update {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .sensor-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            flex: 1;
+            animation: fadeInUp 1s ease-out 0.4s both;
+        }
+
+        .sensor-card {
+            background: linear-gradient(145deg, rgba(139, 69, 19, 0.4), rgba(212, 165, 116, 0.2));
+            border-radius: 30px;
+            padding: 30px;
+            text-align: center;
+            backdrop-filter: blur(15px);
+            border: 2px solid rgba(212, 165, 116, 0.3);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            animation: cardFloat 6s ease-in-out infinite;
+        }
+
+        .sensor-card:nth-child(1) { animation-delay: 0s; }
+        .sensor-card:nth-child(2) { animation-delay: 2s; }
+
+        .sensor-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(212, 165, 116, 0.1), transparent);
+            animation: rotate 10s linear infinite;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sensor-card:hover::before {
+            opacity: 1;
+        }
+
+        .sensor-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        @keyframes cardFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .sensor-title {
+            font-size: 1.8rem;
+            color: var(--shell-amber);
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .sensor-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            animation: gentleBounce 3s ease-in-out infinite;
+        }
+
+        @keyframes gentleBounce {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .reading {
+            margin: 15px 0;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            border: 1px solid rgba(212, 165, 116, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .reading:hover {
+            background: rgba(255,255,255,0.15);
+            transform: scale(1.05);
+        }
+
+        .reading-label {
+            font-size: 1.1rem;
+            color: var(--sand-beige);
+            margin-bottom: 8px;
+            opacity: 0.9;
+        }
+
+        .reading-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--shell-amber);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .reading-value.alert {
+            color: var(--alert-red);
+            animation: alertPulse 1s ease-in-out infinite;
+        }
+
+        .reading-value.warning {
+            color: var(--warning-orange);
+        }
+
+        .reading-value.normal {
+            color: var(--success-green);
+        }
+
+        @keyframes alertPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-top: 15px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(212, 165, 116, 0.3);
+        }
+
+        .status-indicator.normal { color: var(--success-green); }
+        .status-indicator.hot { color: var(--alert-red); }
+        .status-indicator.cold { color: var(--warning-orange); }
+        .status-indicator.dry { color: var(--warning-orange); }
+        .status-indicator.humid { color: var(--alert-red); }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+            font-size: 1.2rem;
+            color: var(--sand-beige);
+        }
+
+        .loading::after {
+            content: '';
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--shell-amber);
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background: rgba(220, 20, 60, 0.3);
+            border: 1px solid var(--alert-red);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        /* Animation keyframes */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInTop {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .sensor-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .reading-value {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🐢 Turtle Monitor</h1>
+            <p>Real-time enclosure monitoring system</p>
+        </div>
+
+        <div class="status-bar">
+            <div class="connection-status">
+                <div class="status-dot offline" id="connectionDot"></div>
+                <span id="connectionStatus">Connecting...</span>
+            </div>
+            <div class="last-update" id="lastUpdate">Last update: Never</div>
+        </div>
+
+        <div class="sensor-grid">
+            <!-- Shell Sensor Card -->
+            <div class="sensor-card">
+                <div class="sensor-icon">🐢</div>
+                <div class="sensor-title">Shell Sensor</div>
+                
+                <div class="reading">
+                    <div class="reading-label">Temperature</div>
+                    <div class="reading-value" id="shellTemp">--</div>
+                </div>
+                
+                <div class="reading">
+                    <div class="reading-label">Humidity</div>
+                    <div class="reading-value" id="shellHumidity">--</div>
+                </div>
+                
+                <div class="status-indicator" id="shellStatus">
+                    <span>Status: Unknown</span>
+                </div>
+            </div>
+
+            <!-- Enclosure Sensor Card -->
+            <div class="sensor-card">
+                <div class="sensor-icon">🏠</div>
+                <div class="sensor-title">Enclosure Sensor</div>
+                
+                <div class="reading">
+                    <div class="reading-label">Temperature</div>
+                    <div class="reading-value" id="enclosureTemp">--</div>
+                </div>
+                
+                <div class="reading">
+                    <div class="reading-label">Humidity</div>
+                    <div class="reading-value" id="enclosureHumidity">--</div>
+                </div>
+                
+                <div class="status-indicator" id="enclosureStatus">
+                    <span>Status: Unknown</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class TurtleMonitor {
+            constructor() {
+                this.apiBase = window.location.origin;
+                this.pollingInterval = 30000; // 30 seconds
+                this.retryDelay = 5000; // 5 seconds
+                this.maxRetries = 3;
+                this.retryCount = 0;
+                this.isOnline = false;
+                this.lastData = null;
+                
+                this.init();
+            }
+
+            init() {
+                this.updateConnectionStatus(false, 'Connecting...');
+                this.startPolling();
+                
+                // Handle page visibility changes
+                document.addEventListener('visibilitychange', () => {
+                    if (document.hidden) {
+                        this.stopPolling();
+                    } else {
+                        this.startPolling();
+                    }
+                });
+            }
+
+            async fetchData() {
+                try {
+                    const response = await fetch(`${this.apiBase}/api/latest`);
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    this.handleDataUpdate(data);
+                    this.retryCount = 0;
+                    
+                } catch (error) {
+                    console.error('Failed to fetch data:', error);
+                    this.handleError(error);
+                }
+            }
+
+            handleDataUpdate(data) {
+                this.isOnline = data.status === 'online';
+                this.lastData = data;
+                
+                // Update connection status
+                this.updateConnectionStatus(this.isOnline, this.isOnline ? 'Connected' : 'Offline');
+                
+                // Update last update time
+                const now = new Date();
+                document.getElementById('lastUpdate').textContent = 
+                    `Last update: ${now.toLocaleTimeString()}`;
+                
+                // Update sensor readings
+                this.updateSensorReadings(data.readings);
+            }
+
+            updateSensorReadings(readings) {
+                // Shell sensor (sensor1)
+                if (readings.sensor1) {
+                    this.updateReading('shellTemp', readings.sensor1.temperature, '°F');
+                    this.updateReading('shellHumidity', readings.sensor1.humidity, '%');
+                    this.updateStatus('shellStatus', readings.sensor1.status);
+                }
+                
+                // Enclosure sensor (sensor2)
+                if (readings.sensor2) {
+                    this.updateReading('enclosureTemp', readings.sensor2.temperature, '°F');
+                    this.updateReading('enclosureHumidity', readings.sensor2.humidity, '%');
+                    this.updateStatus('enclosureStatus', readings.sensor2.status);
+                }
+            }
+
+            updateReading(elementId, value, unit) {
+                const element = document.getElementById(elementId);
+                if (element && value !== null && value !== undefined) {
+                    const oldValue = parseFloat(element.textContent);
+                    const newValue = parseFloat(value);
+                    
+                    // Add animation class if value changed
+                    if (oldValue !== newValue) {
+                        element.classList.add('value-changed');
+                        setTimeout(() => element.classList.remove('value-changed'), 1000);
+                    }
+                    
+                    element.textContent = `${newValue.toFixed(1)}${unit}`;
+                    
+                    // Update color based on value
+                    this.updateReadingColor(element, newValue, elementId);
+                }
+            }
+
+            updateReadingColor(element, value, elementId) {
+                // Remove existing color classes
+                element.classList.remove('normal', 'warning', 'alert');
+                
+                // Determine color based on sensor type and value
+                if (elementId.includes('Temp')) {
+                    if (elementId.includes('shell')) {
+                        // Shell temperature: 70-90°F
+                        if (value >= 70 && value <= 90) {
+                            element.classList.add('normal');
+                        } else if (value < 65 || value > 95) {
+                            element.classList.add('alert');
+                        } else {
+                            element.classList.add('warning');
+                        }
+                    } else {
+                        // Enclosure temperature: 70-85°F
+                        if (value >= 70 && value <= 85) {
+                            element.classList.add('normal');
+                        } else if (value < 65 || value > 90) {
+                            element.classList.add('alert');
+                        } else {
+                            element.classList.add('warning');
+                        }
+                    }
+                } else if (elementId.includes('Humidity')) {
+                    // Humidity: 60-80%
+                    if (value >= 60 && value <= 80) {
+                        element.classList.add('normal');
+                    } else if (value < 50 || value > 85) {
+                        element.classList.add('alert');
+                    } else {
+                        element.classList.add('warning');
+                    }
+                }
+            }
+
+            updateStatus(elementId, status) {
+                const element = document.getElementById(elementId);
+                if (element) {
+                    const statusText = status.charAt(0).toUpperCase() + status.slice(1);
+                    element.innerHTML = `<span>Status: ${statusText}</span>`;
+                    
+                    // Update status indicator class
+                    element.className = `status-indicator ${status}`;
+                }
+            }
+
+            updateConnectionStatus(isOnline, message) {
+                const dot = document.getElementById('connectionDot');
+                const status = document.getElementById('connectionStatus');
+                
+                dot.className = `status-dot ${isOnline ? 'online' : 'offline'}`;
+                status.textContent = message;
+            }
+
+            handleError(error) {
+                this.isOnline = false;
+                this.updateConnectionStatus(false, 'Connection Lost');
+                
+                this.retryCount++;
+                if (this.retryCount >= this.maxRetries) {
+                    console.error('Max retries exceeded');
+                    this.retryCount = 0;
+                }
+            }
+
+            startPolling() {
+                this.stopPolling(); // Clear any existing interval
+                this.pollingTimer = setInterval(() => {
+                    this.fetchData();
+                }, this.pollingInterval);
+                
+                // Fetch immediately
+                this.fetchData();
+            }
+
+            stopPolling() {
+                if (this.pollingTimer) {
+                    clearInterval(this.pollingTimer);
+                    this.pollingTimer = null;
+                }
+            }
+        }
+
+        // Initialize the monitor when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new TurtleMonitor();
+        });
+    </script>
+</body>
+</html> 

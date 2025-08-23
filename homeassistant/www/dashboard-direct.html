@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Turtle System - Direct Dashboard Access</title>
+    <style>
+        body { 
+            background: linear-gradient(135deg, #2D5016, #4A7C59); 
+            color: #E8F5E8; 
+            font-family: Arial, sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0; 
+        }
+        .container { text-align: center; }
+        .logo { font-size: 4em; margin-bottom: 20px; }
+        .status { margin-top: 20px; font-size: 1.2em; }
+        .loading { 
+            margin-top: 20px; 
+            width: 50px; 
+            height: 50px; 
+            border: 3px solid #E8F5E8; 
+            border-top: 3px solid transparent; 
+            border-radius: 50%; 
+            animation: spin 1s linear infinite; 
+            margin-left: auto; 
+            margin-right: auto; 
+        }
+        @keyframes spin { 
+            0% { transform: rotate(0deg); } 
+            100% { transform: rotate(360deg); } 
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">TURTLE</div>
+        <div>Turtle Habitat Monitor</div>
+        <div class="status" id="status">Initializing dashboard access...</div>
+        <div class="loading" id="loading"></div>
+    </div>
+    
+    <script>
+        console.log('Turtle dashboard direct access starting...');
+        const statusEl = document.getElementById('status');
+        function updateStatus(message) { 
+            statusEl.textContent = message; 
+            console.log('Status:', message); 
+        }
+        
+        const ACCESS_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJmMDQwNTE0M2Q0YWU0MTBjYWU1NzUxNzA0YjgxNWMzYSIsImlhdCI6MTc1NTkwNDM2NiwiZXhwIjoyMDcxMjY0MzY2fQ.k_wsbg23TM0XQg4r9HCI4Y9ypweIiHFxGbx872kWVdE';
+        
+        function setupTokenAndRedirect() {
+            updateStatus('Setting up authentication token...');
+            
+            // Store token in localStorage for Home Assistant
+            const tokenData = {
+                "http://localhost:8123": {
+                    "access_token": ACCESS_TOKEN,
+                    "token_type": "Bearer",
+                    "expires_in": 315360000
+                }
+            };
+            localStorage.setItem('hassTokens', JSON.stringify(tokenData));
+            
+            // Also try setting it in sessionStorage
+            sessionStorage.setItem('hassTokens', JSON.stringify(tokenData));
+            
+            updateStatus('Token configured, testing dashboard access...');
+            
+            // Test if we can access the dashboard directly
+            fetch('/lovelace-kiosk', {
+                headers: {
+                    'Authorization': `Bearer ${ACCESS_TOKEN}`,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    updateStatus('Dashboard accessible, redirecting...');
+                    setTimeout(() => {
+                        window.location.href = '/lovelace-kiosk';
+                    }, 1000);
+                } else {
+                    updateStatus('Dashboard not accessible, trying alternative...');
+                    setTimeout(() => {
+                        window.location.href = '/lovelace-kiosk';
+                    }, 2000);
+                }
+            })
+            .catch(error => {
+                console.log('Error testing dashboard:', error);
+                updateStatus('Proceeding with redirect...');
+                setTimeout(() => {
+                    window.location.href = '/lovelace-kiosk';
+                }, 2000);
+            });
+        }
+        
+        // Start the process
+        setTimeout(() => {
+            updateStatus('Checking Home Assistant availability...');
+            fetch('/api/')
+                .then(response => {
+                    if (response.ok) {
+                        updateStatus('Home Assistant ready, setting up token...');
+                        setTimeout(setupTokenAndRedirect, 1000);
+                    } else {
+                        updateStatus('Home Assistant not ready, trying anyway...');
+                        setTimeout(setupTokenAndRedirect, 2000);
+                    }
+                })
+                .catch(error => {
+                    console.log('Home Assistant not accessible:', error);
+                    updateStatus('Home Assistant not accessible, trying anyway...');
+                    setTimeout(setupTokenAndRedirect, 2000);
+                });
+        }, 1000);
+    </script>
+</body>
+</html> 

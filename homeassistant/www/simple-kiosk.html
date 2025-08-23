@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Turtle Kiosk - Simple Access</title>
+    <style>
+        body { 
+            background: linear-gradient(135deg, #2D5016, #4A7C59); 
+            color: #E8F5E8; 
+            font-family: Arial, sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0; 
+        }
+        .container { 
+            text-align: center; 
+            background: rgba(0,0,0,0.3);
+            padding: 40px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        .logo { font-size: 3em; margin-bottom: 20px; }
+        .status { margin-top: 20px; font-size: 1.2em; }
+        .loading { 
+            margin-top: 20px; 
+            width: 40px; 
+            height: 40px; 
+            border: 3px solid #E8F5E8; 
+            border-top: 3px solid transparent; 
+            border-radius: 50%; 
+            animation: spin 1s linear infinite; 
+            margin-left: auto; 
+            margin-right: auto; 
+        }
+        @keyframes spin { 
+            0% { transform: rotate(0deg); } 
+            100% { transform: rotate(360deg); } 
+        }
+        .button {
+            background: #4A7C59;
+            color: #E8F5E8;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 1.2em;
+            cursor: pointer;
+            margin: 10px;
+            transition: background 0.3s;
+        }
+        .button:hover {
+            background: #5A8C69;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">🐢</div>
+        <div>Turtle Habitat Monitor</div>
+        <div class="status" id="status">Ready to access dashboard</div>
+        <div class="loading" id="loading" style="display: none;"></div>
+        <div>
+            <button class="button" onclick="accessDashboard()">Access Dashboard</button>
+            <button class="button" onclick="accessMain()">Access Main Dashboard</button>
+        </div>
+    </div>
+    
+    <script>
+        console.log('Simple kiosk page loaded');
+        const statusEl = document.getElementById('status');
+        const loadingEl = document.getElementById('loading');
+        
+        function updateStatus(message) { 
+            statusEl.textContent = message; 
+            console.log('Status:', message); 
+        }
+        
+        function showLoading() {
+            loadingEl.style.display = 'block';
+        }
+        
+        function hideLoading() {
+            loadingEl.style.display = 'none';
+        }
+        
+        function accessDashboard() {
+            updateStatus('Accessing dashboard...');
+            showLoading();
+            
+            // Try to access the kiosk dashboard first
+            setTimeout(() => {
+                window.location.href = '/lovelace-kiosk';
+            }, 1000);
+        }
+        
+        function accessMain() {
+            updateStatus('Accessing main dashboard...');
+            showLoading();
+            
+            // Access the main dashboard
+            setTimeout(() => {
+                window.location.href = '/lovelace';
+            }, 1000);
+        }
+        
+        // Auto-access after 5 seconds
+        setTimeout(() => {
+            updateStatus('Auto-accessing main dashboard...');
+            showLoading();
+            setTimeout(() => {
+                window.location.href = '/lovelace';
+            }, 2000);
+        }, 5000);
+    </script>
+</body>
+</html> 

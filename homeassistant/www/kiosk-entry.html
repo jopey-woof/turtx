@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>🐢 Turtle System - Auto Login</title>
+    <title>🐢 Turtle System - Kiosk</title>
     <style>
         body {
             background: linear-gradient(135deg, #2D5016, #4A7C59);
@@ -12,6 +12,7 @@
             align-items: center;
             height: 100vh;
             margin: 0;
+            overflow: hidden;
         }
         .container {
             text-align: center;
@@ -54,9 +55,10 @@
     </div>
     
     <script>
-        console.log('🐢 Turtle kiosk login page loaded');
+        console.log('🐢 Turtle kiosk entry point loaded');
         
         const statusEl = document.getElementById('status');
+        const loadingEl = document.getElementById('loading');
         
         function updateStatus(message) {
             statusEl.textContent = message;
@@ -86,7 +88,7 @@
                     
                     // Inject the auto-login script
                     const script = iframeDoc.createElement('script');
-                    script.src = '/local/auto-login-simple.js';
+                    script.src = '/local/kiosk-auto-login.js';
                     iframeDoc.head.appendChild(script);
                     
                     updateStatus('Auto-login script injected');
@@ -129,4 +131,4 @@
         }, 2000);
     </script>
 </body>
-</html>
+</html> 

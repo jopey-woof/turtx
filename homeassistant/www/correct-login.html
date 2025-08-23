@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Turtle System - Correct Login</title>
+    <style>
+        body { 
+            background: linear-gradient(135deg, #2D5016, #4A7C59); 
+            color: #E8F5E8; 
+            font-family: Arial, sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0; 
+        }
+        .container { text-align: center; }
+        .logo { font-size: 4em; margin-bottom: 20px; }
+        .status { margin-top: 20px; font-size: 1.2em; }
+        .loading { 
+            margin-top: 20px; 
+            width: 50px; 
+            height: 50px; 
+            border: 3px solid #E8F5E8; 
+            border-top: 3px solid transparent; 
+            border-radius: 50%; 
+            animation: spin 1s linear infinite; 
+            margin-left: auto; 
+            margin-right: auto; 
+        }
+        @keyframes spin { 
+            0% { transform: rotate(0deg); } 
+            100% { transform: rotate(360deg); } 
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">TURTLE</div>
+        <div>Turtle Habitat Monitor</div>
+        <div class="status" id="status">Setting up correct login...</div>
+        <div class="loading" id="loading"></div>
+    </div>
+    
+    <script>
+        console.log('Turtle correct login starting...');
+        const statusEl = document.getElementById('status');
+        function updateStatus(message) { 
+            statusEl.textContent = message; 
+            console.log('Status:', message); 
+        }
+        
+        function fillAndSubmitForm() {
+            updateStatus('Going to login page...');
+            
+            // Go directly to the main Home Assistant page which will redirect to login if needed
+            window.location.href = '/';
+            
+            // Wait for the page to load, then fill and submit the form
+            setTimeout(() => {
+                updateStatus('Looking for login form...');
+                
+                // Try to find the login form elements with more specific selectors
+                const usernameField = document.querySelector('input[name="username"], input[type="text"][name*="user"], input[placeholder*="username"], input[placeholder*="Username"], input[id*="username"], input[id*="Username"], input[type="text"]');
+                const passwordField = document.querySelector('input[name="password"], input[type="password"], input[id*="password"], input[id*="Password"]');
+                const submitButton = document.querySelector('button[type="submit"], input[type="submit"], button:contains("Login"), button:contains("Sign In"), button:contains("Submit"), .submit-button, button');
+                
+                console.log('Username field found:', usernameField);
+                console.log('Password field found:', passwordField);
+                console.log('Submit button found:', submitButton);
+                
+                if (usernameField && passwordField) {
+                    updateStatus('Filling in credentials...');
+                    
+                    // Fill in the username and password
+                    usernameField.value = 'shrimp';
+                    passwordField.value = 'shrimp';
+                    
+                    // Trigger input events to make sure the form recognizes the changes
+                    usernameField.dispatchEvent(new Event('input', { bubbles: true }));
+                    passwordField.dispatchEvent(new Event('input', { bubbles: true }));
+                    usernameField.dispatchEvent(new Event('change', { bubbles: true }));
+                    passwordField.dispatchEvent(new Event('change', { bubbles: true }));
+                    
+                    updateStatus('Submitting login form...');
+                    
+                    // Submit the form
+                    if (submitButton) {
+                        submitButton.click();
+                    } else {
+                        // Try to find and submit the form directly
+                        const form = usernameField.closest('form');
+                        if (form) {
+                            form.submit();
+                        }
+                    }
+                    
+                    updateStatus('Login submitted, redirecting to dashboard...');
+                    
+                    // Wait a moment then redirect to dashboard
+                    setTimeout(() => {
+                        window.location.href = '/lovelace-kiosk';
+                    }, 3000);
+                    
+                } else {
+                    updateStatus('Login form not found, trying direct dashboard...');
+                    setTimeout(() => {
+                        window.location.href = '/lovelace-kiosk';
+                    }, 2000);
+                }
+            }, 3000);
+        }
+        
+        // Start the process
+        setTimeout(() => {
+            updateStatus('Checking Home Assistant...');
+            fetch('/api/')
+                .then(response => {
+                    if (response.ok) {
+                        updateStatus('Home Assistant ready, starting login...');
+                        setTimeout(fillAndSubmitForm, 1000);
+                    } else {
+                        updateStatus('Home Assistant not ready, trying anyway...');
+                        setTimeout(fillAndSubmitForm, 2000);
+                    }
+                })
+                .catch(error => {
+                    console.log('Home Assistant not accessible:', error);
+                    updateStatus('Home Assistant not accessible, trying anyway...');
+                    setTimeout(fillAndSubmitForm, 2000);
+                });
+        }, 1000);
+    </script>
+</body>
+</html> 

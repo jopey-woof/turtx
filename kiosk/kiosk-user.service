@@ -1,13 +1,10 @@
 [Unit]
-Description=Turtle Monitoring Kiosk Display
-After=network.target docker.service
-Wants=docker.service
-Requires=network.target
+Description=Turtle Monitoring Kiosk Display (User Service)
+After=network.target
+Wants=network.target
 
 [Service]
 Type=simple
-User=shrimp
-Group=shrimp
 WorkingDirectory=/home/shrimp/turtle-monitor
 Environment=DISPLAY=:0
 Environment=HOME=/home/shrimp
@@ -34,4 +31,4 @@ TimeoutStopSec=60
 RemainAfterExit=no
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=default.target 

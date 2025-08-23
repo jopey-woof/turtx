@@ -1,0 +1,15 @@
+[Unit]
+Description=Turtle Dashboard Web Server (Python)
+After=network.target
+
+[Service]
+Type=simple
+User=shrimp
+Group=shrimp
+WorkingDirectory=/home/shrimp/turtle-dashboard
+ExecStart=/usr/bin/python3 -m http.server 8080
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target 

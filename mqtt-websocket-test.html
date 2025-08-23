@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MQTT WebSocket Test</title>
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .connected { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .message { background: #e2e3e5; padding: 5px; margin: 5px 0; border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <h1>MQTT WebSocket Test</h1>
+    <div id="status" class="status">Connecting...</div>
+    <div id="connection-info"></div>
+    <div id="subscription-info"></div>
+    <div id="messages"></div>
+    
+    <script>
+        const client = mqtt.connect('ws://10.0.20.69:9001', {
+            clientId: 'test-client-' + Math.random().toString(16).substr(2, 8),
+            clean: true,
+            reconnectPeriod: 5000,
+            connectTimeout: 30000
+        });
+        
+        client.on('connect', () => {
+            document.getElementById('status').innerHTML = '✅ Connected to MQTT broker';
+            document.getElementById('status').className = 'status connected';
+            document.getElementById('connection-info').innerHTML = `
+                <h3>Connection Info:</h3>
+                <p><strong>Client ID:</strong> ${client.options.clientId}</p>
+                <p><strong>Broker:</strong> ${client.options.hostname}:${client.options.port}</p>
+                <p><strong>Protocol:</strong> ${client.options.protocol}</p>
+            `;
+            
+            console.log('Connected to MQTT broker');
+            
+            // Subscribe to real sensor topics
+            const topics = [
+                'turtle/sensors/sensor1/temperature',
+                'turtle/sensors/sensor1/humidity', 
+                'turtle/sensors/sensor2/temperature',
+                'turtle/sensors/sensor2/humidity'
+            ];
+            
+            let subscribedCount = 0;
+            topics.forEach(topic => {
+                client.subscribe(topic, (err) => {
+                    if (err) {
+                        console.error(`Failed to subscribe to ${topic}:`, err);
+                        document.getElementById('subscription-info').innerHTML += `<p class="error">❌ Failed to subscribe to ${topic}: ${err.message}</p>`;
+                    } else {
+                        console.log(`Subscribed to ${topic}`);
+                        subscribedCount++;
+                        document.getElementById('subscription-info').innerHTML += `<p>✅ Subscribed to ${topic}</p>`;
+                        
+                        if (subscribedCount === topics.length) {
+                            document.getElementById('subscription-info').innerHTML += `<p><strong>🎉 All ${topics.length} topics subscribed successfully!</strong></p>`;
+                        }
+                    }
+                });
+            });
+        });
+        
+        client.on('message', (topic, message) => {
+            console.log(`Received on ${topic}:`, message.toString());
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message';
+            messageDiv.innerHTML = `<strong>${topic}:</strong> ${message.toString()} <small>(${new Date().toLocaleTimeString()})</small>`;
+            document.getElementById('messages').appendChild(messageDiv);
+        });
+        
+        client.on('error', (error) => {
+            console.error('MQTT Error:', error);
+            document.getElementById('status').innerHTML = '❌ MQTT Error: ' + error.message;
+            document.getElementById('status').className = 'status error';
+        });
+        
+        client.on('close', () => {
+            console.log('MQTT connection closed');
+            document.getElementById('status').innerHTML = '🔌 Connection closed';
+            document.getElementById('status').className = 'status error';
+        });
+        
+        client.on('reconnect', () => {
+            console.log('Reconnecting...');
+            document.getElementById('status').innerHTML = '🔄 Reconnecting...';
+        });
+    </script>
+</body>
+</html> 

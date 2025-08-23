@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🐢 Turtle Habitat Monitor - Secure Kiosk</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { 
+            background: linear-gradient(135deg, #2D5016, #4A7C59); 
+            color: #E8F5E8; 
+            font-family: Arial, sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0; 
+            overflow: hidden;
+        }
+        .container { 
+            text-align: center; 
+            background: rgba(0,0,0,0.3);
+            padding: 40px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        .logo { 
+            font-size: 3em; 
+            margin-bottom: 20px; 
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        .status { 
+            margin-top: 20px; 
+            font-size: 1.2em; 
+            min-height: 1.5em;
+        }
+        .loading { 
+            margin-top: 20px; 
+            width: 40px; 
+            height: 40px; 
+            border: 3px solid #E8F5E8; 
+            border-top: 3px solid transparent; 
+            border-radius: 50%; 
+            animation: spin 1s linear infinite; 
+            margin-left: auto; 
+            margin-right: auto; 
+        }
+        .error {
+            color: #ff6b6b;
+            background: rgba(255,107,107,0.1);
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 15px;
+            display: none;
+        }
+        .security-notice {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            font-size: 0.8em;
+            opacity: 0.7;
+        }
+        @keyframes spin { 
+            0% { transform: rotate(0deg); } 
+            100% { transform: rotate(360deg); } 
+        }
+        .retry-button {
+            background: #4A7C59;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 15px;
+            display: none;
+        }
+        .retry-button:hover {
+            background: #5a8c69;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">🐢</div>
+        <div style="font-size: 1.5em; margin-bottom: 10px;">Turtle Habitat Monitor</div>
+        <div style="font-size: 0.9em; opacity: 0.8; margin-bottom: 20px;">Secure Kiosk Mode</div>
+        <div class="status" id="status">Initializing secure connection...</div>
+        <div class="loading" id="loading"></div>
+        <div class="error" id="error"></div>
+        <button class="retry-button" id="retryBtn" onclick="retryConnection()">Retry Connection</button>
+    </div>
+    
+    <div class="security-notice">
+        🔒 Secure Kiosk Mode<br>
+        Read-Only Access
+    </div>
+    
+    <script>
+        console.log('🐢 Secure kiosk login starting...');
+        
+        const statusEl = document.getElementById('status');
+        const errorEl = document.getElementById('error');
+        const loadingEl = document.getElementById('loading');
+        const retryBtn = document.getElementById('retryBtn');
+        
+        let retryCount = 0;
+        const maxRetries = 3;
+        
+        function updateStatus(message) {
+            statusEl.textContent = message;
+            console.log('🐢 Status:', message);
+        }
+        
+        function showError(message) {
+            errorEl.textContent = message;
+            errorEl.style.display = 'block';
+            loadingEl.style.display = 'none';
+            retryBtn.style.display = 'inline-block';
+            console.error('🐢 Error:', message);
+        }
+        
+        function hideError() {
+            errorEl.style.display = 'none';
+            retryBtn.style.display = 'none';
+            loadingEl.style.display = 'block';
+        }
+        
+        // Kiosk user credentials (minimal permission user)
+        const KIOSK_CREDENTIALS = {
+            username: 'turtle_kiosk',
+            password: 'turtle_kiosk_secure_2024!'
+        };
+        
+        async function attemptSecureLogin() {
+            updateStatus('Checking Home Assistant availability...');
+            
+            try {
+                // First check if Home Assistant is available
+                const response = await fetch('/api/', {
+                    method: 'GET',
+                    timeout: 5000
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Home Assistant not accessible');
+                }
+                
+                updateStatus('Home Assistant available, attempting secure login...');
+                
+                // Try to access the dashboard directly with kiosk credentials
+                const loginResponse = await fetch('/auth/login_flow', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: KIOSK_CREDENTIALS.username,
+                        password: KIOSK_CREDENTIALS.password,
+                        client_id: 'turtle_kiosk_secure'
+                    })
+                });
+                
+                if (loginResponse.ok) {
+                    const loginData = await loginResponse.json();
+                    
+                    if (loginData.access_token) {
+                        updateStatus('Secure login successful, configuring session...');
+                        
+                        // Store the token securely
+                        const tokenData = {
+                            "http://localhost:8123": {
+                                "access_token": loginData.access_token,
+                                "token_type": "Bearer",
+                                "expires_in": 86400
+                            }
+                        };
+                        
+                        localStorage.setItem('hassTokens', JSON.stringify(tokenData));
+                        sessionStorage.setItem('hassTokens', JSON.stringify(tokenData));
+                        
+                        updateStatus('Session configured, redirecting to dashboard...');
+                        
+                        // Redirect to the kiosk dashboard
+                        setTimeout(() => {
+                            window.location.href = '/lovelace-kiosk';
+                        }, 1000);
+                        
+                        return true;
+                    }
+                }
+                
+                // If login failed, try direct dashboard access
+                updateStatus('Login failed, trying direct dashboard access...');
+                
+                // Try to access the dashboard directly
+                const dashboardResponse = await fetch('/lovelace-kiosk', {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                if (dashboardResponse.ok) {
+                    updateStatus('Direct dashboard access successful...');
+                    setTimeout(() => {
+                        window.location.href = '/lovelace-kiosk';
+                    }, 1000);
+                    return true;
+                }
+                
+                throw new Error('Dashboard access denied');
+                
+            } catch (error) {
+                console.error('🐢 Login error:', error);
+                retryCount++;
+                
+                if (retryCount < maxRetries) {
+                    updateStatus(`Connection failed, retrying (${retryCount}/${maxRetries})...`);
+                    setTimeout(attemptSecureLogin, 3000);
+                } else {
+                    showError(`Connection failed after ${maxRetries} attempts. Please check network and Home Assistant status.`);
+                }
+                
+                return false;
+            }
+        }
+        
+        function retryConnection() {
+            retryCount = 0;
+            hideError();
+            updateStatus('Retrying connection...');
+            setTimeout(attemptSecureLogin, 1000);
+        }
+        
+        // Start the secure login process
+        setTimeout(attemptSecureLogin, 1000);
+        
+        // Security: Prevent access to browser features
+        document.addEventListener('keydown', function(e) {
+            // Prevent F12, Ctrl+Shift+I, Ctrl+U, etc.
+            if (e.key === 'F12' || 
+                (e.ctrlKey && e.shiftKey && e.key === 'I') ||
+                (e.ctrlKey && e.key === 'u') ||
+                (e.ctrlKey && e.key === 's')) {
+                e.preventDefault();
+                return false;
+            }
+        });
+        
+        // Security: Prevent right-click context menu
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            return false;
+        });
+        
+        // Security: Prevent drag and drop
+        document.addEventListener('dragstart', function(e) {
+            e.preventDefault();
+            return false;
+        });
+        
+        // Security: Prevent selection
+        document.addEventListener('selectstart', function(e) {
+            e.preventDefault();
+            return false;
+        });
+    </script>
+</body>
+</html> 

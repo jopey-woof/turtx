@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Turtle Kiosk - Token Access</title>
+    <style>
+        body { 
+            background: linear-gradient(135deg, #2D5016, #4A7C59); 
+            color: #E8F5E8; 
+            font-family: Arial, sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0; 
+        }
+        .container { 
+            text-align: center; 
+            background: rgba(0,0,0,0.3);
+            padding: 40px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        .logo { font-size: 3em; margin-bottom: 20px; }
+        .status { margin-top: 20px; font-size: 1.2em; }
+        .loading { 
+            margin-top: 20px; 
+            width: 40px; 
+            height: 40px; 
+            border: 3px solid #E8F5E8; 
+            border-top: 3px solid transparent; 
+            border-radius: 50%; 
+            animation: spin 1s linear infinite; 
+            margin-left: auto; 
+            margin-right: auto; 
+        }
+        @keyframes spin { 
+            0% { transform: rotate(0deg); } 
+            100% { transform: rotate(360deg); } 
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">🐢</div>
+        <div>Turtle Habitat Monitor</div>
+        <div class="status" id="status">Initializing kiosk...</div>
+        <div class="loading" id="loading"></div>
+    </div>
+    
+    <script>
+        console.log('Token-based kiosk starting...');
+        const statusEl = document.getElementById('status');
+        const loadingEl = document.getElementById('loading');
+        
+        function updateStatus(message) { 
+            statusEl.textContent = message; 
+            console.log('Status:', message); 
+        }
+        
+        // Long-lived access token for admin user
+        const ACCESS_TOKEN = '5ff89d3504fa52d3f8a06bdd291f8024e563522cf812eb14f3cbf5e63903582564df9e834b97e849ca76c12d2166a54bd439b0ea4018b43feb53abf6c60eba3a';
+        
+        async function initializeKiosk() {
+            try {
+                updateStatus('Setting up authentication...');
+                
+                // Store the token in localStorage
+                localStorage.setItem('auth_token', ACCESS_TOKEN);
+                localStorage.setItem('auth_provider', 'homeassistant');
+                
+                // Test the token by making an API call
+                updateStatus('Testing authentication...');
+                const response = await fetch('/api/', {
+                    headers: {
+                        'Authorization': `Bearer ${ACCESS_TOKEN}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    updateStatus('Authentication successful! Redirecting...');
+                    
+                    // Redirect to the main dashboard
+                    setTimeout(() => {
+                        window.location.href = '/lovelace';
+                    }, 2000);
+                } else {
+                    throw new Error(`API test failed: ${response.status}`);
+                }
+                
+            } catch (error) {
+                console.error('Kiosk initialization error:', error);
+                updateStatus('Authentication failed, trying direct access...');
+                
+                // Fallback: try direct access
+                setTimeout(() => {
+                    window.location.href = '/lovelace';
+                }, 3000);
+            }
+        }
+        
+        // Start the kiosk initialization
+        setTimeout(initializeKiosk, 1000);
+        
+        // Fallback: if everything fails, redirect after 10 seconds
+        setTimeout(() => {
+            updateStatus('Fallback: Direct access...');
+            window.location.href = '/lovelace';
+        }, 10000);
+    </script>
+</body>
+</html> 

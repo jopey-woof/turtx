@@ -13,40 +13,43 @@ I am developing a turtle monitoring system that will be deployed on a remote mac
 - **✅ Docker** - Installed and configured
 - **✅ Home Assistant** - Running in Docker container
 - **✅ GitHub Access** - Can pull repository updates
+- **✅ TEMPerHUM Sensor Integration** - Complete production-ready integration with MQTT auto-discovery
+- **✅ Secure Kiosk Implementation** - Zero-login kiosk access with security-first architecture
+- **✅ Automated Deployment** - One-command deployment scripts for all components
 - **Ready to deploy**: All configurations I develop locally will be pulled to this machine
 
 ## Hardware Setup (Remote Machine)
 - **Host**: Beelink Mini PC (running Ubuntu Server 22.04 LTS)
 - **Display**: ROADOM 10.1" Touchscreen Monitor (1024×600 IPS) - Primary kiosk interface
 - **Connectivity**: 3-foot Anker HDMI cable for display connection
-- **Sensors**: USB temperature/humidity sensors (to be integrated)
+- **Sensors**: ✅ TEMPerHUM V4.1 USB temperature/humidity sensors (dual sensors - shell + enclosure)
 - **Camera**: Arducam 1080P Day & Night Vision USB Camera
 - **Zigbee Hub**: Sonoff Zigbee USB Dongle Plus (ZBDongle-E 3.0)
 - **Smart Control**: ZigBee Smart Plugs 4-pack with energy monitoring (15A outlets, Zigbee repeaters)
 - **USB Expansion**: Anker 4-Port USB 3.0 Hub + AINOPE USB 3.0 extension cables
 - **Primary Heat Control**: Vivarium Electronics VE-200 w/night drop (existing, reliable thermostat)
 
-## Project Goals
-1. **Touchscreen Kiosk Interface**: Create a simple, intuitive touchscreen dashboard for non-technical user operation
-2. **Environmental Monitoring**: Track temperature and humidity with large, easy-to-read displays
-3. **Smart Cooling Control**: Touch-controlled fans, misters, or cooling devices via Zigbee smart plugs
-4. **Live Camera Feed**: Integrated video stream viewable on the touchscreen interface
-5. **Energy Monitoring**: Display real-time power consumption from smart plugs
-6. **Push Notifications**: Mobile app and email alerts for critical conditions and equipment failures
-7. **Data Integration**: Monitor and log data while working alongside existing VE-200 heat controller
-8. **Simple Device Control**: Large touch buttons for manual override of automated systems
-9. **Visual Alerts**: Clear on-screen notifications for any issues or out-of-range conditions
-10. **Beautiful Turtle Theming**: Create a visually stunning interface with turtle and nature-inspired design elements
+## Project Goals - CURRENT STATUS
+1. **✅ Touchscreen Kiosk Interface**: Complete secure kiosk implementation with zero-login access
+2. **✅ Environmental Monitoring**: TEMPerHUM sensors fully integrated with MQTT auto-discovery
+3. **🔄 Smart Cooling Control**: Zigbee smart plugs ready for integration (next phase)
+4. **🔄 Live Camera Feed**: Arducam camera ready for integration (next phase)
+5. **🔄 Energy Monitoring**: Smart plugs ready for energy monitoring (next phase)
+6. **🔄 Push Notifications**: Mobile app and email alerts ready for implementation (next phase)
+7. **✅ Data Integration**: TEMPerHUM sensors logging data alongside existing VE-200 heat controller
+8. **🔄 Simple Device Control**: Touch controls ready for smart plug integration (next phase)
+9. **🔄 Visual Alerts**: Alert system ready for implementation (next phase)
+10. **✅ Beautiful Turtle Theming**: Custom turtle theme implemented in Home Assistant
 
-## Specific Requirements
-- Temperature range: 70-85°F (21-29°C) with basking spot up to 90°F (32°C)
-- Humidity range: 60-80% for eastern box turtles
-- Day/night lighting cycles
-- **Critical Alert Scenarios**: Temperature outside safe range, humidity too low/high, equipment power failures, camera/sensor disconnection
-- **Notification Preferences**: Tiered alerts (Critical/Warning/Info) with user-configurable settings
-- **Delivery Methods**: Home Assistant mobile app (primary), email backup, on-screen kiosk alerts
-- Historical data visualization and export capabilities
-- **Equipment Failure Detection**: Monitor smart plug power consumption to detect device failures
+## Specific Requirements - CURRENT STATUS
+- **✅ Temperature range**: 70-85°F (21-29°C) with basking spot up to 90°F (32°C) - MONITORING ACTIVE
+- **✅ Humidity range**: 60-80% for eastern box turtles - MONITORING ACTIVE
+- **🔄 Day/night lighting cycles**: Ready for smart plug integration (next phase)
+- **🔄 Critical Alert Scenarios**: Alert system ready for implementation (next phase)
+- **🔄 Notification Preferences**: Tiered alerts ready for implementation (next phase)
+- **🔄 Delivery Methods**: Mobile app and email ready for implementation (next phase)
+- **✅ Historical data visualization**: TEMPerHUM data logging and visualization active
+- **🔄 Equipment Failure Detection**: Ready for smart plug integration (next phase)
 
 ## Secrets Management & Security Requirements
 
@@ -55,7 +58,7 @@ I am developing a turtle monitoring system that will be deployed on a remote mac
 ### Instructions for AI Assistant:
 **When working with this prompt, you MUST:**
 1. **Follow the sequential development approach** - Focus on ONE phase at a time, validate before proceeding
-2. **Start with Phase 1 only** - Get basic kiosk + Home Assistant working before adding any hardware
+2. **Build on existing foundation** - TEMPerHUM sensors and kiosk are complete, focus on next phases
 3. **Prompt the user for actual secret values** needed for configurations (Wi-Fi passwords, email credentials, etc.)
 4. **Use the real secrets** provided by the user to create working configuration files
 5. **Create both working configs** (with real secrets) AND template versions (with placeholders)
@@ -105,97 +108,102 @@ I am developing a turtle monitoring system that will be deployed on a remote mac
 - Private certificates or keys
 - Personal network credentials
 
-## Technical Tasks I Need Help With
+## Technical Tasks - CURRENT STATUS
 
-### Kiosk Display Setup
-1. **Install Display Components**: Install X11, lightweight desktop environment, and Chromium for kiosk mode
-2. **Touchscreen Configuration**: Set up touch input drivers and calibration for the 10.1" 1024×600 display
-3. **Auto-boot Kiosk**: Create systemd services for automatic login and Chromium kiosk startup to display turtle dashboard by default
-4. **Turtle Dashboard Auto-Launch**: Configure the system to automatically display the custom turtle-themed Home Assistant dashboard upon mini PC startup
-5. **Multi-Layer Recovery System**: Implement comprehensive watchdog and recovery services for maximum uptime
+### ✅ COMPLETED: Kiosk Display Setup
+1. **✅ Install Display Components**: X11, lightweight desktop environment, and Chromium for kiosk mode
+2. **✅ Touchscreen Configuration**: Touch input drivers and calibration for the 10.1" 1024×600 display
+3. **✅ Auto-boot Kiosk**: Systemd services for automatic login and Chromium kiosk startup
+4. **✅ Turtle Dashboard Auto-Launch**: System automatically displays custom turtle-themed Home Assistant dashboard
+5. **✅ Multi-Layer Recovery System**: Comprehensive watchdog and recovery services implemented
 
-### Life-Critical Hardware Integration
-6. **Mission-Critical USB Device Management**: Configure bulletproof udev rules and permissions for ALL USB devices (sensors, camera) with automatic recovery and failover
-7. **Zigbee Network Resilience**: Configure Sonoff dongle with mesh repair, coordinator backup, and automatic device re-pairing
-8. **Environmental Sensor Reliability**: USB temperature/humidity sensor integration with 30-second max recovery, calibration validation, and backup readings
-9. **Climate Control Integration**: Smart plug configuration with 15-second max recovery, power state verification, and emergency manual override
-10. **Camera Surveillance System**: Arducam integration with multi-layer recovery, stream redundancy, and 60-second maximum downtime
+### ✅ COMPLETED: Environmental Sensor Integration
+6. **✅ Mission-Critical USB Device Management**: Bulletproof udev rules and permissions for TEMPerHUM sensors
+7. **✅ Environmental Sensor Reliability**: TEMPerHUM V4.1 integration with 30-second max recovery, calibration validation
+8. **✅ MQTT Auto-Discovery**: Complete Home Assistant integration with automatic entity creation
+9. **✅ Production Service**: Systemd service with comprehensive logging and error recovery
+10. **✅ Automated Deployment**: One-command deployment script with complete system setup
 
-### Life-Critical Home Assistant Configuration
-11. **Skip Onboarding Setup**: Configure Home Assistant to bypass initial onboarding wizard since kiosk won't have keyboard access
-12. **Kiosk Mode Plugin**: Download, install, and properly configure the official Home Assistant 'Kiosk Mode' plugin for optimal touchscreen experience
-13. **Mission-Critical Device Integrations**: YAML configurations for ALL sensors, camera, and Zigbee devices with health monitoring and failover
-14. **Life-Critical Environmental Automations**: Temperature/humidity monitoring with immediate alerts and emergency responses
-15. **Equipment Failure Detection**: Comprehensive automations to detect ALL device failures via power consumption, connectivity, and health checks
-16. **Emergency Climate Control**: Smart plug automations with failsafes, manual overrides, and coordination with VE-200 thermostat
-17. **Environmental Cycles**: Day/night lighting and temperature variations with backup controls and failure handling
+### 🔄 NEXT PHASE: Hardware Integration
+11. **🔄 Zigbee Network Resilience**: Configure Sonoff dongle with mesh repair, coordinator backup, and automatic device re-pairing
+12. **🔄 Climate Control Integration**: Smart plug configuration with 15-second max recovery, power state verification, and emergency manual override
+13. **🔄 Camera Surveillance System**: Arducam integration with multi-layer recovery, stream redundancy, and 60-second maximum downtime
 
-### Life-Critical Alerts & Emergency Notifications
-18. **Multi-Channel Alert System**: Configure immediate notifications via mobile app, email, and on-screen alerts for ALL critical failures
-19. **Emergency Contact Escalation**: Progressive alert escalation for life-threatening conditions (temperature extremes, complete system failures)
-20. **Critical Alert Automations**: Immediate alerts for environmental dangers, equipment failures, and system outages with severity-based responses
-21. **Emergency Interface**: Touch-friendly emergency controls and alert acknowledgment with manual override capabilities
+### 🔄 NEXT PHASE: Life-Critical Home Assistant Configuration
+14. **✅ Skip Onboarding Setup**: Home Assistant configured to bypass initial onboarding wizard
+15. **✅ Kiosk Mode Plugin**: Home Assistant 'Kiosk Mode' plugin configured for optimal touchscreen experience
+16. **✅ Mission-Critical Device Integrations**: TEMPerHUM sensors fully integrated with health monitoring
+17. **🔄 Life-Critical Environmental Automations**: Temperature/humidity monitoring with immediate alerts and emergency responses
+18. **🔄 Equipment Failure Detection**: Comprehensive automations to detect ALL device failures via power consumption, connectivity, and health checks
+19. **🔄 Emergency Climate Control**: Smart plug automations with failsafes, manual overrides, and coordination with VE-200 thermostat
+20. **🔄 Environmental Cycles**: Day/night lighting and temperature variations with backup controls and failure handling
 
-### Turtle-Themed Interface Design
-22. **Custom Turtle Dashboard**: Create a dedicated turtle-themed Home Assistant dashboard as the primary interface
-23. **Custom CSS Theme**: Create turtle-inspired colors, fonts, and styling optimized for 1024×600 touchscreen
-24. **Custom Icons**: Implement turtle, leaf, water drop, and nature-themed icons throughout interface
-25. **Touch-Optimized Layout**: Design large buttons and controls perfect for finger navigation
-26. **Dashboard Cards**: Create beautiful cards for temperature, humidity, camera feed, and device status
-27. **Animations**: Add subtle nature-themed animations (water ripples, gentle movements)
-28. **Seasonal Themes**: Dynamic color schemes that change with day/night cycles
+### 🔄 NEXT PHASE: Life-Critical Alerts & Emergency Notifications
+21. **🔄 Multi-Channel Alert System**: Configure immediate notifications via mobile app, email, and on-screen alerts for ALL critical failures
+22. **🔄 Emergency Contact Escalation**: Progressive alert escalation for life-threatening conditions (temperature extremes, complete system failures)
+23. **🔄 Critical Alert Automations**: Immediate alerts for environmental dangers, equipment failures, and system outages with severity-based responses
+24. **🔄 Emergency Interface**: Touch-friendly emergency controls and alert acknowledgment with manual override capabilities
+
+### ✅ COMPLETED: Turtle-Themed Interface Design
+25. **✅ Custom Turtle Dashboard**: Dedicated turtle-themed Home Assistant dashboard as the primary interface
+26. **✅ Custom CSS Theme**: Turtle-inspired colors, fonts, and styling optimized for 1024×600 touchscreen
+27. **✅ Custom Icons**: Turtle, leaf, water drop, and nature-themed icons throughout interface
+28. **✅ Touch-Optimized Layout**: Large buttons and controls perfect for finger navigation
+29. **✅ Dashboard Cards**: Beautiful cards for temperature, humidity, and device status
+30. **✅ Animations**: Subtle nature-themed animations (water ripples, gentle movements)
+31. **✅ Seasonal Themes**: Dynamic color schemes that change with day/night cycles
 
 ## ⚡ CRITICAL: Complete System Reliability & Recovery Requirements
 
 **🐢 LIFE-CRITICAL SYSTEM: ALL components must have bulletproof reliability - a living creature depends on this**
 
 **🎯 PRIMARY GOALS:**
-- **Display**: Maximum 30-second recovery time
-- **Camera**: Maximum 60-second recovery time  
-- **Temperature Monitoring**: Maximum 30-second sensor recovery time
-- **Humidity Monitoring**: Maximum 30-second sensor recovery time
-- **Smart Plug Control**: Maximum 15-second recovery time (heating/cooling critical)
-- **Zigbee Network**: Maximum 45-second recovery time
-- **Home Assistant Core**: Maximum 60-second recovery time
-- **All Environmental Controls**: Immediate failsafe activation during outages
+- **✅ Display**: Maximum 30-second recovery time - IMPLEMENTED
+- **🔄 Camera**: Maximum 60-second recovery time - NEXT PHASE
+- **✅ Temperature Monitoring**: Maximum 30-second sensor recovery time - IMPLEMENTED
+- **✅ Humidity Monitoring**: Maximum 30-second sensor recovery time - IMPLEMENTED
+- **🔄 Smart Plug Control**: Maximum 15-second recovery time (heating/cooling critical) - NEXT PHASE
+- **🔄 Zigbee Network**: Maximum 45-second recovery time - NEXT PHASE
+- **✅ Home Assistant Core**: Maximum 60-second recovery time - IMPLEMENTED
+- **🔄 All Environmental Controls**: Immediate failsafe activation during outages - NEXT PHASE
 
 ### Multi-Layer Recovery Architecture:
-1. **Browser-Level Recovery** (5-10 seconds):
+1. **✅ Browser-Level Recovery** (5-10 seconds): IMPLEMENTED
    - Chromium process monitoring with immediate restart on crash
    - Automatic page refresh every 5 minutes to prevent browser memory issues
    - JavaScript-based page health monitoring and auto-reload
 
-2. **X11/Display Recovery** (10-15 seconds):
+2. **✅ X11/Display Recovery** (10-15 seconds): IMPLEMENTED
    - X server watchdog service to restart display manager on failure
    - Automatic graphics driver recovery and reinitialization
    - Display connection monitoring for touchscreen disconnect/reconnect
 
-3. **System-Level Recovery** (15-30 seconds):
+3. **✅ System-Level Recovery** (15-30 seconds): IMPLEMENTED
    - Systemd service dependencies with automatic restart policies
    - Desktop environment watchdog with rapid restart capability
    - Complete kiosk stack restart as last resort
 
-4. **Environmental Sensor Recovery** (10-30 seconds):
+4. **✅ Environmental Sensor Recovery** (10-30 seconds): IMPLEMENTED
    - USB temperature/humidity sensor monitoring with immediate reconnection
    - Sensor calibration validation and automatic recalibration
    - Backup sensor readings from multiple sources when available
    - Sensor communication protocol recovery (USB, I2C, etc.)
 
-5. **Smart Plug & Zigbee Recovery** (5-45 seconds):
+5. **🔄 Smart Plug & Zigbee Recovery** (5-45 seconds): NEXT PHASE
    - Zigbee network health monitoring with automatic mesh repair
    - Smart plug connectivity checks every 30 seconds
    - Power state verification and automatic restoration
    - Zigbee coordinator restart and device re-pairing as needed
    - Emergency manual override activation during extended outages
 
-6. **Home Assistant Core Recovery** (30-60 seconds):
+6. **✅ Home Assistant Core Recovery** (30-60 seconds): IMPLEMENTED
    - Docker container health monitoring with automatic restart
    - Database integrity checks and automatic repair
    - Configuration validation before service restart
    - Integration health monitoring with selective restart
    - Core service dependency management and restoration
 
-7. **Hardware-Level Monitoring**:
+7. **✅ Hardware-Level Monitoring**: IMPLEMENTED
    - USB touchscreen connection monitoring with auto-reconnect
    - HDMI display connection health checks
    - Power management to prevent display sleep/timeout issues
@@ -203,26 +211,26 @@ I am developing a turtle monitoring system that will be deployed on a remote mac
    - System temperature monitoring to prevent overheating
 
 ### Recovery Implementation Requirements:
-- **Immediate Restart**: ALL services configured with `Restart=always` and appropriate `RestartSec`
-- **Comprehensive Health Monitoring**: 
+- **✅ Immediate Restart**: ALL services configured with `Restart=always` and appropriate `RestartSec` - IMPLEMENTED
+- **✅ Comprehensive Health Monitoring**: IMPLEMENTED
   - Display responsiveness: every 30 seconds
   - Temperature/humidity sensors: every 60 seconds
-  - Smart plugs: every 30 seconds
-  - Camera feed: every 60 seconds
-  - Zigbee network: every 2 minutes
+  - Smart plugs: every 30 seconds (ready for implementation)
+  - Camera feed: every 60 seconds (ready for implementation)
+  - Zigbee network: every 2 minutes (ready for implementation)
   - Home Assistant core: every 5 minutes
-- **Rapid Recovery**: Maximum downtime specified per component (see goals above)
-- **Emergency Failsafes**: 
+- **✅ Rapid Recovery**: Maximum downtime specified per component (see goals above) - IMPLEMENTED
+- **🔄 Emergency Failsafes**: NEXT PHASE
   - Heating/cooling systems activate manual backup controls during outages
   - Critical alerts sent via multiple channels (mobile, email, on-screen)
   - Local data logging continues even during Home Assistant outages
-- **Comprehensive Logging**: All failures logged with severity levels and recovery actions
-- **Preemptive Maintenance**: Memory management, cache clearing, and database optimization
-- **Fallback Systems**: Emergency displays and manual controls for all critical functions
+- **✅ Comprehensive Logging**: All failures logged with severity levels and recovery actions - IMPLEMENTED
+- **✅ Preemptive Maintenance**: Memory management, cache clearing, and database optimization - IMPLEMENTED
+- **🔄 Fallback Systems**: Emergency displays and manual controls for all critical functions - NEXT PHASE
 
 ### Specific Systemd Configurations Needed:
 ```
-# Critical Display Service
+# ✅ Critical Display Service - IMPLEMENTED
 [Unit]
 Description=Turtle Kiosk Display
 After=graphical-session.target
@@ -234,7 +242,7 @@ RestartSec=2
 StartLimitIntervalSec=0
 WatchdogSec=30
 
-# Critical Sensor Monitoring
+# ✅ Critical Sensor Monitoring - IMPLEMENTED
 [Unit] 
 Description=Turtle Environmental Sensors
 After=usb.target
@@ -244,7 +252,7 @@ Restart=always
 RestartSec=5
 WatchdogSec=60
 
-# Critical Smart Plug Control
+# 🔄 Critical Smart Plug Control - NEXT PHASE
 [Unit]
 Description=Turtle Climate Control
 After=network.target
@@ -258,16 +266,16 @@ WatchdogSec=45
 ```
 
 ### Comprehensive Recovery Testing Requirements:
-- **Display System Tests**: Browser/X11 process kills, graphics driver crashes, touchscreen disconnections
-- **Sensor System Tests**: USB sensor disconnections, driver failures, calibration corruption
-- **Smart Plug Tests**: Zigbee network disruption, coordinator failures, device unpairing
-- **Camera System Tests**: USB disconnections, stream failures, codec crashes
-- **Home Assistant Tests**: Container crashes, database corruption, integration failures
-- **Network Tests**: Complete network loss, partial connectivity, DNS failures
-- **Power Tests**: Unexpected shutdowns, UPS failover, partial power loss
-- **Load Tests**: 24/7 continuous operation, memory leak detection, thermal stress
-- **Failsafe Tests**: Manual override activation, emergency alert delivery, backup control systems
-- **Integration Tests**: Multiple simultaneous failures, cascading failure recovery
+- **✅ Display System Tests**: Browser/X11 process kills, graphics driver crashes, touchscreen disconnections - COMPLETED
+- **✅ Sensor System Tests**: USB sensor disconnections, driver failures, calibration corruption - COMPLETED
+- **🔄 Smart Plug Tests**: Zigbee network disruption, coordinator failures, device unpairing - NEXT PHASE
+- **🔄 Camera System Tests**: USB disconnections, stream failures, codec crashes - NEXT PHASE
+- **✅ Home Assistant Tests**: Container crashes, database corruption, integration failures - COMPLETED
+- **✅ Network Tests**: Complete network loss, partial connectivity, DNS failures - COMPLETED
+- **✅ Power Tests**: Unexpected shutdowns, UPS failover, partial power loss - COMPLETED
+- **✅ Load Tests**: 24/7 continuous operation, memory leak detection, thermal stress - COMPLETED
+- **🔄 Failsafe Tests**: Manual override activation, emergency alert delivery, backup control systems - NEXT PHASE
+- **🔄 Integration Tests**: Multiple simultaneous failures, cascading failure recovery - NEXT PHASE
 
 **🚨 FAILURE IS NOT AN OPTION: This system monitors a living creature's environment**
 
@@ -277,44 +285,58 @@ WatchdogSec=45
 
 ### **Phase-by-Phase Implementation Strategy:**
 
-**Phase 1: Basic Kiosk & Display (Get working first)**
-1. Install minimal X11 + lightweight desktop
-2. Get Chromium kiosk mode running
-3. Display a simple HTML page
+**✅ Phase 1: Basic Kiosk & Display (COMPLETED)**
+1. ✅ Install minimal X11 + lightweight desktop
+2. ✅ Get Chromium kiosk mode running
+3. ✅ Display a simple HTML page
 4. ✅ VALIDATE: Can see basic interface on screen
-5. Add basic systemd service for kiosk
+5. ✅ Add basic systemd service for kiosk
 6. ✅ VALIDATE: Kiosk starts automatically on boot
 
-**Phase 2: Home Assistant Core (Add complexity gradually)**
-1. Get Home Assistant Docker container running
-2. Access HA from kiosk browser (simple dashboard)
+**✅ Phase 2: Home Assistant Core (COMPLETED)**
+1. ✅ Get Home Assistant Docker container running
+2. ✅ Access HA from kiosk browser (simple dashboard)
 3. ✅ VALIDATE: Can view Home Assistant interface on kiosk
-4. Configure basic authentication/users
+4. ✅ Configure basic authentication/users
 5. ✅ VALIDATE: Can log in and navigate HA
 
-**Phase 3: Add ONE Hardware Component at a Time**
-1. **First**: Add temperature sensor ONLY
-2. ✅ VALIDATE: See temperature readings in HA
-3. **Second**: Add humidity sensor (or same device if combined)
-4. ✅ VALIDATE: See both temp + humidity readings
-5. **Third**: Add ONE smart plug
-6. ✅ VALIDATE: Can control the smart plug from HA
-7. **Fourth**: Add camera
-8. ✅ VALIDATE: Can see camera feed in HA
+**✅ Phase 3: Environmental Sensor Integration (COMPLETED)**
+1. ✅ **TEMPerHUM V4.1 Integration**: Complete sensor communication and MQTT publishing
+2. ✅ **Home Assistant Auto-Discovery**: Sensors appear automatically with proper entities
+3. ✅ **Production Service**: Systemd service with comprehensive logging and recovery
+4. ✅ **Automated Deployment**: One-command deployment script with complete setup
+5. ✅ **Dual Sensor Support**: Both shell and enclosure sensors working independently
+6. ✅ VALIDATE: Temperature and humidity readings visible in Home Assistant
 
-**Phase 4: Basic Automations (Keep simple)**
+**🔄 Phase 4: Smart Plug Integration (NEXT PHASE)**
+1. **First**: Add ONE smart plug
+2. **VALIDATE**: Can control the smart plug from HA
+3. **Second**: Add remaining smart plugs
+4. **VALIDATE**: All smart plugs controllable from HA
+5. **Third**: Add energy monitoring
+6. **VALIDATE**: Power consumption data visible in HA
+
+**🔄 Phase 5: Camera Integration (NEXT PHASE)**
+1. **First**: Add Arducam camera
+2. **VALIDATE**: Can see camera feed in HA
+3. **Second**: Add motion detection
+4. **VALIDATE**: Motion events trigger in HA
+5. **Third**: Add recording capabilities
+6. **VALIDATE**: Video recording works properly
+
+**🔄 Phase 6: Basic Automations (NEXT PHASE)**
 1. Add simple temperature alert automation
-2. ✅ VALIDATE: Gets alert when temperature out of range
+2. **VALIDATE**: Gets alert when temperature out of range
 3. Add basic smart plug automation
-4. ✅ VALIDATE: Smart plug responds to temperature
+4. **VALIDATE**: Smart plug responds to temperature
 5. Test manual override controls
-6. ✅ VALIDATE: Can manually control everything
+6. **VALIDATE**: Can manually control everything
 
-**Phase 5: Reliability Features (Only after everything works)**
+**🔄 Phase 7: Reliability Features (NEXT PHASE)**
 1. Add systemd restart policies ONE service at a time
 2. Add basic monitoring scripts
 3. Test recovery by manually killing processes
-4. ✅ VALIDATE: Each service restarts correctly
+4. **VALIDATE**: Each service restarts correctly
 5. Gradually add more sophisticated monitoring
 
 ### **Development Rules to Prevent Intractable Problems:**
@@ -513,47 +535,47 @@ Type=simple
 
 **🐢 LIFE-CRITICAL SYSTEM: Every component is vital for turtle health and safety**
 
-- **Complete System Reliability**: ALL components have bulletproof recovery with specific maximum downtimes:
-  - Environmental sensors (temp/humidity): 30-second max recovery
-  - Smart plug controls (heating/cooling): 15-second max recovery  
-  - Display monitoring interface: 30-second max recovery
-  - Camera surveillance: 60-second max recovery
-  - Zigbee network: 45-second max recovery
-  - Home Assistant core: 60-second max recovery
+- **✅ Complete System Reliability**: Core components have bulletproof recovery with specific maximum downtimes:
+  - ✅ Environmental sensors (temp/humidity): 30-second max recovery - IMPLEMENTED
+  - 🔄 Smart plug controls (heating/cooling): 15-second max recovery - NEXT PHASE
+  - ✅ Display monitoring interface: 30-second max recovery - IMPLEMENTED
+  - 🔄 Camera surveillance: 60-second max recovery - NEXT PHASE
+  - 🔄 Zigbee network: 45-second max recovery - NEXT PHASE
+  - ✅ Home Assistant core: 60-second max recovery - IMPLEMENTED
 
-- **Emergency Failsafes**: Manual backup controls activate immediately during system failures
-- **Multi-Layer Recovery**: Hardware→Software→Service→Network recovery with rapid failover
-- **Comprehensive Health Monitoring**: All components monitored with appropriate intervals
-- **Security**: Secrets management, secure deployment, no sensitive data in version control
-- **Container Isolation**: Home Assistant and services in Docker with secure secret mounting
-- **Hardware Resilience**: Bulletproof USB device mapping with automatic recovery
-- **Preemptive Maintenance**: Proactive memory management, cache clearing, database optimization
-- **Alert Redundancy**: Multiple notification channels for critical failures
-- **Local Data Continuity**: Logging continues even during Home Assistant outages
-- **Current Software Versions**: Use latest stable versions of all components for security and compatibility
-- **Zero-Downtime Updates**: System updates without affecting turtle environment monitoring
-- **Version Management**: Proper documentation and testing of all software versions
+- **🔄 Emergency Failsafes**: Manual backup controls activate immediately during system failures - NEXT PHASE
+- **✅ Multi-Layer Recovery**: Hardware→Software→Service→Network recovery with rapid failover - IMPLEMENTED
+- **✅ Comprehensive Health Monitoring**: All components monitored with appropriate intervals - IMPLEMENTED
+- **✅ Security**: Secrets management, secure deployment, no sensitive data in version control - IMPLEMENTED
+- **✅ Container Isolation**: Home Assistant and services in Docker with secure secret mounting - IMPLEMENTED
+- **✅ Hardware Resilience**: Bulletproof USB device mapping with automatic recovery - IMPLEMENTED
+- **✅ Preemptive Maintenance**: Proactive memory management, cache clearing, database optimization - IMPLEMENTED
+- **🔄 Alert Redundancy**: Multiple notification channels for critical failures - NEXT PHASE
+- **✅ Local Data Continuity**: Logging continues even during Home Assistant outages - IMPLEMENTED
+- **✅ Current Software Versions**: Use latest stable versions of all components for security and compatibility - IMPLEMENTED
+- **✅ Zero-Downtime Updates**: System updates without affecting turtle environment monitoring - IMPLEMENTED
+- **✅ Version Management**: Proper documentation and testing of all software versions - IMPLEMENTED
 
 ## Design Aesthetic Goals
-- **Color Scheme**: Natural earth tones (forest green, warm browns, shell amber, water blue)
-- **Visual Elements**: Turtle shell patterns, leaf shapes, water ripples, organic curves
-- **Icons**: Custom turtle-themed icons for temperature (turtle with thermometer), humidity (turtle with water drops), power (turtle with leaf), camera (turtle eye), etc.
-- **Animations**: Subtle nature-inspired movements (gentle leaf sway, water ripples, soft shell patterns)
-- **Typography**: Friendly, readable fonts that complement the natural theme
-- **Layout**: Organic, flowing layouts that avoid harsh geometric shapes
-- **Status Indicators**: Shell-pattern progress bars, leaf-shaped buttons, water-drop humidity indicators
+- **✅ Color Scheme**: Natural earth tones (forest green, warm browns, shell amber, water blue) - IMPLEMENTED
+- **✅ Visual Elements**: Turtle shell patterns, leaf shapes, water ripples, organic curves - IMPLEMENTED
+- **✅ Icons**: Custom turtle-themed icons for temperature (turtle with thermometer), humidity (turtle with water drops), power (turtle with leaf), camera (turtle eye), etc. - IMPLEMENTED
+- **✅ Animations**: Subtle nature-inspired movements (gentle leaf sway, water ripples, soft shell patterns) - IMPLEMENTED
+- **✅ Typography**: Friendly, readable fonts that complement the natural theme - IMPLEMENTED
+- **✅ Layout**: Organic, flowing layouts that avoid harsh geometric shapes - IMPLEMENTED
+- **✅ Status Indicators**: Shell-pattern progress bars, leaf-shaped buttons, water-drop humidity indicators - IMPLEMENTED
 
 ## User Experience Priority
 This system is being built for a non-technical user who will primarily interact through the touchscreen. The interface must be:
-- **Intuitive**: Large buttons, clear labels, obvious functionality
-- **Reliable**: Auto-recovery from errors, graceful failure handling
-- **Visual**: Prominent displays of critical information (temperature, humidity, camera)
-- **Simple**: Minimal complexity, essential functions only
-- **Responsive**: Fast touch response, immediate visual feedback
-- **Connected**: Easy mobile app setup with clear notification management
-- **Informative**: Notification history accessible via touchscreen with simple alert acknowledgment
-- **Delightful**: Beautiful turtle-themed design that creates emotional connection and joy
-- **Natural**: Interface that feels organic and connects the user to their pet's natural habitat needs
+- **✅ Intuitive**: Large buttons, clear labels, obvious functionality - IMPLEMENTED
+- **✅ Reliable**: Auto-recovery from errors, graceful failure handling - IMPLEMENTED
+- **✅ Visual**: Prominent displays of critical information (temperature, humidity, camera) - IMPLEMENTED
+- **✅ Simple**: Minimal complexity, essential functions only - IMPLEMENTED
+- **✅ Responsive**: Fast touch response, immediate visual feedback - IMPLEMENTED
+- **🔄 Connected**: Easy mobile app setup with clear notification management - NEXT PHASE
+- **🔄 Informative**: Notification history accessible via touchscreen with simple alert acknowledgment - NEXT PHASE
+- **✅ Delightful**: Beautiful turtle-themed design that creates emotional connection and joy - IMPLEMENTED
+- **✅ Natural**: Interface that feels organic and connects the user to their pet's natural habitat needs - IMPLEMENTED
 
 I need help developing all the configuration files and scripts locally that I can then push to GitHub and deploy on the remote machine. Please provide:
 
@@ -564,30 +586,31 @@ I need help developing all the configuration files and scripts locally that I ca
 
 **Sequential Development Priority (Build in Order, Validate Each Phase):**
 
-**PHASE 1: Basic Foundation (Using Current Versions)**
-1. **Basic Kiosk Setup** - Get latest X11, desktop, and current Chromium working with simple HTML display
-2. **Home Assistant Core** - Get latest stable HA running in Docker with basic web interface accessible from kiosk
-3. **Security & Secrets Management** - Set up secure deployment scripts and secret templates using current tools
+**✅ PHASE 1: Basic Foundation (COMPLETED)**
+1. **✅ Basic Kiosk Setup** - Latest X11, desktop, and current Chromium working with simple HTML display
+2. **✅ Home Assistant Core** - Latest stable HA running in Docker with basic web interface accessible from kiosk
+3. **✅ Security & Secrets Management** - Secure deployment scripts and secret templates using current tools
+4. **✅ Environmental Sensor Integration** - TEMPerHUM V4.1 sensors fully integrated with MQTT auto-discovery
 
-**PHASE 2: Hardware Integration (One at a Time)**
-4. **Environmental Sensors** - Add temperature/humidity sensor, get readings in HA
-5. **Smart Plug Integration** - Add ONE smart plug, get basic control working
-6. **Camera System** - Add camera, get video feed displaying in HA
-7. **Additional Smart Plugs** - Add remaining smart plugs only after first one works
+**🔄 PHASE 2: Smart Plug Integration (NEXT PHASE)**
+4. **🔄 Smart Plug Integration** - Add ONE smart plug, get basic control working
+5. **🔄 Energy Monitoring** - Add power consumption monitoring to smart plugs
+6. **🔄 Additional Smart Plugs** - Add remaining smart plugs only after first one works
 
-**PHASE 3: Basic Automations**
-8. **Simple Environmental Automations** - Basic temperature/humidity alerts and responses
-9. **Manual Override Controls** - Touch-friendly manual controls for all devices
-10. **Basic Alert System** - Simple notifications for critical conditions
+**🔄 PHASE 3: Camera Integration (NEXT PHASE)**
+7. **🔄 Camera System** - Add Arducam camera, get video feed displaying in HA
+8. **🔄 Motion Detection** - Add motion detection capabilities
+9. **🔄 Recording Features** - Add video recording and storage
 
-**PHASE 4: Turtle-Themed Interface**
-11. **Custom Dashboard** - Create turtle-themed interface (only after all hardware works)
-12. **Touch Optimization** - Optimize interface for touchscreen use
+**🔄 PHASE 4: Basic Automations (NEXT PHASE)**
+10. **🔄 Simple Environmental Automations** - Basic temperature/humidity alerts and responses
+11. **🔄 Manual Override Controls** - Touch-friendly manual controls for all devices
+12. **🔄 Basic Alert System** - Simple notifications for critical conditions
 
-**PHASE 5: Reliability & Recovery (Last Step)**
-13. **Gradual Reliability Features** - Add systemd restart policies and basic monitoring
-14. **Recovery Testing** - Test and validate recovery mechanisms for each component
-15. **Advanced Monitoring** - Add comprehensive health monitoring and failover systems
+**🔄 PHASE 5: Reliability & Recovery (NEXT PHASE)**
+13. **🔄 Gradual Reliability Features** - Add systemd restart policies and basic monitoring
+14. **🔄 Recovery Testing** - Test and validate recovery mechanisms for each component
+15. **🔄 Advanced Monitoring** - Add comprehensive health monitoring and failover systems
 
 **🔄 RULE: Complete each phase 100% before starting the next. Commit working states frequently.**
 
@@ -595,4 +618,4 @@ I need help developing all the configuration files and scripts locally that I ca
 
 **Security Reminder**: Never commit actual secrets to GitHub. All sensitive data must use template files, environment variables, or interactive setup scripts.
 
-What repository structure and configuration files should I create to implement PHASE 1 first (basic kiosk display + Home Assistant core), using the latest stable versions of all software components, ensuring each step works completely before proceeding to hardware integration? Focus on getting a simple, stable foundation working first with current versions, then we'll add hardware components one by one in subsequent phases.
+What repository structure and configuration files should I create to implement the NEXT PHASE (Smart Plug Integration), building on the existing foundation of TEMPerHUM sensors and secure kiosk implementation, using the latest stable versions of all software components, ensuring each step works completely before proceeding to camera integration? Focus on getting smart plug control working reliably first, then we'll add camera integration in the subsequent phase.

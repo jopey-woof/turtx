@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Turtle Monitor</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            background: #000; 
+            color: #0f0; 
+            margin: 20px;
+            font-size: 24px;
+        }
+        .sensor { margin: 20px 0; }
+        .value { font-size: 48px; font-weight: bold; }
+        .status { color: #0f0; }
+        .error { color: #f00; }
+        .time { color: #666; font-size: 16px; margin-top: 40px; }
+    </style>
+</head>
+<body>
+    <h1>🐢 Turtle Habitat Monitor</h1>
+    <div id="status" class="status">Connecting...</div>
+    
+    <div class="sensor">
+        <div>Sensor 1 Temperature: <span id="temp1" class="value">--</span>°C</div>
+    </div>
+    
+    <div class="sensor">
+        <div>Sensor 1 Humidity: <span id="hum1" class="value">--</span>%</div>
+    </div>
+    
+    <div class="sensor">
+        <div>Sensor 2 Temperature: <span id="temp2" class="value">--</span>°C</div>
+    </div>
+    
+    <div class="sensor">
+        <div>Sensor 2 Humidity: <span id="hum2" class="value">--</span>%</div>
+    </div>
+    
+    <div class="time" id="time"></div>
+
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+    <script>
+        let client = null;
+        let data = { temp1: null, hum1: null, temp2: null, hum2: null };
+        let lastUpdate = 0;
+        
+        function connect() {
+            try {
+                client = mqtt.connect('ws://10.0.20.69:9001', {
+                    clientId: 'ultra-simple-' + Date.now(),
+                    clean: true,
+                    reconnectPeriod: 0,
+                    connectTimeout: 5000
+                });
+                
+                client.on('connect', function() {
+                    document.getElementById('status').textContent = 'Connected';
+                    document.getElementById('status').className = 'status';
+                    
+                    // Subscribe to topics
+                    client.subscribe('turtle/sensors/sensor1/temperature');
+                    client.subscribe('turtle/sensors/sensor1/humidity');
+                    client.subscribe('turtle/sensors/sensor2/temperature');
+                    client.subscribe('turtle/sensors/sensor2/humidity');
+                });
+                
+                client.on('message', function(topic, message) {
+                    const value = parseFloat(message.toString());
+                    if (isNaN(value)) return;
+                    
+                    if (topic.includes('sensor1/temperature')) data.temp1 = value;
+                    if (topic.includes('sensor1/humidity')) data.hum1 = value;
+                    if (topic.includes('sensor2/temperature')) data.temp2 = value;
+                    if (topic.includes('sensor2/humidity')) data.hum2 = value;
+                });
+                
+                client.on('close', function() {
+                    document.getElementById('status').textContent = 'Disconnected';
+                    document.getElementById('status').className = 'error';
+                });
+                
+                client.on('error', function() {
+                    document.getElementById('status').textContent = 'Error';
+                    document.getElementById('status').className = 'error';
+                });
+                
+            } catch (e) {
+                document.getElementById('status').textContent = 'Connection Failed';
+                document.getElementById('status').className = 'error';
+            }
+        }
+        
+        function updateDisplay() {
+            const now = Date.now();
+            
+            // Only update if 30 seconds have passed
+            if (now - lastUpdate < 30000) return;
+            
+            lastUpdate = now;
+            
+            document.getElementById('temp1').textContent = data.temp1 !== null ? data.temp1.toFixed(1) : '--';
+            document.getElementById('hum1').textContent = data.hum1 !== null ? data.hum1.toFixed(1) : '--';
+            document.getElementById('temp2').textContent = data.temp2 !== null ? data.temp2.toFixed(1) : '--';
+            document.getElementById('hum2').textContent = data.hum2 !== null ? data.hum2.toFixed(1) : '--';
+            
+            document.getElementById('time').textContent = new Date().toLocaleString();
+        }
+        
+        // Connect immediately
+        connect();
+        
+        // Update display every 30 seconds
+        setInterval(updateDisplay, 30000);
+        
+        // Initial display update
+        setTimeout(updateDisplay, 1000);
+        
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', function() {
+            if (client) client.end();
+        });
+    </script>
+</body>
+</html> 
