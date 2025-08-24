@@ -4,21 +4,24 @@
 ## ⏰ Session: Start
 ## 🎯 Focus: [Primary objective for this session]
 ## ⏱️ Duration: [Estimated time for session]
+## 🤖 AI-Generated: Yes
+## 🔗 Related: [Links to related summaries and documentation]
 
 ---
 
 ## ✅ Current System Status
 
 ### Working Components
-- **API Service**: [Status - Running/Stopped/Issues]
-- **Sensor Service**: [Status - Running/Stopped/Issues]
-- **Web Dashboard**: [Status - Accessible/Issues]
-- **Home Assistant**: [Status - Connected/Issues]
-- **Kiosk Mode**: [Status - Working/Issues]
+- **API Service**: [Status - Running/Stopped/Issues] - [Details]
+- **Sensor Service**: [Status - Running/Stopped/Issues] - [Details]
+- **Web Dashboard**: [Status - Accessible/Issues] - [Details]
+- **Home Assistant**: [Status - Connected/Issues] - [Details]
+- **Kiosk Mode**: [Status - Working/Issues] - [Details]
+- **Nginx Proxy**: [Status - Running/Issues] - [Details]
 
 ### Recent Issues/Challenges
-- [Issue 1: Description and current status]
-- [Issue 2: Description and current status]
+- **[Issue Name]**: [Description] - [Impact] - [Current Status]
+- **[Issue Name]**: [Description] - [Impact] - [Current Status]
 
 ### System Health
 - **Uptime**: [How long system has been running]
@@ -50,7 +53,8 @@
 - [ ] Check system status: `ssh shrimp@10.0.20.69 'systemctl status temperhum-mqtt'`
 - [ ] Verify API health: `curl http://10.0.20.69/health`
 - [ ] Check sensor data: `curl http://10.0.20.69/api/latest`
-- [ ] Review previous session notes
+- [ ] Read most recent session complete summary
+- [ ] Review current system status index
 - [ ] Gather required hardware/software
 
 ### Resources Needed
@@ -126,6 +130,31 @@
 ### Nice to Have
 - [ ] [Criterion 1]
 - [ ] [Criterion 2]
+
+---
+
+## 🔧 Technical Context
+
+### Current System State
+- **Last Updated**: [Date of last system check]
+- **System Status**: [Overall health assessment]
+- **Active Issues**: [Number and types of issues]
+- **Performance**: [Current performance metrics]
+
+### Key Commands for Session
+```bash
+# Check system status
+ssh shrimp@10.0.20.69 'systemctl status temperhum-mqtt'
+
+# Verify API health
+curl http://10.0.20.69/health
+
+# Check sensor data
+curl http://10.0.20.69/api/latest
+
+# View recent logs
+ssh shrimp@10.0.20.69 'journalctl -u temperhum-mqtt -n 20'
+```
 
 ---
 
