@@ -40,6 +40,9 @@ secrets/
 *.bak
 *~
 
+# Note: daily-summaries/ directory is intentionally NOT ignored
+# This directory contains important project documentation and should be tracked in git
+
 # Archive (old files)
 archive/
 
