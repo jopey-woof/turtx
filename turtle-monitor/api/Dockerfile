@@ -4,6 +4,8 @@ FROM python:3.11-slim
 RUN apt-get update && apt-get install -y \
     curl \
     gcc \
+    ffmpeg \
+    v4l-utils \
     && rm -rf /var/lib/apt/lists/*
 
 # Create non-root user
@@ -19,7 +21,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
-COPY main.py .
+COPY main.py camera.py hybrid_camera.py adjust_settings.py ./
 
 # Create data directory
 RUN mkdir -p /data && chown -R turtle:turtle /data

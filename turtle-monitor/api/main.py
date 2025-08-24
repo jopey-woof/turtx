@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 🐢 Turtle Monitor API Server
-FastAPI-based monitoring system for turtle enclosure sensors
+FastAPI-based monitoring system for turtle enclosure sensors with camera integration
 """
 
 import os
@@ -16,13 +16,16 @@ from typing import Dict, List, Optional, Any
 from contextlib import asynccontextmanager
 
 import paho.mqtt.client as mqtt
-from fastapi import FastAPI, HTTPException, BackgroundTasks
+from fastapi import FastAPI, HTTPException, BackgroundTasks, Body
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, StreamingResponse
 from pydantic import BaseModel
 from fastapi import Path
 import uvicorn
+
+# Import camera routes
+from camera_routes import camera_router, init_camera_manager, stop_camera_manager
 
 # Configure logging
 logging.basicConfig(
@@ -112,22 +115,17 @@ class TurtleMonitorAPI:
                 )
             ''')
             
-            # Create indexes for efficient queries
+            # Create index for faster queries
             cursor.execute('''
                 CREATE INDEX IF NOT EXISTS idx_sensor_timestamp 
                 ON sensor_readings(sensor_id, timestamp)
             ''')
             
-            cursor.execute('''
-                CREATE INDEX IF NOT EXISTS idx_timestamp 
-                ON sensor_readings(timestamp)
-            ''')
-            
             self.db_conn.commit()
-            logger.info(f"Database initialized at {DATABASE_PATH}")
+            logger.info("✅ Database initialized successfully")
             
         except Exception as e:
-            logger.error(f"Failed to initialize database: {e}")
+            logger.error(f"❌ Database initialization failed: {e}")
             raise
     
     def setup_mqtt(self):
@@ -142,28 +140,30 @@ class TurtleMonitorAPI:
             self.mqtt_client.connect(MQTT_BROKER, MQTT_PORT, 60)
             self.mqtt_client.loop_start()
             
-            logger.info(f"MQTT client setup complete, connecting to {MQTT_BROKER}:{MQTT_PORT}")
+            logger.info(f"✅ MQTT client setup complete - connecting to {MQTT_BROKER}:{MQTT_PORT}")
             
         except Exception as e:
-            logger.error(f"Failed to setup MQTT client: {e}")
+            logger.error(f"❌ MQTT setup failed: {e}")
+            raise
     
     def on_mqtt_connect(self, client, userdata, flags, rc):
         """MQTT connection callback"""
         if rc == 0:
-            self.mqtt_connected = True
             logger.info("✅ Connected to MQTT broker")
+            self.mqtt_connected = True
             
             # Subscribe to all sensor topics
             for topic in MQTT_TOPICS:
                 client.subscribe(topic)
-                logger.debug(f"Subscribed to {topic}")
+                logger.info(f"📡 Subscribed to: {topic}")
         else:
-            logger.error(f"Failed to connect to MQTT broker, return code {rc}")
+            logger.error(f"❌ MQTT connection failed with code: {rc}")
+            self.mqtt_connected = False
     
     def on_mqtt_disconnect(self, client, userdata, rc):
         """MQTT disconnection callback"""
+        logger.warning(f"⚠️ MQTT disconnected with code: {rc}")
         self.mqtt_connected = False
-        logger.warning(f"Disconnected from MQTT broker, return code {rc}")
     
     def on_mqtt_message(self, client, userdata, msg):
         """MQTT message callback"""
@@ -171,200 +171,224 @@ class TurtleMonitorAPI:
             topic = msg.topic
             payload = msg.payload.decode('utf-8')
             
-            logger.debug(f"Received MQTT message: {topic} = {payload}")
-            
-            # Parse topic to extract sensor info
-            parts = topic.split('/')
-            
-            # Handle turtle/sensors/ topics
-            if len(parts) >= 4 and parts[0] == 'turtle' and parts[1] == 'sensors':
-                sensor_id = parts[2]
-                data_type = parts[3]
-                
-                # Update sensor data
-                if sensor_id not in self.sensor_data:
-                    self.sensor_data[sensor_id] = {}
-                
-                if data_type == 'temperature':
-                    self.sensor_data[sensor_id]['temperature'] = float(payload)
-                elif data_type == 'humidity':
-                    self.sensor_data[sensor_id]['humidity'] = float(payload)
-                elif data_type == 'availability':
-                    self.sensor_data[sensor_id]['availability'] = payload
-                
-                # Store reading in database if we have both temp and humidity
-                if ('temperature' in self.sensor_data[sensor_id] and 
-                    'humidity' in self.sensor_data[sensor_id]):
-                    
-                    self.store_sensor_reading(sensor_id)
-                    self.last_sensor_update = datetime.now()
-            
-            # Handle homeassistant/sensor/ topics
-            elif len(parts) >= 5 and parts[0] == 'homeassistant' and parts[1] == 'sensor':
-                # Extract sensor info from topic like "homeassistant/sensor/turtle_sensors_sensor1_temp/state"
-                sensor_topic = parts[2]  # e.g., "turtle_sensors_sensor1_temp"
-                
-                # Parse sensor ID and type from the topic
-                if '_temp' in sensor_topic:
-                    sensor_id = sensor_topic.split('_')[-2]  # Extract sensor1 from turtle_sensors_sensor1_temp
-                    data_type = 'temperature'
-                elif '_hum' in sensor_topic:
-                    sensor_id = sensor_topic.split('_')[-2]  # Extract sensor1 from turtle_sensors_sensor1_hum
-                    data_type = 'humidity'
-                else:
-                    return  # Unknown sensor type
-                
-                # Update sensor data
-                if sensor_id not in self.sensor_data:
-                    self.sensor_data[sensor_id] = {}
-                
-                if data_type == 'temperature':
-                    self.sensor_data[sensor_id]['temperature'] = float(payload)
-                elif data_type == 'humidity':
-                    self.sensor_data[sensor_id]['humidity'] = float(payload)
-                
-                # Store reading in database if we have both temp and humidity
-                if ('temperature' in self.sensor_data[sensor_id] and 
-                    'humidity' in self.sensor_data[sensor_id]):
-                    
-                    self.store_sensor_reading(sensor_id)
-                    self.last_sensor_update = datetime.now()
+            # Parse sensor data based on topic
+            if "temperature" in topic:
+                self.process_temperature_reading(topic, float(payload))
+            elif "humidity" in topic:
+                self.process_humidity_reading(topic, float(payload))
+            elif "availability" in topic:
+                self.process_availability_reading(topic, payload)
             
         except Exception as e:
-            logger.error(f"Error processing MQTT message: {e}")
+            logger.error(f"❌ Error processing MQTT message: {e}")
     
-    def store_sensor_reading(self, sensor_id: str):
-        """Store sensor reading in database"""
+    def process_temperature_reading(self, topic: str, temperature: float):
+        """Process temperature reading from MQTT"""
         try:
-            data = self.sensor_data[sensor_id]
-            temperature = data.get('temperature')
-            humidity = data.get('humidity')
+            # Extract sensor ID from topic
+            if "sensor1" in topic:
+                sensor_id = "sensor1"
+            elif "sensor2" in topic:
+                sensor_id = "sensor2"
+            else:
+                sensor_id = "unknown"
             
-            # Determine status based on temperature ranges
-            status = self.determine_status(sensor_id, temperature, humidity)
+            # Store in memory
+            if sensor_id not in self.sensor_data:
+                self.sensor_data[sensor_id] = {}
             
+            self.sensor_data[sensor_id]['temperature'] = temperature
+            self.sensor_data[sensor_id]['timestamp'] = datetime.now()
+            
+            # Store in database
             cursor = self.db_conn.cursor()
             cursor.execute('''
-                INSERT INTO sensor_readings (sensor_id, temperature, humidity, status)
-                VALUES (?, ?, ?, ?)
-            ''', (sensor_id, temperature, humidity, status))
-            
+                INSERT INTO sensor_readings (sensor_id, temperature, timestamp)
+                VALUES (?, ?, ?)
+            ''', (sensor_id, temperature, datetime.now()))
             self.db_conn.commit()
-            logger.debug(f"Stored reading for {sensor_id}: {temperature}°F, {humidity}%, status: {status}")
+            
+            self.last_sensor_update = datetime.now()
+            logger.debug(f"🌡️ Temperature reading: {sensor_id} = {temperature}°F")
             
         except Exception as e:
-            logger.error(f"Failed to store sensor reading: {e}")
+            logger.error(f"❌ Error processing temperature reading: {e}")
     
-    def determine_status(self, sensor_id: str, temperature: float, humidity: float) -> str:
-        """Determine sensor status based on readings"""
+    def process_humidity_reading(self, topic: str, humidity: float):
+        """Process humidity reading from MQTT"""
         try:
-            # Determine temperature range based on sensor
-            if sensor_id == 'sensor1':  # Shell sensor
-                temp_range = SHELL_TEMP_RANGE
-            else:  # Enclosure sensor
-                temp_range = ENCLOSURE_TEMP_RANGE
-            
-            # Check temperature
-            if temperature < temp_range[0]:
-                return "cold"
-            elif temperature > temp_range[1]:
-                return "hot"
-            elif humidity < HUMIDITY_RANGE[0]:
-                return "dry"
-            elif humidity > HUMIDITY_RANGE[1]:
-                return "humid"
+            # Extract sensor ID from topic
+            if "sensor1" in topic:
+                sensor_id = "sensor1"
+            elif "sensor2" in topic:
+                sensor_id = "sensor2"
             else:
-                return "normal"
-                
+                sensor_id = "unknown"
+            
+            # Store in memory
+            if sensor_id not in self.sensor_data:
+                self.sensor_data[sensor_id] = {}
+            
+            self.sensor_data[sensor_id]['humidity'] = humidity
+            self.sensor_data[sensor_id]['timestamp'] = datetime.now()
+            
+            # Store in database
+            cursor = self.db_conn.cursor()
+            cursor.execute('''
+                INSERT INTO sensor_readings (sensor_id, humidity, timestamp)
+                VALUES (?, ?, ?)
+            ''', (sensor_id, humidity, datetime.now()))
+            self.db_conn.commit()
+            
+            self.last_sensor_update = datetime.now()
+            logger.debug(f"💧 Humidity reading: {sensor_id} = {humidity}%")
+            
         except Exception as e:
-            logger.error(f"Error determining status: {e}")
-            return "unknown"
+            logger.error(f"❌ Error processing humidity reading: {e}")
+    
+    def process_availability_reading(self, topic: str, status: str):
+        """Process sensor availability reading from MQTT"""
+        try:
+            # Extract sensor ID from topic
+            if "sensor1" in topic:
+                sensor_id = "sensor1"
+            elif "sensor2" in topic:
+                sensor_id = "sensor2"
+            else:
+                sensor_id = "unknown"
+            
+            # Store in memory
+            if sensor_id not in self.sensor_data:
+                self.sensor_data[sensor_id] = {}
+            
+            self.sensor_data[sensor_id]['status'] = status
+            self.sensor_data[sensor_id]['timestamp'] = datetime.now()
+            
+            logger.debug(f"📡 Sensor status: {sensor_id} = {status}")
+            
+        except Exception as e:
+            logger.error(f"❌ Error processing availability reading: {e}")
     
     def get_latest_readings(self) -> Dict[str, Any]:
-        """Get latest sensor readings"""
-        try:
-            cursor = self.db_conn.cursor()
-            cursor.execute('''
-                SELECT sensor_id, temperature, humidity, timestamp, status
-                FROM sensor_readings 
-                WHERE timestamp = (
-                    SELECT MAX(timestamp) 
-                    FROM sensor_readings 
-                    WHERE sensor_id = sensor_readings.sensor_id
-                )
-                ORDER BY sensor_id
-            ''')
-            
-            readings = {}
-            for row in cursor.fetchall():
-                sensor_id, temp, hum, timestamp, status = row
+        """Get latest sensor readings with status"""
+        readings = {}
+        
+        for sensor_id, data in self.sensor_data.items():
+            if 'timestamp' in data:
+                # Determine status based on temperature and humidity
+                status = self.determine_sensor_status(sensor_id, data)
+                
                 readings[sensor_id] = {
-                    "temperature": temp,
-                    "humidity": hum,
-                    "timestamp": timestamp,
-                    "status": status
+                    'temperature': data.get('temperature'),
+                    'humidity': data.get('humidity'),
+                    'timestamp': data['timestamp'].strftime('%Y-%m-%d %H:%M:%S'),
+                    'status': status
                 }
+        
+        return readings
+    
+    def determine_sensor_status(self, sensor_id: str, data: Dict[str, Any]) -> str:
+        """Determine sensor status based on readings"""
+        try:
+            temp = data.get('temperature')
+            humidity = data.get('humidity')
             
-            return readings
+            if temp is None and humidity is None:
+                return "unknown"
+            
+            # Check temperature ranges
+            if temp is not None:
+                if sensor_id == "sensor1":  # Shell temperature
+                    if temp < SHELL_TEMP_RANGE[0]:
+                        return "cold"
+                    elif temp > SHELL_TEMP_RANGE[1]:
+                        return "hot"
+                else:  # Enclosure temperature
+                    if temp < ENCLOSURE_TEMP_RANGE[0]:
+                        return "cold"
+                    elif temp > ENCLOSURE_TEMP_RANGE[1]:
+                        return "hot"
+            
+            # Check humidity
+            if humidity is not None:
+                if humidity < HUMIDITY_RANGE[0]:
+                    return "dry"
+                elif humidity > HUMIDITY_RANGE[1]:
+                    return "wet"
+            
+            return "normal"
             
         except Exception as e:
-            logger.error(f"Failed to get latest readings: {e}")
-            return {}
+            logger.error(f"❌ Error determining sensor status: {e}")
+            return "unknown"
     
     def get_historical_data(self, hours: int) -> List[Dict[str, Any]]:
-        """Get historical sensor data for last N hours"""
+        """Get historical sensor data from database"""
         try:
+            cursor = self.db_conn.cursor()
+            
+            # Get data from the last N hours
             cutoff_time = datetime.now() - timedelta(hours=hours)
             
-            cursor = self.db_conn.cursor()
             cursor.execute('''
                 SELECT sensor_id, temperature, humidity, timestamp, status
                 FROM sensor_readings
                 WHERE timestamp >= ?
                 ORDER BY timestamp DESC
-            ''', (cutoff_time.isoformat(),))
+            ''', (cutoff_time,))
+            
+            rows = cursor.fetchall()
             
             data = []
-            for row in cursor.fetchall():
-                sensor_id, temp, hum, timestamp, status = row
+            for row in rows:
                 data.append({
-                    "sensor_id": sensor_id,
-                    "temperature": temp,
-                    "humidity": hum,
-                    "timestamp": timestamp,
-                    "status": status
+                    'sensor_id': row[0],
+                    'temperature': row[1],
+                    'humidity': row[2],
+                    'timestamp': row[3],
+                    'status': row[4] or 'unknown'
                 })
             
             return data
             
         except Exception as e:
-            logger.error(f"Failed to get historical data: {e}")
+            logger.error(f"❌ Error getting historical data: {e}")
             return []
     
     def get_system_health(self) -> SystemHealth:
         """Get system health information"""
         try:
             uptime = time.time() - self.start_time
+            sensor_count = len(self.sensor_data)
             
             # Check database health
-            cursor = self.db_conn.cursor()
-            cursor.execute("SELECT COUNT(*) FROM sensor_readings")
-            sensor_count = cursor.fetchone()[0]
-            database_healthy = True
+            db_healthy = False
+            if self.db_conn:
+                try:
+                    cursor = self.db_conn.cursor()
+                    cursor.execute("SELECT 1")
+                    db_healthy = True
+                except:
+                    db_healthy = False
+            
+            return SystemHealth(
+                status="healthy" if self.mqtt_connected and db_healthy else "degraded",
+                uptime=uptime,
+                last_sensor_update=self.last_sensor_update,
+                mqtt_connected=self.mqtt_connected,
+                database_healthy=db_healthy,
+                sensor_count=sensor_count
+            )
             
         except Exception as e:
-            logger.error(f"Database health check failed: {e}")
-            database_healthy = False
-            sensor_count = 0
-        
-        return SystemHealth(
-            status="healthy" if (self.mqtt_connected and database_healthy) else "degraded",
-            uptime=uptime,
-            last_sensor_update=self.last_sensor_update,
-            mqtt_connected=self.mqtt_connected,
-            database_healthy=database_healthy,
-            sensor_count=sensor_count
-        )
+            logger.error(f"❌ Error getting system health: {e}")
+            return SystemHealth(
+                status="error",
+                uptime=time.time() - self.start_time,
+                mqtt_connected=False,
+                database_healthy=False,
+                sensor_count=0
+            )
     
     def cleanup(self):
         """Cleanup resources"""
@@ -372,14 +396,14 @@ class TurtleMonitorAPI:
             if self.mqtt_client:
                 self.mqtt_client.loop_stop()
                 self.mqtt_client.disconnect()
+                logger.info("📡 MQTT client disconnected")
             
             if self.db_conn:
                 self.db_conn.close()
+                logger.info("🗄️ Database connection closed")
                 
-            logger.info("Cleanup completed")
-            
         except Exception as e:
-            logger.error(f"Error during cleanup: {e}")
+            logger.error(f"❌ Error during cleanup: {e}")
 
 # Global API instance
 api_instance = None
@@ -390,8 +414,15 @@ async def lifespan(app: FastAPI):
     global api_instance
     
     # Startup
-    logger.info("🐢 Starting Turtle Monitor API")
+    logger.info("🐢 Starting Turtle Monitor API with Camera Integration")
     api_instance = TurtleMonitorAPI()
+    
+    # Initialize camera manager
+    try:
+        init_camera_manager()
+        logger.info("📹 Camera manager initialized")
+    except Exception as e:
+        logger.error(f"Failed to initialize camera manager: {e}")
     
     yield
     
@@ -399,11 +430,18 @@ async def lifespan(app: FastAPI):
     logger.info("🛑 Shutting down Turtle Monitor API")
     if api_instance:
         api_instance.cleanup()
+    
+    # Stop camera manager
+    try:
+        stop_camera_manager()
+        logger.info("📹 Camera manager stopped")
+    except Exception as e:
+        logger.error(f"Error stopping camera manager: {e}")
 
 # Create FastAPI app
 app = FastAPI(
     title="Turtle Monitor API",
-    description="FastAPI-based monitoring system for turtle enclosure sensors",
+    description="FastAPI-based monitoring system for turtle enclosure sensors with camera integration",
     version="1.0.0",
     lifespan=lifespan
 )
@@ -418,16 +456,24 @@ app.add_middleware(
 )
 
 # Mount static files
-app.mount("/static", StaticFiles(directory="/app/frontend"), name="static")
+app.mount("/static", StaticFiles(directory="/home/shrimp/turtx/turtle-monitor/frontend"), name="static")
+
+# Include camera routes
+app.include_router(camera_router)
 
 @app.get("/", response_class=HTMLResponse)
 async def root():
     """Serve the main HTML page"""
     try:
-        with open("/app/frontend/index.html", "r") as f:
+        with open("/home/shrimp/turtx/turtle-monitor/frontend/index.html", "r") as f:
             return HTMLResponse(content=f.read())
     except FileNotFoundError:
         return HTMLResponse(content="<h1>🐢 Turtle Monitor</h1><p>Frontend not found</p>")
+
+@app.get("/health")
+async def health():
+    """Simple health check endpoint"""
+    return "healthy"
 
 @app.get("/api/health", response_model=SystemHealth)
 async def health_check():
@@ -463,11 +509,10 @@ async def get_historical_data(hours: int = Path(ge=1, le=168, description="Hours
         "data": data
     }
 
+@app.get("/api/test")
+async def test_endpoint():
+    """Test endpoint"""
+    return {"message": "Test endpoint working"}
+
 if __name__ == "__main__":
-    uvicorn.run(
-        "main:app",
-        host="0.0.0.0",
-        port=8000,
-        reload=False,
-        log_level="info"
-    ) 
+    uvicorn.run(app, host="0.0.0.0", port=8001) 

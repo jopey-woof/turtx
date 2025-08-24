@@ -1,0 +1,40 @@
+# Arducam USB Camera udev rules for Turtle Monitor System
+# These rules ensure proper device access and automatic service restart
+
+# Arducam 1080P Day & Night Vision USB Camera
+# Vendor ID: 0c45 (Sonix Technology Co., Ltd.)
+# Product ID: Various (depends on specific model)
+
+# Rule for Arducam USB camera devices
+SUBSYSTEM=="video4linux", ATTR{name}=="USB Camera*", SYMLINK+="turtle-camera", MODE="0664", GROUP="turtle"
+
+# Rule for USB devices with Arducam vendor ID
+SUBSYSTEM=="usb", ATTR{idVendor}=="0c45", ATTR{idProduct}=="*", MODE="0664", GROUP="turtle"
+
+# Alternative vendor IDs for Arducam cameras
+SUBSYSTEM=="usb", ATTR{idVendor}=="0bda", ATTR{idProduct}=="*", MODE="0664", GROUP="turtle"
+SUBSYSTEM=="usb", ATTR{idVendor}=="1b71", ATTR{idProduct}=="*", MODE="0664", GROUP="turtle"
+
+# Generic USB camera rules (fallback)
+SUBSYSTEM=="video4linux", ATTR{name}=="*Camera*", SYMLINK+="turtle-camera", MODE="0664", GROUP="turtle"
+SUBSYSTEM=="video4linux", ATTR{name}=="*Webcam*", SYMLINK+="turtle-camera", MODE="0664", GROUP="turtle"
+
+# Auto-restart camera service on USB device events
+ACTION=="add", SUBSYSTEM=="video4linux", RUN+="/bin/systemctl --user restart turtle-camera.service"
+ACTION=="remove", SUBSYSTEM=="video4linux", RUN+="/bin/systemctl --user restart turtle-camera.service"
+
+# Auto-restart on USB device events
+ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="0c45", RUN+="/bin/systemctl --user restart turtle-camera.service"
+ACTION=="remove", SUBSYSTEM=="usb", ATTR{idVendor}=="0c45", RUN+="/bin/systemctl --user restart turtle-camera.service"
+
+# Alternative vendor auto-restart
+ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="0bda", RUN+="/bin/systemctl --user restart turtle-camera.service"
+ACTION=="remove", SUBSYSTEM=="usb", ATTR{idVendor}=="0bda", RUN+="/bin/systemctl --user restart turtle-camera.service"
+
+ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="1b71", RUN+="/bin/systemctl --user restart turtle-camera.service"
+ACTION=="remove", SUBSYSTEM=="usb", ATTR{idVendor}=="1b71", RUN+="/bin/systemctl --user restart turtle-camera.service"
+
+# Set environment variables for camera detection
+ENV{ID_VENDOR_ID}=="0c45", ENV{TURTLE_CAMERA}="1"
+ENV{ID_VENDOR_ID}=="0bda", ENV{TURTLE_CAMERA}="1"
+ENV{ID_VENDOR_ID}=="1b71", ENV{TURTLE_CAMERA}="1" 
