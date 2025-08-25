@@ -51,6 +51,12 @@ sleep 2
 
 echo "Starting Chrome with Turtle Monitor Kiosk..."
 
+# Set environment variables to suppress dialogs
+export CHROME_HEADLESS=1
+export CHROME_NO_SANDBOX=1
+export CHROME_CRASH_REPORTS_DISABLED=1
+export GOOGLE_CHROME_DISABLE_CRASH_REPORTS=1
+
 # Create chrome directory properly
 mkdir -p /home/shrimp/.chrome-kiosk
 
@@ -66,10 +72,6 @@ mkdir -p /home/shrimp/.chrome-kiosk
             --disable-infobars \
             --disable-session-crashed-bubble \
             --disable-translate \
-            --disable-background-timer-throttling \
-            --disable-backgrounding-occluded-windows \
-            --disable-renderer-backgrounding \
-            --disable-features=TranslateUI \
             --disable-default-apps \
             --disable-extensions \
             --disable-plugins \
@@ -82,7 +84,6 @@ mkdir -p /home/shrimp/.chrome-kiosk
             --disable-hang-monitor \
             --disable-prompt-on-repost \
             --disable-domain-rereliability \
-            --disable-features=VizDisplayCompositor \
             --force-color-profile=srgb \
             --metrics-recording-only \
             --no-report-upload \
@@ -91,4 +92,13 @@ mkdir -p /home/shrimp/.chrome-kiosk
             --disable-single-click-autofill \
             --disable-spellcheck-autocorrect \
             --disable-background-media-suspend \
-            --disable-background-video-track 2>/dev/null 
+            --disable-background-video-track \
+            --disable-crash-reporter \
+            --disable-breakpad \
+            --disable-logging \
+            --silent-launch \
+            --disable-features=TranslateUI,VizDisplayCompositor \
+            --disable-background-timer-throttling \
+            --disable-backgrounding-occluded-windows \
+            --disable-renderer-backgrounding \
+            --disable-default-browser-check 2>/dev/null 
