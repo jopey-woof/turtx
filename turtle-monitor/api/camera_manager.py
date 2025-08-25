@@ -5,6 +5,7 @@ Advanced camera management for Arducam 1080P USB camera with full feature suppor
 """
 
 import cv2
+import numpy as np
 import time
 import threading
 import logging
@@ -99,9 +100,11 @@ class TurtleCameraManager:
         self.camera_lock = threading.Lock()
         self.settings_lock = threading.Lock()
         
-        # Current frame buffer
+        # Continuous stream management
+        self.stream_process = None
         self.current_frame = None
         self.frame_lock = threading.Lock()
+        self.last_frame_time = 0
         
         # Initialize camera (non-blocking)
         try:
@@ -111,58 +114,27 @@ class TurtleCameraManager:
             self.is_connected = False
     
     def _initialize_camera(self) -> bool:
-        """Initialize camera connection and settings"""
+        """Initialize camera connection and settings (non-blocking)"""
         try:
-            # Test both camera devices
-            devices = {
-                "/dev/video0": "MJPG",  # For streaming
-                "/dev/video2": "H264"   # For snapshots
-            }
+            # Quick check if camera devices exist
+            devices = ["/dev/video0", "/dev/video1", "/dev/video2", "/dev/video3"]
+            available_devices = []
             
-            working_devices = {}
+            for device in devices:
+                if os.path.exists(device):
+                    available_devices.append(device)
             
-            for device, format_type in devices.items():
-                try:
-                    logger.info(f"🔍 Testing {device} ({format_type})")
-                    
-                    # Test with FFmpeg
-                    test_cmd = [
-                        'ffmpeg', '-f', 'v4l2',
-                        '-video_size', f'{self.settings.streaming_resolution[0]}x{self.settings.streaming_resolution[1]}',
-                        '-i', device,
-                        '-vframes', '1',
-                        '-f', 'null',
-                        '-'
-                    ]
-                    
-                    result = run_with_timeout(test_cmd, timeout=3.0)
-                    if result and result.returncode == 0:
-                        working_devices[device] = format_type
-                        logger.info(f"✅ {device} ({format_type}) works!")
-                    else:
-                        logger.warning(f"⚠️ {device} test failed")
-                        
-                except Exception as e:
-                    logger.warning(f"⚠️ Exception testing {device}: {e}")
-                    continue
-            
-            if not working_devices:
-                logger.error("❌ No camera devices work, using placeholder mode")
+            if not available_devices:
+                logger.warning("⚠️ No camera devices found, using placeholder mode")
                 self.is_connected = True
                 self.device_path = "/dev/video0"
                 logger.info("✅ Camera manager initialized in placeholder mode")
                 return True
             
-            # Use the best available device
-            if "/dev/video0" in working_devices:
-                self.device_path = "/dev/video0"  # MJPG for streaming
-                logger.info("✅ Using /dev/video0 (MJPG) for streaming")
-            elif "/dev/video2" in working_devices:
-                self.device_path = "/dev/video2"  # H264 for snapshots
-                logger.info("✅ Using /dev/video2 (H264) for snapshots")
-            
+            # Use the first available device without testing
+            self.device_path = available_devices[0]
             self.is_connected = True
-            logger.info(f"✅ Camera manager initialized with {self.device_path}")
+            logger.info(f"✅ Camera manager initialized with {self.device_path} (quick mode)")
             return True
             
         except Exception as e:
@@ -254,7 +226,7 @@ class TurtleCameraManager:
             logger.error(f"❌ V4L2 settings application failed: {e}")
     
     def start_streaming(self) -> bool:
-        """Start camera streaming in background thread"""
+        """Start continuous camera streaming"""
         if self.is_streaming:
             logger.warning("⚠️ Camera already streaming")
             return True
@@ -264,13 +236,14 @@ class TurtleCameraManager:
                 return False
         
         try:
-            self.stream_stop_event.clear()
-            self.stream_thread = threading.Thread(target=self._stream_worker, daemon=True)
-            self.stream_thread.start()
-            self.is_streaming = True
-            
-            logger.info("🎥 Camera streaming started")
-            return True
+            # Start continuous stream
+            if self._start_continuous_stream():
+                self.is_streaming = True
+                logger.info("🎥 Continuous camera streaming started")
+                return True
+            else:
+                logger.error("❌ Failed to start continuous stream")
+                return False
             
         except Exception as e:
             logger.error(f"❌ Failed to start camera streaming: {e}")
@@ -282,10 +255,7 @@ class TurtleCameraManager:
             return
         
         try:
-            self.stream_stop_event.set()
-            if self.stream_thread:
-                self.stream_thread.join(timeout=5.0)
-            
+            self._stop_continuous_stream()
             self.is_streaming = False
             logger.info("🛑 Camera streaming stopped")
             
@@ -325,18 +295,242 @@ class TurtleCameraManager:
         
         logger.info("🎬 Camera stream worker stopped")
     
+    def _start_continuous_stream(self):
+        """Start a continuous FFmpeg stream process"""
+        try:
+            if hasattr(self, '_stream_process') and self._stream_process:
+                self._stop_continuous_stream()
+            
+            # Start FFmpeg in continuous mode for MJPEG streaming
+            cmd = [
+                'ffmpeg',
+                '-f', 'v4l2',
+                '-input_format', 'mjpeg',
+                '-video_size', f'{self.settings.streaming_resolution[0]}x{self.settings.streaming_resolution[1]}',
+                '-i', self.device_path,
+                '-f', 'mjpeg',  # Output MJPEG format
+                '-q:v', '10',   # Good quality for streaming
+                '-r', '15',     # 15 FPS
+                'pipe:1'
+            ]
+            
+            self._stream_process = subprocess.Popen(
+                cmd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                bufsize=0
+            )
+            
+            logger.info("✅ Continuous camera stream started")
+            
+        except Exception as e:
+            logger.error(f"❌ Failed to start continuous stream: {e}")
+            self._stream_process = None
+    
+    def _stop_continuous_stream(self):
+        """Stop the continuous FFmpeg stream process"""
+        try:
+            if hasattr(self, '_stream_process') and self._stream_process:
+                self._stream_process.terminate()
+                self._stream_process.wait(timeout=2)
+                self._stream_process = None
+                logger.info("🛑 Continuous camera stream stopped")
+        except Exception as e:
+            logger.error(f"❌ Error stopping continuous stream: {e}")
+    
+    def _get_frame_from_stream(self) -> Optional[bytes]:
+        """Extract a single frame from the continuous MJPEG stream"""
+        try:
+            if not hasattr(self, '_stream_process') or not self._stream_process:
+                return None
+            
+            # Read MJPEG frame from the stream
+            # MJPEG format: --boundary\r\nContent-Type: image/jpeg\r\nContent-Length: size\r\n\r\n[image data]\r\n
+            
+            # Read until we find a frame boundary
+            frame_data = b""
+            boundary_found = False
+            
+            while not boundary_found:
+                line = self._stream_process.stdout.readline()
+                if not line:
+                    break
+                
+                if line.startswith(b'--'):
+                    boundary_found = True
+                    frame_data = line
+            
+            if not boundary_found:
+                return None
+            
+            # Read headers
+            while True:
+                line = self._stream_process.stdout.readline()
+                if not line or line == b'\r\n':
+                    break
+                frame_data += line
+            
+            # Read image data
+            content_length = 0
+            for line in frame_data.split(b'\r\n'):
+                if line.startswith(b'Content-Length:'):
+                    try:
+                        content_length = int(line.split(b':')[1].strip())
+                        break
+                    except:
+                        pass
+            
+            if content_length > 0:
+                image_data = self._stream_process.stdout.read(content_length)
+                frame_data += image_data
+                
+                # Read the trailing \r\n
+                self._stream_process.stdout.read(2)
+                
+                return image_data
+            
+            return None
+            
+        except Exception as e:
+            logger.error(f"❌ Error reading frame from stream: {e}")
+            return None
+    
     def get_current_frame(self) -> Optional[bytes]:
-        """Get current frame as JPEG bytes"""
+        """Get current frame directly from camera - always available"""
         try:
             if not self.is_connected:
                 return self._get_placeholder_image()
             
-            # Use FFmpeg to capture a frame from the camera
-            return self.capture_ffmpeg_snapshot(self.settings.streaming_resolution)
+            # Try the continuous stream first
+            frame_data = self._get_direct_frame()
             
+            # If continuous stream fails, try simple capture
+            if frame_data is None or frame_data == self._get_placeholder_image():
+                frame_data = self._get_simple_frame()
+            
+            # If we successfully get a frame, mark as streaming
+            if frame_data and frame_data != self._get_placeholder_image():
+                self.is_streaming = True
+            
+            return frame_data
+                    
         except Exception as e:
             logger.error(f"❌ Error getting current frame: {e}")
             return self._get_placeholder_image()
+    
+    def _get_simple_frame(self) -> Optional[bytes]:
+        """Get frame using simple FFmpeg command - fallback method"""
+        try:
+            # Simple FFmpeg command for single frame capture
+            cmd = [
+                'ffmpeg',
+                '-f', 'v4l2',
+                '-input_format', 'mjpeg',
+                '-video_size', f'{self.settings.streaming_resolution[0]}x{self.settings.streaming_resolution[1]}',
+                '-i', self.device_path,
+                '-vframes', '1',
+                '-q:v', '10',  # Good quality
+                '-f', 'image2',
+                'pipe:1'
+            ]
+            
+            result = run_with_timeout(cmd, timeout=1.5)  # Shorter timeout
+            if result and result.returncode == 0 and result.stdout:
+                logger.debug("✅ Simple frame capture successful")
+                return result.stdout
+            else:
+                logger.debug("⚠️ Simple frame capture failed")
+                return self._get_placeholder_image()
+                
+        except Exception as e:
+            logger.debug(f"❌ Simple frame capture error: {e}")
+            return self._get_placeholder_image()
+    
+    def _get_direct_frame(self) -> Optional[bytes]:
+        """Get frame directly from camera using FFmpeg - improved for streaming"""
+        try:
+            # Use a more efficient approach for streaming
+            # Instead of calling FFmpeg for each frame, use a continuous stream
+            if not hasattr(self, '_stream_process') or self._stream_process is None:
+                self._start_continuous_stream()
+            
+            # Get frame from the continuous stream
+            frame_data = self._get_frame_from_stream()
+            if frame_data:
+                logger.debug("✅ Frame captured from continuous stream")
+                self.is_streaming = True
+                return frame_data
+            else:
+                logger.warning("⚠️ No frame from continuous stream, using placeholder")
+                return self._get_placeholder_image()
+                
+        except Exception as e:
+            logger.error(f"❌ Direct frame capture error: {e}")
+            return self._get_placeholder_image()
+    
+    def capture_snapshot(self, resolution: Optional[Tuple[int, int]] = None) -> Optional[bytes]:
+        """Capture snapshot from current stream frame"""
+        try:
+            # Get current frame from stream
+            frame_data = self.get_current_frame()
+            if not frame_data or frame_data == self._get_placeholder_image():
+                logger.warning("⚠️ No valid frame for snapshot")
+                return None
+            
+            # If we need a different resolution, we could resize here
+            # For now, return the current frame
+            logger.info("📸 Snapshot captured from stream")
+            return frame_data
+            
+        except Exception as e:
+            logger.error(f"❌ Error capturing snapshot: {e}")
+            return None
+    
+    def capture_ffmpeg_snapshot(self, resolution: Optional[Tuple[int, int]] = None) -> Optional[bytes]:
+        """Capture high-quality snapshot using separate FFmpeg process with current camera settings"""
+        try:
+            snapshot_res = resolution or self.settings.snapshot_resolution
+            
+            # Get current camera settings from simple_camera_controls
+            from simple_camera_controls import camera_controls
+            current_settings = camera_controls.get_all_controls()
+            
+            # Build FFmpeg command with camera controls
+            cmd = [
+                'ffmpeg',
+                '-f', 'v4l2',
+                '-input_format', 'mjpeg',
+                '-video_size', f'{snapshot_res[0]}x{snapshot_res[1]}',
+                '-i', self.device_path,
+                '-vframes', '1',
+                '-q:v', '2',  # High quality
+            ]
+            
+            # Add camera controls if available
+            if current_settings:
+                # Apply brightness, contrast, saturation, etc.
+                if 'brightness' in current_settings:
+                    cmd.extend(['-vf', f'eq=brightness={current_settings["brightness"]/64.0:.3f}'])
+                if 'contrast' in current_settings:
+                    cmd.extend(['-vf', f'eq=contrast={current_settings["contrast"]/32.0:.3f}'])
+                if 'saturation' in current_settings:
+                    cmd.extend(['-vf', f'eq=saturation={current_settings["saturation"]/64.0:.3f}'])
+                if 'gamma' in current_settings:
+                    cmd.extend(['-vf', f'eq=gamma={current_settings["gamma"]/100.0:.3f}'])
+            
+            cmd.extend(['-f', 'image2', 'pipe:1'])
+            
+            result = run_with_timeout(cmd, timeout=3.0)
+            if result and result.returncode == 0 and result.stdout:
+                logger.info(f"📸 High-quality snapshot captured at {snapshot_res[0]}x{snapshot_res[1]} with camera settings")
+                return result.stdout
+            else:
+                logger.warning("⚠️ High-quality snapshot failed, using stream frame")
+                return self.capture_snapshot(resolution)
+                
+        except Exception as e:
+            logger.error(f"❌ Error capturing high-quality snapshot: {e}")
+            return self.capture_snapshot(resolution)
     
     def _get_placeholder_image(self) -> bytes:
         """Generate a placeholder image when camera is unavailable"""
@@ -366,87 +560,6 @@ class TurtleCameraManager:
         except Exception as e:
             logger.error(f"❌ Error creating placeholder image: {e}")
             return b''
-    
-    def capture_snapshot(self, resolution: Optional[Tuple[int, int]] = None) -> Optional[bytes]:
-        """Capture high-quality snapshot at specified resolution"""
-        try:
-            if not self.is_connected:
-                if not self._initialize_camera():
-                    return None
-            
-            # Set resolution for snapshot
-            snapshot_res = resolution or self.settings.snapshot_resolution
-            
-            with self.camera_lock:
-                # Temporarily change resolution
-                self.camera.set(cv2.CAP_PROP_FRAME_WIDTH, snapshot_res[0])
-                self.camera.set(cv2.CAP_PROP_FRAME_HEIGHT, snapshot_res[1])
-                
-                # Capture frame
-                ret, frame = self.camera.read()
-                
-                if not ret or frame is None:
-                    logger.error("❌ Failed to capture snapshot")
-                    return None
-                
-                # Encode as high-quality JPEG
-                encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 95]  # 95% quality for snapshots
-                ret, jpeg_data = cv2.imencode('.jpg', frame, encode_param)
-                
-                # Restore streaming resolution
-                self.camera.set(cv2.CAP_PROP_FRAME_WIDTH, self.settings.streaming_resolution[0])
-                self.camera.set(cv2.CAP_PROP_FRAME_HEIGHT, self.settings.streaming_resolution[1])
-                
-                if ret:
-                    logger.info(f"📸 Snapshot captured at {snapshot_res[0]}x{snapshot_res[1]}")
-                    return jpeg_data.tobytes()
-                else:
-                    return None
-                    
-        except Exception as e:
-            logger.error(f"❌ Error capturing snapshot: {e}")
-            return None
-    
-    def capture_ffmpeg_snapshot(self, resolution: Optional[Tuple[int, int]] = None) -> Optional[bytes]:
-        """Capture snapshot using FFmpeg for maximum quality"""
-        try:
-            snapshot_res = resolution or self.settings.snapshot_resolution
-            
-            # Choose the best device based on resolution
-            if snapshot_res[0] >= 1920:  # High resolution - use H264 device
-                device = "/dev/video2"
-                logger.debug(f"📸 Using {device} (H264) for high-res snapshot")
-            else:  # Lower resolution - use MJPG device
-                device = "/dev/video0"
-                logger.debug(f"📸 Using {device} (MJPG) for snapshot")
-            
-            # Use FFmpeg to capture high-quality snapshot
-            cmd = [
-                'ffmpeg',
-                '-f', 'v4l2',
-                '-video_size', f'{snapshot_res[0]}x{snapshot_res[1]}',
-                '-i', device,
-                '-vframes', '1',
-                '-q:v', '2',  # High quality
-                '-f', 'image2',
-                'pipe:1'
-            ]
-            
-            result = run_with_timeout(cmd, timeout=3.0)
-            if result is None:
-                logger.error("❌ FFmpeg snapshot timeout")
-                return None
-                
-            if result.returncode == 0 and result.stdout:
-                logger.info(f"📸 FFmpeg snapshot captured at {snapshot_res[0]}x{snapshot_res[1]} from {device}")
-                return result.stdout
-            else:
-                logger.error(f"❌ FFmpeg snapshot failed: {result.stderr.decode()}")
-                return None
-                
-        except Exception as e:
-            logger.error(f"❌ Error capturing FFmpeg snapshot: {e}")
-            return None
     
     def set_resolution(self, resolution: Tuple[int, int], is_streaming: bool = True):
         """Set camera resolution"""

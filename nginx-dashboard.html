@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐢 Turtle Habitat Monitor</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/emoji-font.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+    <style>
+        /* Camera-specific styles */
+        .camera-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .camera-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .camera-title {
+            font-size: 1.5rem;
+            color: #4ade80;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .camera-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .camera-btn {
+            background: rgba(74, 222, 128, 0.2);
+            border: 1px solid #4ade80;
+            color: #4ade80;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .camera-btn:hover {
+            background: rgba(74, 222, 128, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .camera-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .camera-btn.danger {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+
+        .camera-btn.danger:hover {
+            background: rgba(239, 68, 68, 0.3);
+        }
+
+        .camera-content {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 20px;
+            align-items: start;
+        }
+
+        .camera-video {
+            background: #000;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            aspect-ratio: 16/9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .camera-video img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .camera-video video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .camera-placeholder {
+            color: #666;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+
+        .camera-info {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .camera-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .status-online { background: #10b981; }
+        .status-offline { background: #ef4444; }
+        .status-warning { background: #f59e0b; }
+
+        .camera-details {
+            margin-bottom: 15px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .detail-label {
+            color: #ccc;
+        }
+
+        .detail-value {
+            color: #4ade80;
+            font-weight: 500;
+        }
+
+        .camera-settings {
+            margin-top: 15px;
+        }
+
+        .setting-group {
+            margin-bottom: 15px;
+        }
+
+        .setting-label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+
+        .setting-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            padding: 8px;
+            color: #fff;
+            font-size: 0.9rem;
+        }
+
+        .setting-input:focus {
+            outline: none;
+            border-color: #4ade80;
+        }
+
+        .profile-selector {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .profile-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .profile-btn:hover {
+            background: rgba(74, 222, 128, 0.2);
+            border-color: #4ade80;
+            transform: translateY(-1px);
+        }
+
+        .refresh-btn {
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.5);
+            color: #60a5fa;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .refresh-btn:hover {
+            background: rgba(59, 130, 246, 0.3);
+            border-color: #60a5fa;
+        }
+
+        .safety-notice {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 15px;
+            font-size: 0.8rem;
+            color: #fca5a5;
+        }
+
+        .recording-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(239, 68, 68, 0.9);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            display: none;
+        }
+
+        .recording-indicator.active {
+            display: block;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .camera-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .camera-controls {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="title">🐢 Turtle Habitat Monitor</h1><a href="/api-docs.html" style="color: #4ade80; text-decoration: none; margin-left: 20px; font-size: 0.9rem; padding: 5px 10px; background: rgba(74, 222, 128, 0.1); border-radius: 5px; border: 1px solid #4ade80;">📚 API Docs</a>
+                <div class="connection-status" id="connectionStatus">
+                    <span class="status-dot" id="statusDot"></span>
+                    <span class="status-text" id="statusText">Connecting...</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Dashboard -->
+        <main class="dashboard">
+            <!-- Sensor Cards -->
+            <div class="sensor-grid">
+                <!-- Sensor 1 -->
+                <div class="sensor-card" id="sensor1">
+                    <div class="sensor-header">
+                        <h3>🌡️ Sensor 1</h3>
+                        <div class="sensor-location">Main Habitat</div>
+                    </div>
+                    <div class="sensor-data">
+                        <div class="data-row">
+                            <div class="data-item">
+                                <div class="data-label">Temperature</div>
+                                <div class="data-value" id="temp1">--</div>
+                                <div class="data-unit">°F</div>
+                            </div>
+                            <div class="data-item">
+                                <div class="data-label">Humidity</div>
+                                <div class="data-value" id="hum1">--</div>
+                                <div class="data-unit">%</div>
+                            </div>
+                        </div>
+                        <div class="last-update" id="update1">Last update: Never</div>
+                    </div>
+                </div>
+
+                <!-- Sensor 2 -->
+                <div class="sensor-card" id="sensor2">
+                    <div class="sensor-header">
+                        <h3>🌡️ Sensor 2</h3>
+                        <div class="sensor-location">Basking Area</div>
+                    </div>
+                    <div class="sensor-data">
+                        <div class="data-row">
+                            <div class="data-item">
+                                <div class="data-label">Temperature</div>
+                                <div class="data-value" id="temp2">--</div>
+                                <div class="data-unit">°F</div>
+                            </div>
+                            <div class="data-item">
+                                <div class="data-label">Humidity</div>
+                                <div class="data-value" id="hum2">--</div>
+                                <div class="data-unit">%</div>
+                            </div>
+                        </div>
+                        <div class="last-update" id="update2">Last update: Never</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Camera Section -->
+            <div class="camera-section">
+                <div class="camera-header">
+                    <h2 class="camera-title">📷 Habitat Camera</h2>
+                    <div class="camera-controls">
+                        <button class="camera-btn" id="snapshotBtn" onclick="takeSnapshot()">
+                            📸 Snapshot
+                        </button>
+                        <button class="camera-btn" id="streamBtn" onclick="toggleStream()">
+                            🎥 Live Stream
+                        </button>
+                        <button class="camera-btn" id="settingsBtn" onclick="toggleSettings()">
+                            ⚙️ Settings
+                        </button>
+                        <button class="camera-btn danger" id="stopBtn" onclick="stopCamera()" disabled>
+                            🛑 Stop
+                        </button>
+                    </div>
+                </div>
+
+                <div class="camera-content">
+                    <div class="camera-video">
+                        <div class="camera-placeholder" id="cameraPlaceholder">
+                            Camera starting automatically...
+                        </div>
+                        <img id="cameraImage" style="display: none;" alt="Camera Feed">
+                        <video id="cameraVideo" style="display: none;" autoplay muted></video>
+                        <div class="recording-indicator" id="recordingIndicator">
+                            🔴 REC
+                        </div>
+                    </div>
+
+                    <div class="camera-info">
+                        <div class="camera-status">
+                            <span class="status-indicator" id="cameraStatusIndicator"></span>
+                            <span id="cameraStatusText">Checking camera...</span>
+                        </div>
+
+                        <div class="camera-details">
+                            <div class="detail-row">
+                                <span class="detail-label">Device:</span>
+                                <span class="detail-value" id="cameraDevice">--</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Resolution:</span>
+                                <span class="detail-value" id="cameraResolution">--</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">FPS:</span>
+                                <span class="detail-value" id="cameraFps">--</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Format:</span>
+                                <span class="detail-value" id="cameraFormat">--</span>
+                            </div>
+                        </div>
+
+                        <div class="camera-settings" id="cameraSettings" style="display: none;">
+                            <div class="setting-group">
+                                <label class="setting-label">Quick Profiles:</label>
+                                <div class="profile-selector">
+                                    <button class="profile-btn" onclick="applyProfile('turtle-monitor')">🐢 Turtle Monitor</button>
+                                    <button class="profile-btn" onclick="applyProfile('daylight')">☀️ Daylight</button>
+                                    <button class="profile-btn" onclick="applyProfile('low-light')">🌙 Low Light</button>
+                                    <button class="profile-btn" onclick="applyProfile('fix-green-tint')">🎨 Fix Green Tint</button>
+                                </div>
+                            </div>
+                            
+                            <div class="setting-group">
+                                <label class="setting-label">Brightness:</label>
+                                <input type="range" class="setting-input" id="brightnessSlider" min="-64" max="64" value="5">
+                                <span id="brightnessValue">5</span>
+                            </div>
+
+                            <div class="setting-group">
+                                <label class="setting-label">Contrast:</label>
+                                <input type="range" class="setting-input" id="contrastSlider" min="0" max="64" value="35">
+                                <span id="contrastValue">35</span>
+                            </div>
+
+                            <div class="setting-group">
+                                <label class="setting-label">Saturation:</label>
+                                <input type="range" class="setting-input" id="saturationSlider" min="0" max="128" value="70">
+                                <span id="saturationValue">70</span>
+                            </div>
+
+                            <div class="setting-group">
+                                <label class="setting-label">White Balance Temp:</label>
+                                <input type="range" class="setting-input" id="wbTempSlider" min="2800" max="6500" value="5000">
+                                <span id="wbTempValue">5000K</span>
+                            </div>
+
+                            <div class="setting-group">
+                                <label class="setting-label">Gain:</label>
+                                <input type="range" class="setting-input" id="gainSlider" min="0" max="100" value="12">
+                                <span id="gainValue">12</span>
+                            </div>
+
+                            <div class="setting-group">
+                                <label class="setting-label">Sharpness:</label>
+                                <input type="range" class="setting-input" id="sharpnessSlider" min="0" max="6" value="4">
+                                <span id="sharpnessValue">4</span>
+                            </div>
+
+                            <div class="setting-group">
+                                <button class="refresh-btn" onclick="refreshCameraControls()">🔄 Refresh Controls</button>
+                            </div>
+
+                            <div class="safety-notice">
+                                ⚠️ <strong>Safety Notice:</strong> Camera is for monitoring only. 
+                                Do not use for extended periods to avoid stressing the turtle.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="quick-stats">
+                <div class="stat-card">
+                    <div class="stat-icon">📈</div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="avgTemp">--</div>
+                        <div class="stat-label">Avg Temp (°F)</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💧</div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="avgHum">--</div>
+                        <div class="stat-label">Avg Humidity (%)</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⏰</div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="uptime">--</div>
+                        <div class="stat-label">Uptime</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="timestamp" id="currentTime">Loading...</div>
+                <div class="version">Turtle Monitor v1.0</div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Connecting to sensors...</div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>
+        // Camera Integration JavaScript
+        let cameraStream = null;
+        let cameraStatus = 'offline';
+        let isStreaming = false;
+        let snapshotInterval = null;
+
+        // Initialize camera on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeCamera();
+            updateCameraStatus();
+            
+            // Auto-start the camera stream
+            setTimeout(() => {
+                toggleStream();
+            }, 1000); // Start stream 1 second after page load
+        });
+
+        async function initializeCamera() {
+            try {
+                const response = await fetch('http://10.0.20.69:8000/api/camera/status');
+                const data = await response.json();
+                
+                if (data.camera.connected) {
+                    cameraStatus = 'online';
+                    updateCameraInfo(data.camera);
+                } else {
+                    cameraStatus = 'offline';
+                }
+                
+                updateCameraStatus();
+            } catch (error) {
+                console.error('Camera initialization failed:', error);
+                cameraStatus = 'offline';
+                updateCameraStatus();
+            }
+        }
+
+        function updateCameraStatus() {
+            const indicator = document.getElementById('cameraStatusIndicator');
+            const statusText = document.getElementById('cameraStatusText');
+            
+            indicator.className = 'status-indicator';
+            
+            switch (cameraStatus) {
+                case 'online':
+                    indicator.classList.add('status-online');
+                    statusText.textContent = 'Camera Online';
+                    break;
+                case 'offline':
+                    indicator.classList.add('status-offline');
+                    statusText.textContent = 'Camera Offline';
+                    break;
+                case 'streaming':
+                    indicator.classList.add('status-online');
+                    statusText.textContent = 'Live Streaming';
+                    break;
+            }
+        }
+
+        function updateCameraInfo(camera) {
+            document.getElementById('cameraDevice').textContent = camera.device;
+            document.getElementById('cameraResolution').textContent = `${camera.resolution.streaming[0]}x${camera.resolution.streaming[1]}`;
+            document.getElementById('cameraFps').textContent = camera.fps || '30';
+            document.getElementById('cameraFormat').textContent = camera.capabilities.formats[0] || 'MJPG';
+        }
+
+        async function takeSnapshot() {
+            try {
+                const btn = document.getElementById('snapshotBtn');
+                btn.disabled = true;
+                btn.textContent = '📸 Taking...';
+
+                const response = await fetch('http://10.0.20.69:8000/api/camera/snapshot');
+                const blob = await response.blob();
+                
+                const imageUrl = URL.createObjectURL(blob);
+                const img = document.getElementById('cameraImage');
+                const placeholder = document.getElementById('cameraPlaceholder');
+                const video = document.getElementById('cameraVideo');
+                
+                img.src = imageUrl;
+                img.style.display = 'block';
+                placeholder.style.display = 'none';
+                video.style.display = 'none';
+                
+                // Auto-hide snapshot after 10 seconds
+                setTimeout(() => {
+                    if (!isStreaming) {
+                        img.style.display = 'none';
+                        placeholder.style.display = 'block';
+                    }
+                }, 10000);
+
+            } catch (error) {
+                console.error('Snapshot failed:', error);
+                alert('Failed to take snapshot. Please try again.');
+            } finally {
+                const btn = document.getElementById('snapshotBtn');
+                btn.disabled = false;
+                btn.textContent = '📸 Snapshot';
+            }
+        }
+
+        async function toggleStream() {
+            const btn = document.getElementById('streamBtn');
+            const stopBtn = document.getElementById('stopBtn');
+            const placeholder = document.getElementById('cameraPlaceholder');
+            const video = document.getElementById('cameraVideo');
+            const img = document.getElementById('cameraImage');
+            const recordingIndicator = document.getElementById('recordingIndicator');
+
+            // Always start the stream - no toggle needed
+            try {
+                btn.disabled = true;
+                btn.textContent = '🎥 Loading...';
+
+                // Use img element for MJPEG stream (works better than video)
+                const streamUrl = 'http://10.0.20.69:8000/api/camera/stream';
+                img.src = streamUrl;
+                img.style.display = 'block';
+                video.style.display = 'none';
+                placeholder.style.display = 'none';
+                
+                // Set a timeout to detect if stream fails to start
+                const streamTimeout = setTimeout(() => {
+                    if (btn.textContent === '🎥 Loading...') {
+                        console.error('Stream timeout - switching to fallback');
+                        // Fallback to snapshot mode
+                        btn.textContent = '📸 Snapshot Mode';
+                        btn.disabled = false;
+                        stopBtn.disabled = false;
+                        img.style.display = 'none';
+                        placeholder.style.display = 'block';
+                        placeholder.textContent = 'Stream timeout - using snapshot mode';
+                    }
+                }, 30000); // 30 second timeout
+
+                img.onload = () => {
+                    clearTimeout(streamTimeout);
+                    isStreaming = true;
+                    cameraStatus = 'streaming';
+                    updateCameraStatus();
+                    
+                    btn.textContent = '🎥 Live Stream';
+                    btn.disabled = false;
+                    stopBtn.disabled = false;
+                    
+                    recordingIndicator.classList.add('active');
+                };
+
+                img.onerror = () => {
+                    clearTimeout(streamTimeout);
+                    console.error('Image stream failed to load');
+                    // Fallback to snapshot mode
+                    btn.textContent = '📸 Snapshot Mode';
+                    btn.disabled = false;
+                    stopBtn.disabled = false;
+                    img.style.display = 'none';
+                    placeholder.style.display = 'block';
+                    placeholder.textContent = 'Stream failed - using snapshot mode';
+                };
+
+            } catch (error) {
+                console.error('Stream start failed:', error);
+                btn.textContent = '📸 Snapshot Mode';
+                btn.disabled = false;
+                placeholder.style.display = 'block';
+                placeholder.textContent = 'Stream failed - using snapshot mode';
+            }
+        }
+
+        function stopCamera() {
+            const btn = document.getElementById('streamBtn');
+            const stopBtn = document.getElementById('stopBtn');
+            const placeholder = document.getElementById('cameraPlaceholder');
+            const video = document.getElementById('cameraVideo');
+            const img = document.getElementById('cameraImage');
+            const recordingIndicator = document.getElementById('recordingIndicator');
+
+            // Stop image stream
+            if (img.src) {
+                img.src = '';
+            }
+            
+            isStreaming = false;
+            cameraStatus = 'online';
+            updateCameraStatus();
+            
+            btn.textContent = '🎥 Live Stream';
+            btn.disabled = false;
+            stopBtn.disabled = true;
+            
+            img.style.display = 'none';
+            video.style.display = 'none';
+            placeholder.style.display = 'block';
+            placeholder.textContent = 'Camera ready - click "Live Stream" to start';
+            
+            recordingIndicator.classList.remove('active');
+        }
+
+        function toggleSettings() {
+            const settings = document.getElementById('cameraSettings');
+            const btn = document.getElementById('settingsBtn');
+            
+            if (settings.style.display === 'none') {
+                settings.style.display = 'block';
+                btn.textContent = '⚙️ Hide Settings';
+            } else {
+                settings.style.display = 'none';
+                btn.textContent = '⚙️ Settings';
+            }
+        }
+
+        // Camera API Integration Functions
+        async function loadCameraControls() {
+            try {
+                const response = await fetch('http://10.0.20.69:8000/api/camera/simple/controls');
+                const data = await response.json();
+                
+                if (data.success) {
+                    updateControlSliders(data.current_values);
+                }
+            } catch (error) {
+                console.error('Failed to load camera controls:', error);
+            }
+        }
+
+        function updateControlSliders(controls) {
+            // Update brightness
+            if (controls.brightness !== undefined) {
+                document.getElementById('brightnessSlider').value = controls.brightness;
+                document.getElementById('brightnessValue').textContent = controls.brightness;
+            }
+            
+            // Update contrast
+            if (controls.contrast !== undefined) {
+                document.getElementById('contrastSlider').value = controls.contrast;
+                document.getElementById('contrastValue').textContent = controls.contrast;
+            }
+            
+            // Update saturation
+            if (controls.saturation !== undefined) {
+                document.getElementById('saturationSlider').value = controls.saturation;
+                document.getElementById('saturationValue').textContent = controls.saturation;
+            }
+            
+            // Update white balance temperature
+            if (controls.white_balance_temperature !== undefined) {
+                document.getElementById('wbTempSlider').value = controls.white_balance_temperature;
+                document.getElementById('wbTempValue').textContent = controls.white_balance_temperature + 'K';
+            }
+            
+            // Update gain
+            if (controls.gain !== undefined) {
+                document.getElementById('gainSlider').value = controls.gain;
+                document.getElementById('gainValue').textContent = controls.gain;
+            }
+            
+            // Update sharpness
+            if (controls.sharpness !== undefined) {
+                document.getElementById('sharpnessSlider').value = controls.sharpness;
+                document.getElementById('sharpnessValue').textContent = controls.sharpness;
+            }
+        }
+
+        async function applyProfile(profileName) {
+            try {
+                const response = await fetch(`http://10.0.20.69:8000/api/camera/simple/profile/${profileName}`, {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    // Wait a moment for settings to apply
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    
+                    // Reload controls to show updated values
+                    await loadCameraControls();
+                    
+                    // Show success message
+                    showMessage(`✅ ${data.message}`, 'success');
+                } else {
+                    showMessage(`❌ Failed to apply profile: ${data.message || 'Unknown error'}`, 'error');
+                }
+            } catch (error) {
+                console.error('Error applying profile:', error);
+                showMessage('❌ Failed to apply profile', 'error');
+            }
+        }
+
+        async function updateCameraControl(controlName, value) {
+            try {
+                const response = await fetch(`http://10.0.20.69:8000/api/camera/simple/control/${controlName}?value=${parseInt(value)}`, {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    showMessage(`✅ ${controlName} set to ${value}`, 'success');
+                } else {
+                    showMessage(`❌ Failed to update ${controlName}`, 'error');
+                }
+            } catch (error) {
+                console.error('Error updating control:', error);
+                showMessage(`❌ Failed to update ${controlName}`, 'error');
+            }
+        }
+
+        async function refreshCameraControls() {
+            try {
+                showMessage('🔄 Refreshing controls...', 'success');
+                await loadCameraControls();
+                showMessage('✅ Controls refreshed', 'success');
+            } catch (error) {
+                console.error('Error refreshing controls:', error);
+                showMessage('❌ Failed to refresh controls', 'error');
+            }
+        }
+
+        function showMessage(message, type) {
+            const messageDiv = document.createElement('div');
+            messageDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 8px;
+                color: white;
+                font-weight: bold;
+                z-index: 1000;
+                background: ${type === 'success' ? '#4ade80' : '#ef4444'};
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            `;
+            messageDiv.textContent = message;
+            
+            document.body.appendChild(messageDiv);
+            
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 3000);
+        }
+
+        // Camera control sliders with API integration
+        document.getElementById('brightnessSlider').addEventListener('input', function() {
+            document.getElementById('brightnessValue').textContent = this.value;
+            updateCameraControl('brightness', this.value);
+        });
+
+        document.getElementById('contrastSlider').addEventListener('input', function() {
+            document.getElementById('contrastValue').textContent = this.value;
+            updateCameraControl('contrast', this.value);
+        });
+
+        document.getElementById('saturationSlider').addEventListener('input', function() {
+            document.getElementById('saturationValue').textContent = this.value;
+            updateCameraControl('saturation', this.value);
+        });
+
+        document.getElementById('wbTempSlider').addEventListener('input', function() {
+            document.getElementById('wbTempValue').textContent = this.value + 'K';
+            updateCameraControl('white_balance_temperature', this.value);
+        });
+
+        document.getElementById('gainSlider').addEventListener('input', function() {
+            document.getElementById('gainValue').textContent = this.value;
+            updateCameraControl('gain', this.value);
+        });
+
+        document.getElementById('sharpnessSlider').addEventListener('input', function() {
+            document.getElementById('sharpnessValue').textContent = this.value;
+            updateCameraControl('sharpness', this.value);
+        });
+
+        // Load camera controls on page load
+        loadCameraControls();
+
+        // Auto-refresh camera status every 30 seconds
+        setInterval(initializeCamera, 30000);
+    </script>
+</body>
+</html> 

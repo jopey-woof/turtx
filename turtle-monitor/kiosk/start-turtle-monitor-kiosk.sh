@@ -54,10 +54,10 @@ echo "Starting Chrome with Turtle Monitor Kiosk..."
 # Create chrome directory properly
 mkdir -p /home/shrimp/.chrome-kiosk
 
-        # Start Chrome with turtle monitor kiosk
+        # Start Chrome with turtle monitor kiosk - simplified for camera compatibility
         exec google-chrome-stable \
             --kiosk \
-            --app="http://localhost:8000" \
+            --app="http://10.0.20.69" \
             --no-sandbox \
             --disable-dev-shm-usage \
             --window-size=1024,600 \
@@ -66,12 +66,10 @@ mkdir -p /home/shrimp/.chrome-kiosk
             --disable-infobars \
             --disable-session-crashed-bubble \
             --disable-translate \
-            --disable-web-security \
             --disable-background-timer-throttling \
             --disable-backgrounding-occluded-windows \
             --disable-renderer-backgrounding \
             --disable-features=TranslateUI \
-            --disable-ipc-flooding-protection \
             --disable-default-apps \
             --disable-extensions \
             --disable-plugins \
@@ -92,45 +90,5 @@ mkdir -p /home/shrimp/.chrome-kiosk
             --disable-save-password-bubble \
             --disable-single-click-autofill \
             --disable-spellcheck-autocorrect \
-            --disable-web-resources \
-            --disable-webgl \
-            --disable-webgl2 \
-            --disable-frame-rate-limit \
-            --disable-gpu-vsync \
-            --disable-accelerated-2d-canvas \
-            --disable-accelerated-jpeg-decoding \
-            --disable-accelerated-mjpeg-decode \
-            --disable-accelerated-video-decode \
-            --disable-accelerated-video-encode \
-            --disable-gpu-rasterization \
-            --disable-software-rasterizer \
             --disable-background-media-suspend \
-            --disable-background-video-track \
-            --disable-background-timer-throttling \
-            --disable-renderer-backgrounding \
-            --disable-backgrounding-occluded-windows \
-            --disable-features=TranslateUI \
-            --disable-ipc-flooding-protection \
-            --disable-default-apps \
-            --disable-extensions \
-            --disable-plugins \
-            --disable-sync \
-            --no-first-run \
-            --no-default-browser-check \
-            --disable-component-update \
-            --disable-background-networking \
-            --disable-client-side-phishing-detection \
-            --disable-hang-monitor \
-            --disable-prompt-on-repost \
-            --disable-domain-rereliability \
-            --disable-features=VizDisplayCompositor \
-            --force-color-profile=srgb \
-            --metrics-recording-only \
-            --no-report-upload \
-            --disable-print-preview \
-            --disable-save-password-bubble \
-            --disable-single-click-autofill \
-            --disable-spellcheck-autocorrect \
-            --disable-web-resources \
-            --disable-webgl \
-            --disable-webgl2 2>/dev/null 
+            --disable-background-video-track 2>/dev/null 
