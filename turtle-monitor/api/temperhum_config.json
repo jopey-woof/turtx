@@ -1,0 +1,32 @@
+{
+  "mqtt": {
+    "host": "localhost",
+    "port": 1883,
+    "username": null,
+    "password": null,
+    "client_id": "temperhum_sensors",
+    "keepalive": 60
+  },
+  "homeassistant": {
+    "discovery_prefix": "homeassistant",
+    "node_id": "turtle_sensors",
+    "device_class_temperature": "temperature",
+    "device_class_humidity": "humidity", 
+    "unit_temperature": "°F",
+    "unit_humidity": "%"
+  },
+  "sensors": {
+    "sensor1": {
+      "name": "Turtle Enclosure",
+      "location": "enclosure",
+      "update_interval": 2
+    }
+  },
+  "service": {
+    "update_interval": 2,
+    "retry_attempts": 3,
+    "retry_delay": 5,
+    "temperature_unit": "fahrenheit"
+  },
+  "debug": false
+}
