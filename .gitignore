@@ -12,6 +12,7 @@ homeassistant/ip_bans.yaml
 turtle-monitor/api/data/
 turtle-monitor/api/logs/
 turtle-monitor/api/.env
+turtle-monitor/data/
 
 # Docker
 .env
