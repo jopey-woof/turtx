@@ -23,9 +23,14 @@ rm -rf /tmp/.com.google.Chrome* || true
 echo "Configuring display..."
 sleep 2
 
-# Configure touchscreen display
+# Configure touchscreen display - fix display conflicts
+echo "Configuring touchscreen display..."
 xrandr --output HDMI-1 --off || true
-xrandr --output HDMI-2 --primary --mode 1024x600 || true
+sleep 1
+xrandr --output HDMI-2 --primary --mode 1024x600 --pos 0x0 || true
+sleep 1
+# Force refresh and clear any display artifacts
+xrandr --output HDMI-2 --mode 1024x600 --refresh 60 || true
 echo "Touchscreen configured"
 
 # Wait for Turtle Monitor API
@@ -41,10 +46,15 @@ while ! curl -s http://localhost:8000/api/health > /dev/null; do
 done
 echo "Turtle Monitor API ready"
 
-# Configure display settings
+# Configure display settings - prevent artifacts and ensure clean display
 echo "Configuring display settings..."
 xset -dpms || true
 xset s off || true
+xset s noblank || true
+# Clear any display artifacts and ensure clean rendering
+xset r off || true
+# Set gamma to prevent display issues
+xgamma -gamma 1.0 || true
 echo "Display configured"
 
 sleep 2
@@ -60,7 +70,7 @@ export GOOGLE_CHROME_DISABLE_CRASH_REPORTS=1
 # Create chrome directory properly
 mkdir -p /home/shrimp/.chrome-kiosk
 
-        # Start Chrome with turtle monitor kiosk - simplified for camera compatibility
+        # Start Chrome with turtle monitor kiosk - optimized for clean display
         exec google-chrome-stable \
             --kiosk \
             --app="http://10.0.20.69" \
@@ -69,6 +79,10 @@ mkdir -p /home/shrimp/.chrome-kiosk
             --window-size=1024,600 \
             --start-fullscreen \
             --user-data-dir=/home/shrimp/.chrome-kiosk \
+            --disable-gpu-sandbox \
+            --disable-background-timer-throttling \
+            --disable-gpu-driver-bug-workarounds \
+            --disable-gpu-process-crash-limit \
             --disable-infobars \
             --disable-session-crashed-bubble \
             --disable-translate \
@@ -97,8 +111,12 @@ mkdir -p /home/shrimp/.chrome-kiosk
             --disable-breakpad \
             --disable-logging \
             --silent-launch \
-            --disable-features=TranslateUI,VizDisplayCompositor \
-            --disable-background-timer-throttling \
-            --disable-backgrounding-occluded-windows \
-            --disable-renderer-backgrounding \
-            --disable-default-browser-check 2>/dev/null 
+            --disable-features=TranslateUI \
+            --disable-default-browser-check \
+            --disable-web-security \
+            --disable-ipc-flooding-protection \
+            --disable-gpu-sandbox \
+            --disable-accelerated-2d-canvas \
+            --disable-accelerated-video-decode \
+            --disable-accelerated-video-encode \
+            --disable-gpu-rasterization 2>/dev/null 
