@@ -2,7 +2,7 @@
 # Phase 1: Basic dashboard with turtle theme
 # Optimized for 1024x600 touchscreen display
 
-title: "🐢 Turtle Monitor"
+title: "🐢 TurtX"
 background: "var(--turtle-bg-image)"
 
 # Import custom CSS for enhanced aesthetics

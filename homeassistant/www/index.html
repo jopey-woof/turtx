@@ -1,0 +1,2884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShrimpCenter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+
+
+        /* Hide cursor for kiosk mode */
+        .kiosk-mode body {
+            cursor: none !important;
+        }
+
+        .kiosk-mode * {
+            cursor: none !important;
+        }
+
+        /* ==================== THEME SYSTEM ==================== */
+        :root {
+            /* Core Animation Variables */
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            --border-radius: 12px;
+            --shadow-base: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            
+            /* Status Colors (Universal) */
+            --status-excellent: #10B981;
+            --status-good: #34D399;
+            --status-warning: #F59E0B;
+            --status-critical: #EF4444;
+            --status-info: #3B82F6;
+            
+            /* Custom Theme Default Values */
+            --custom-primary: #667eea;
+            --custom-primary-dark: #764ba2;
+            --custom-accent: #3182ce;
+            --custom-accent-dark: #2c5aa0;
+            --custom-card-bg: rgba(255, 255, 255, 0.95);
+            --custom-card-text: #1a202c;
+            --custom-secondary-text: #4a5568;
+            --custom-gradient-direction: 135deg;
+            --custom-gradient-type: linear;
+            --custom-card-opacity: 95%;
+            --custom-backdrop-blur: blur(10px);
+        }
+
+        /* ==================== CLASSIC THEME (Default) ==================== */
+        [data-theme="classic"] {
+            --bg-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --bg-secondary: rgba(255, 255, 255, 0.95);
+            --bg-tertiary: rgba(255, 255, 255, 0.8);
+            --text-primary: #1a202c;
+            --text-secondary: #4a5568;
+            --text-accent: #2d3748;
+            --accent: #3182ce;
+            --accent-hover: #2c5aa0;
+            --border: rgba(203, 213, 225, 0.3);
+            --backdrop-blur: blur(10px);
+            
+            /* Header specific */
+            --header-bg: linear-gradient(135deg, #000428 0%, #004e92 100%);
+            --star-opacity: 1;
+            --moon-color: radial-gradient(circle at 30% 30%, #FFD700, #FFA500);
+        }
+
+        /* ==================== DARK THEME ==================== */
+        [data-theme="dark"] {
+            --bg-primary: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            --bg-secondary: rgba(15, 23, 42, 0.95);
+            --bg-tertiary: rgba(30, 41, 59, 0.8);
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-accent: #e2e8f0;
+            --accent: #60a5fa;
+            --accent-hover: #3b82f6;
+            --border: rgba(71, 85, 105, 0.3);
+            --backdrop-blur: blur(15px);
+            
+            /* Header specific */
+            --header-bg: linear-gradient(135deg, #0c1445 0%, #1a237e 50%, #000051 100%);
+            --star-opacity: 1;
+            --moon-color: radial-gradient(circle at 30% 30%, #fff, #ddd);
+        }
+
+        /* ==================== OCEAN THEME ==================== */
+        [data-theme="ocean"] {
+            --bg-primary: linear-gradient(135deg, #006064 0%, #00838f 50%, #0097a7 100%);
+            --bg-secondary: rgba(224, 247, 250, 0.95);
+            --bg-tertiary: rgba(178, 235, 242, 0.8);
+            --text-primary: #004d40;
+            --text-secondary: #00695c;
+            --text-accent: #00796b;
+            --accent: #00acc1;
+            --accent-hover: #0097a7;
+            --border: rgba(77, 208, 225, 0.3);
+            --backdrop-blur: blur(12px);
+            
+            /* Header specific */
+            --header-bg: linear-gradient(135deg, #006064 0%, #00838f 50%, #4dd0e1 100%);
+            --star-opacity: 0.6;
+            --moon-color: radial-gradient(circle at 30% 30%, #b2ebf2, #80deea);
+        }
+
+        /* ==================== FOREST THEME ==================== */
+        [data-theme="forest"] {
+            --bg-primary: linear-gradient(135deg, #2e7d32 0%, #388e3c 50%, #43a047 100%);
+            --bg-secondary: rgba(232, 245, 233, 0.95);
+            --bg-tertiary: rgba(200, 230, 201, 0.8);
+            --text-primary: #1b5e20;
+            --text-secondary: #2e7d32;
+            --text-accent: #388e3c;
+            --accent: #4caf50;
+            --accent-hover: #43a047;
+            --border: rgba(129, 199, 132, 0.3);
+            --backdrop-blur: blur(8px);
+            
+            /* Header specific */
+            --header-bg: linear-gradient(135deg, #1b5e20 0%, #2e7d32 50%, #66bb6a 100%);
+            --star-opacity: 0.4;
+            --moon-color: radial-gradient(circle at 30% 30%, #c8e6c9, #a5d6a7);
+        }
+
+        /* ==================== SUNSET THEME ==================== */
+        [data-theme="sunset"] {
+            --bg-primary: linear-gradient(135deg, #ff6b35 0%, #f7931e 50%, #ffd23f 100%);
+            --bg-secondary: rgba(255, 248, 225, 0.95);
+            --bg-tertiary: rgba(255, 236, 179, 0.8);
+            --text-primary: #8b4513;
+            --text-secondary: #d2691e;
+            --text-accent: #ff6347;
+            --accent: #ff7043;
+            --accent-hover: #ff5722;
+            --border: rgba(255, 183, 77, 0.3);
+            --backdrop-blur: blur(6px);
+            
+            /* Header specific */
+            --header-bg: linear-gradient(135deg, #ff6b35 0%, #f7931e 50%, #ffcc02 100%);
+            --star-opacity: 0.2;
+            --moon-color: radial-gradient(circle at 30% 30%, #ffcc02, #ff9800);
+        }
+
+        /* ==================== LIGHT THEME VARIANTS ==================== */
+        
+        /* ==================== CLASSIC LIGHT ==================== */
+        [data-theme="classic-light"] {
+            --bg-primary: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            --bg-secondary: rgba(255, 255, 255, 0.95);
+            --bg-tertiary: rgba(240, 248, 255, 0.8);
+            --text-primary: #1a202c;
+            --text-secondary: #4a5568;
+            --text-accent: #2d3748;
+            --accent: #3182ce;
+            --accent-hover: #2c5aa0;
+            --border: rgba(203, 213, 225, 0.3);
+            --backdrop-blur: blur(10px);
+            
+            /* Header specific */
+            --header-bg: linear-gradient(135deg, #87CEEB 0%, #98D8E8 50%, #B6E5F0 100%);
+            --star-opacity: 0.3;
+            --moon-color: radial-gradient(circle at 30% 30%, #FFD700, #FFA500);
+        }
+
+        /* ==================== DARK LIGHT ==================== */
+        [data-theme="dark-light"] {
+            --bg-primary: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            --bg-secondary: rgba(248, 250, 252, 0.95);
+            --bg-tertiary: rgba(241, 245, 249, 0.8);
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --text-accent: #334155;
+            --accent: #60a5fa;
+            --accent-hover: #3b82f6;
+            --border: rgba(148, 163, 184, 0.3);
+            --backdrop-blur: blur(15px);
+            
+            /* Header specific */
+            --header-bg: linear-gradient(135deg, #64748b 0%, #475569 50%, #334155 100%);
+            --star-opacity: 0.4;
+            --moon-color: radial-gradient(circle at 30% 30%, #fbbf24, #f59e0b);
+        }
+
+        /* ==================== OCEAN LIGHT ==================== */
+        [data-theme="ocean-light"] {
+            --bg-primary: linear-gradient(135deg, #e0f2f1 0%, #b2dfdb 100%);
+            --bg-secondary: rgba(240, 253, 250, 0.95);
+            --bg-tertiary: rgba(204, 251, 241, 0.8);
+            --text-primary: #134e4a;
+            --text-secondary: #115e59;
+            --text-accent: #0f766e;
+            --accent: #14b8a6;
+            --accent-hover: #0d9488;
+            --border: rgba(45, 212, 191, 0.3);
+            --backdrop-blur: blur(12px);
+            
+            /* Header specific */
+            --header-bg: linear-gradient(135deg, #99f6e4 0%, #5eead4 50%, #2dd4bf 100%);
+            --star-opacity: 0.5;
+            --moon-color: radial-gradient(circle at 30% 30%, #fef3c7, #fde68a);
+        }
+
+        /* ==================== FOREST LIGHT ==================== */
+        [data-theme="forest-light"] {
+            --bg-primary: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            --bg-secondary: rgba(240, 253, 244, 0.95);
+            --bg-tertiary: rgba(220, 252, 231, 0.8);
+            --text-primary: #14532d;
+            --text-secondary: #166534;
+            --text-accent: #15803d;
+            --accent: #22c55e;
+            --accent-hover: #16a34a;
+            --border: rgba(74, 222, 128, 0.3);
+            --backdrop-blur: blur(8px);
+            
+            /* Header specific */
+            --header-bg: linear-gradient(135deg, #bbf7d0 0%, #86efac 50%, #4ade80 100%);
+            --star-opacity: 0.3;
+            --moon-color: radial-gradient(circle at 30% 30%, #fef3c7, #fde68a);
+        }
+
+        /* ==================== SUNSET LIGHT ==================== */
+        [data-theme="sunset-light"] {
+            --bg-primary: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            --bg-secondary: rgba(255, 251, 235, 0.95);
+            --bg-tertiary: rgba(254, 243, 199, 0.8);
+            --text-primary: #92400e;
+            --text-secondary: #b45309;
+            --text-accent: #d97706;
+            --accent: #f59e0b;
+            --accent-hover: #d97706;
+            --border: rgba(251, 191, 36, 0.3);
+            --backdrop-blur: blur(6px);
+            
+            /* Header specific */
+            --header-bg: linear-gradient(135deg, #fef3c7 0%, #fde68a 50%, #fbbf24 100%);
+            --star-opacity: 0.2;
+            --moon-color: radial-gradient(circle at 30% 30%, #fbbf24, #f59e0b);
+        }
+
+        /* ==================== DARK THEME VARIANTS ==================== */
+        
+        /* ==================== CLASSIC DARK ==================== */
+        [data-theme="classic-dark"] {
+            --bg-primary: linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%);
+            --bg-secondary: rgba(30, 41, 59, 0.95);
+            --bg-tertiary: rgba(51, 65, 85, 0.8);
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-accent: #e2e8f0;
+            --accent: #60a5fa;
+            --accent-hover: #3b82f6;
+            --border: rgba(71, 85, 105, 0.3);
+            --backdrop-blur: blur(15px);
+            
+            /* Header specific */
+            --header-bg: linear-gradient(135deg, #000428 0%, #004e92 100%);
+            --star-opacity: 1;
+            --moon-color: radial-gradient(circle at 30% 30%, #FFD700, #FFA500);
+        }
+
+        /* ==================== DARK DARK ==================== */
+        [data-theme="dark-dark"] {
+            --bg-primary: linear-gradient(135deg, #020617 0%, #0f172a 100%);
+            --bg-secondary: rgba(2, 6, 23, 0.95);
+            --bg-tertiary: rgba(15, 23, 42, 0.8);
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-accent: #e2e8f0;
+            --accent: #60a5fa;
+            --accent-hover: #3b82f6;
+            --border: rgba(51, 65, 85, 0.3);
+            --backdrop-blur: blur(20px);
+            
+            /* Header specific */
+            --header-bg: linear-gradient(135deg, #0c1445 0%, #1a237e 50%, #000051 100%);
+            --star-opacity: 1;
+            --moon-color: radial-gradient(circle at 30% 30%, #fff, #ddd);
+        }
+
+        /* ==================== OCEAN DARK ==================== */
+        [data-theme="ocean-dark"] {
+            --bg-primary: linear-gradient(135deg, #042f2e 0%, #064e3b 100%);
+            --bg-secondary: rgba(4, 47, 46, 0.95);
+            --bg-tertiary: rgba(6, 78, 59, 0.8);
+            --text-primary: #f0fdfa;
+            --text-secondary: #ccfbf1;
+            --text-accent: #99f6e4;
+            --accent: #14b8a6;
+            --accent-hover: #0d9488;
+            --border: rgba(20, 184, 166, 0.3);
+            --backdrop-blur: blur(15px);
+            
+            /* Header specific */
+            --header-bg: linear-gradient(135deg, #042f2e 0%, #064e3b 50%, #0d9488 100%);
+            --star-opacity: 0.8;
+            --moon-color: radial-gradient(circle at 30% 30%, #5eead4, #2dd4bf);
+        }
+
+        /* ==================== FOREST DARK ==================== */
+        [data-theme="forest-dark"] {
+            --bg-primary: linear-gradient(135deg, #052e16 0%, #064e3b 100%);
+            --bg-secondary: rgba(5, 46, 22, 0.95);
+            --bg-tertiary: rgba(6, 78, 59, 0.8);
+            --text-primary: #f0fdf4;
+            --text-secondary: #dcfce7;
+            --text-accent: #bbf7d0;
+            --accent: #22c55e;
+            --accent-hover: #16a34a;
+            --border: rgba(34, 197, 94, 0.3);
+            --backdrop-blur: blur(12px);
+            
+            /* Header specific */
+            --header-bg: linear-gradient(135deg, #052e16 0%, #064e3b 50%, #16a34a 100%);
+            --star-opacity: 0.7;
+            --moon-color: radial-gradient(circle at 30% 30%, #86efac, #4ade80);
+        }
+
+        /* ==================== SUNSET DARK ==================== */
+        [data-theme="sunset-dark"] {
+            --bg-primary: linear-gradient(135deg, #451a03 0%, #7c2d12 100%);
+            --bg-secondary: rgba(69, 26, 3, 0.95);
+            --bg-tertiary: rgba(124, 45, 18, 0.8);
+            --text-primary: #fef3c7;
+            --text-secondary: #fde68a;
+            --text-accent: #fbbf24;
+            --accent: #f59e0b;
+            --accent-hover: #d97706;
+            --border: rgba(245, 158, 11, 0.3);
+            --backdrop-blur: blur(10px);
+            
+            /* Header specific */
+            --header-bg: linear-gradient(135deg, #451a03 0%, #7c2d12 50%, #f59e0b 100%);
+            --star-opacity: 0.6;
+            --moon-color: radial-gradient(circle at 30% 30%, #fbbf24, #f59e0b);
+        }
+
+        /* ==================== CUSTOM THEME ==================== */
+        [data-theme="custom"] {
+            --bg-primary: linear-gradient(var(--custom-gradient-direction), var(--custom-primary) 0%, var(--custom-primary-dark) 100%);
+            --bg-secondary: var(--custom-card-bg);
+            --bg-tertiary: var(--custom-card-bg);
+            --text-primary: var(--custom-card-text);
+            --text-secondary: var(--custom-secondary-text);
+            --text-accent: var(--custom-card-text);
+            --accent: var(--custom-accent);
+            --accent-hover: var(--custom-accent-dark);
+            --border: rgba(203, 213, 225, 0.3);
+            --backdrop-blur: var(--custom-backdrop-blur);
+            
+            /* Header specific */
+            --header-bg: linear-gradient(var(--custom-gradient-direction), var(--custom-primary) 0%, var(--custom-primary-dark) 100%);
+            --star-opacity: 0.5;
+            --moon-color: radial-gradient(circle at 30% 30%, var(--custom-accent), var(--custom-accent-dark));
+        }
+
+        /* ==================== BASE LAYOUT ==================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            height: 100vh;
+            width: 100vw;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            transition: var(--transition-smooth);
+            background: var(--bg-primary);
+        }
+
+        .page {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            backdrop-filter: var(--backdrop-blur);
+            transition: var(--transition-smooth);
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .page.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* ==================== ANIMATED HEADER ==================== */
+        .animated-header {
+            height: 20vh;
+            background: var(--header-bg);
+            position: relative;
+            overflow: hidden;
+            border-bottom: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            animation: header-glow 4s ease-in-out infinite alternate;
+        }
+
+        .animated-header::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, 
+                #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57, #ff9ff3,
+                #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57, #ff9ff3
+            );
+            background-size: 300% 300%;
+            animation: continuous-gradient 8s ease infinite;
+            border-radius: 4px;
+            z-index: -1;
+            opacity: 0.3;
+        }
+
+        @keyframes header-glow {
+            0% {
+                filter: brightness(1) drop-shadow(0 0 10px rgba(255,255,255,0.15));
+            }
+            100% {
+                filter: brightness(1.05) drop-shadow(0 0 25px rgba(255,255,255,0.3));
+            }
+        }
+
+        @keyframes continuous-gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .star-field {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(1px 1px at 20px 30px, #fff, transparent),
+                radial-gradient(1px 1px at 40px 70px, #fff, transparent),
+                radial-gradient(1px 1px at 90px 40px, #fff, transparent),
+                radial-gradient(1px 1px at 130px 80px, #fff, transparent),
+                radial-gradient(1px 1px at 160px 20px, #fff, transparent),
+                radial-gradient(1px 1px at 200px 60px, #fff, transparent),
+                radial-gradient(1px 1px at 240px 40px, #fff, transparent),
+                radial-gradient(1px 1px at 280px 80px, #fff, transparent),
+                radial-gradient(1px 1px at 320px 30px, #fff, transparent),
+                radial-gradient(1px 1px at 360px 70px, #fff, transparent),
+                radial-gradient(1px 1px at 400px 50px, #fff, transparent),
+                radial-gradient(1px 1px at 440px 90px, #fff, transparent),
+                radial-gradient(1px 1px at 480px 25px, #fff, transparent),
+                radial-gradient(1px 1px at 520px 65px, #fff, transparent),
+                radial-gradient(1px 1px at 560px 45px, #fff, transparent),
+                radial-gradient(1px 1px at 600px 85px, #fff, transparent);
+            background-size: 640px 100px;
+            animation: star-scroll 20s linear infinite;
+            opacity: var(--star-opacity);
+        }
+
+        .turtle-section {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            z-index: 10;
+            position: relative;
+        }
+
+        .turtle-trail-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .turtle-sprite {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            animation: swim 2s ease-in-out infinite;
+            filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.5));
+            z-index: 15;
+        }
+
+        .rainbow-trail {
+            width: 300px;
+            height: 8px;
+            background: linear-gradient(
+                90deg,
+                #ff0000 0%, #ff7700 14.28%, #ffdd00 28.57%, #00ff00 42.85%, 
+                #0077ff 57.14%, #4400ff 71.42%, #ff0088 85.71%, #ff0000 100%
+            );
+            background-size: 200% 100%;
+            animation: rainbow-flow 2s linear infinite;
+            border-radius: 4px;
+            opacity: 0.9;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            position: relative;
+        }
+
+        .rainbow-trail::before {
+            content: '✨';
+            position: absolute;
+            top: -15px;
+            left: 20%;
+            font-size: 12px;
+            animation: sparkle-float-1 4s ease-in-out infinite;
+            z-index: 10;
+            filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.8));
+        }
+
+        .rainbow-trail::after {
+            content: '✨';
+            position: absolute;
+            top: -20px;
+            left: 60%;
+            font-size: 10px;
+            animation: sparkle-float-2 3.5s ease-in-out infinite;
+            z-index: 10;
+            filter: drop-shadow(0 0 3px rgba(255, 215, 0, 0.8));
+        }
+
+        .rainbow-trail .sparkle-1 {
+            content: '✨';
+            position: absolute;
+            top: -12px;
+            left: 40%;
+            font-size: 8px;
+            animation: sparkle-float-3 5s ease-in-out infinite;
+            z-index: 10;
+            filter: drop-shadow(0 0 3px rgba(255, 105, 180, 0.8));
+        }
+
+        .rainbow-trail .sparkle-2 {
+            content: '✨';
+            position: absolute;
+            top: -18px;
+            left: 80%;
+            font-size: 14px;
+            animation: sparkle-float-4 4.5s ease-in-out infinite;
+            z-index: 10;
+            filter: drop-shadow(0 0 3px rgba(0, 255, 255, 0.8));
+        }
+
+        .rainbow-trail .sparkle-3 {
+            content: '✨';
+            position: absolute;
+            top: 15px;
+            left: 25%;
+            font-size: 9px;
+            animation: sparkle-float-down-1 4.2s ease-in-out infinite;
+            z-index: 10;
+            filter: drop-shadow(0 0 3px rgba(255, 182, 193, 0.8));
+        }
+
+        .rainbow-trail .sparkle-4 {
+            content: '✨';
+            position: absolute;
+            top: 20px;
+            left: 55%;
+            font-size: 11px;
+            animation: sparkle-float-down-2 3.8s ease-in-out infinite;
+            z-index: 10;
+            filter: drop-shadow(0 0 3px rgba(173, 216, 230, 0.8));
+        }
+
+        .rainbow-trail .sparkle-5 {
+            content: '✨';
+            position: absolute;
+            top: 12px;
+            left: 75%;
+            font-size: 7px;
+            animation: sparkle-float-down-3 5.2s ease-in-out infinite;
+            z-index: 10;
+            filter: drop-shadow(0 0 3px rgba(255, 218, 185, 0.8));
+        }
+
+        .title-text {
+            color: #ffffff;
+            font-size: clamp(1.2rem, 2.8vw, 2rem);
+            font-weight: 800;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-shadow: 
+                2px 2px 8px rgba(0,0,0,0.8), 
+                0 0 20px rgba(255,255,255,0.3),
+                0 0 30px rgba(255,255,255,0.2),
+                0 0 40px rgba(255,255,255,0.1);
+            margin-left: 0;
+            margin-top: 0.3rem;
+            margin-bottom: 0.5rem;
+            z-index: 15;
+            line-height: 1.2;
+            letter-spacing: 0.05em;
+            background: linear-gradient(135deg, #ffffff 0%, #f0f8ff 50%, #e6f3ff 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: title-glow 3s ease-in-out infinite alternate;
+            position: relative;
+            white-space: nowrap;
+            overflow: visible;
+            text-align: center;
+            width: 100%;
+            padding: 0 1rem;
+            box-sizing: border-box;
+        }
+
+        .title-text::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57, #ff9ff3);
+            background-size: 400% 400%;
+            animation: rainbow-border 4s ease infinite;
+            border-radius: 8px;
+            z-index: -1;
+            opacity: 0.3;
+        }
+
+        @keyframes title-glow {
+            0% {
+                filter: brightness(1) drop-shadow(0 0 5px rgba(255,255,255,0.3));
+            }
+            100% {
+                filter: brightness(1.2) drop-shadow(0 0 15px rgba(255,255,255,0.5));
+            }
+        }
+
+        @keyframes rainbow-border {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .moon-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            z-index: 10;
+        }
+
+        .moon {
+            width: clamp(30px, 5vw, 50px);
+            height: clamp(30px, 5vw, 50px);
+            border-radius: 50%;
+            background: var(--moon-color);
+            animation: moon-glow 6s ease-in-out infinite;
+            transition: var(--transition-smooth);
+        }
+
+        .theme-selector {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .theme-toggle-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border);
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            z-index: 1002;
+        }
+        
+        .theme-toggle-btn:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--accent);
+        }
+        
+        .theme-toggle-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+        
+        .theme-options {
+            position: absolute;
+            top: 45px;
+            right: -10px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            max-width: 300px;
+            box-shadow: var(--shadow-xl);
+            backdrop-filter: var(--backdrop-blur);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1001;
+        }
+        
+        .theme-options.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        /* ==================== GLOBAL THEME SELECTOR ==================== */
+        .global-theme-selector {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            z-index: 1003;
+        }
+
+        .global-theme-selector .theme-toggle-btn {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border);
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .global-theme-selector .theme-toggle-btn:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--accent);
+        }
+
+        .global-theme-selector .theme-toggle-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        .global-theme-selector .theme-options {
+            position: absolute;
+            top: 0;
+            right: 42px;
+            transform-origin: right center;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border);
+            border-radius: var(--border-radius);
+            padding: 0.5rem;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            gap: 0.2rem;
+            width: 350px;
+            box-shadow: var(--shadow-xl);
+            backdrop-filter: var(--backdrop-blur);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateX(10px);
+            transition: all 0.3s ease;
+        }
+
+        .global-theme-selector .theme-options.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(0);
+        }
+
+        .theme-btn {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .theme-btn:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .theme-btn.active {
+            border-color: var(--accent);
+            transform: scale(1.2);
+        }
+
+        .theme-btn[data-theme="classic"] { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .theme-btn[data-theme="classic-light"] { background: linear-gradient(135deg, #e3f2fd, #bbdefb); }
+        .theme-btn[data-theme="classic-dark"] { background: linear-gradient(135deg, #1e3a8a, #3730a3); }
+        .theme-btn[data-theme="dark"] { background: linear-gradient(135deg, #0f172a, #1e293b); }
+        .theme-btn[data-theme="dark-light"] { background: linear-gradient(135deg, #f1f5f9, #e2e8f0); }
+        .theme-btn[data-theme="dark-dark"] { background: linear-gradient(135deg, #020617, #0f172a); }
+        .theme-btn[data-theme="ocean"] { background: linear-gradient(135deg, #006064, #0097a7); }
+        .theme-btn[data-theme="ocean-light"] { background: linear-gradient(135deg, #e0f2f1, #b2dfdb); }
+        .theme-btn[data-theme="ocean-dark"] { background: linear-gradient(135deg, #042f2e, #064e3b); }
+        .theme-btn[data-theme="forest"] { background: linear-gradient(135deg, #2e7d32, #43a047); }
+        .theme-btn[data-theme="forest-light"] { background: linear-gradient(135deg, #f0fdf4, #dcfce7); }
+        .theme-btn[data-theme="forest-dark"] { background: linear-gradient(135deg, #052e16, #064e3b); }
+        .theme-btn[data-theme="sunset"] { background: linear-gradient(135deg, #ff6b35, #ffd23f); }
+        .theme-btn[data-theme="sunset-light"] { background: linear-gradient(135deg, #fef3c7, #fde68a); }
+        .theme-btn[data-theme="sunset-dark"] { background: linear-gradient(135deg, #451a03, #7c2d12); }
+        .theme-btn[data-theme="custom"] { 
+            background: linear-gradient(135deg, #6366f1, #8b5cf6); 
+            position: relative;
+        }
+        .theme-btn[data-theme="custom"]::after {
+            content: "🎨";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 12px;
+        }
+
+        /* ==================== CUSTOM COLOR PICKER ==================== */
+        .custom-color-picker {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--bg-secondary);
+            border: 2px solid var(--border);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            box-shadow: var(--shadow-xl);
+            backdrop-filter: var(--backdrop-blur);
+            z-index: 1000;
+            min-width: 300px;
+            max-width: 800px;
+            max-height: 85vh;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .custom-color-picker.show {
+            display: block;
+        }
+
+        .color-picker-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .color-picker-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #ffffff;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+        }
+
+        .color-picker-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: var(--transition-smooth);
+        }
+
+        .color-picker-close:hover {
+            color: var(--text-primary);
+        }
+
+        /* ==================== LIVE PREVIEW ==================== */
+        .color-picker-preview {
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--border-radius);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .preview-label {
+            color: #ffffff;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+        }
+
+        .preview-card {
+            background: var(--custom-card-bg, rgba(255, 255, 255, 0.95));
+            border-radius: var(--border-radius);
+            padding: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: var(--custom-backdrop-blur, blur(10px));
+            transition: all 0.3s ease;
+        }
+
+        .preview-header {
+            color: var(--custom-card-text, #1a202c);
+            font-weight: bold;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .preview-content {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .preview-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .preview-item .preview-label {
+            color: var(--custom-secondary-text, #4a5568);
+            font-size: 0.8rem;
+            margin-bottom: 0;
+        }
+
+        .preview-item .preview-value {
+            color: var(--custom-card-text, #1a202c);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .color-input-group {
+            margin-bottom: 0.75rem;
+        }
+
+        .color-input-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #ffffff;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+        }
+
+        .color-input-row {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .color-input {
+            width: 60px;
+            height: 40px;
+            border: 2px solid var(--border);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+
+        .color-input:hover {
+            border-color: var(--accent);
+            transform: scale(1.05);
+        }
+
+        .color-input-value {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: var(--border-radius);
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            font-family: monospace;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+        }
+
+        .color-picker-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .color-picker-btn {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+
+        .color-picker-btn.primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .color-picker-btn.primary:hover {
+            background: var(--accent-hover);
+        }
+
+        .color-picker-btn.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+        }
+
+        .color-picker-btn.secondary:hover {
+            background: var(--border);
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 999;
+            display: none;
+        }
+
+        .overlay.show {
+            display: block;
+        }
+
+        /* ==================== GRADIENT & OPACITY CONTROLS ==================== */
+        .gradient-controls, .opacity-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .gradient-row, .opacity-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .gradient-label, .opacity-label {
+            color: #ffffff;
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+            min-width: 100px;
+        }
+
+        .gradient-select {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: var(--border-radius);
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            font-size: 0.9rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+        }
+
+        .gradient-select option {
+            background: #2d3748;
+            color: #ffffff;
+        }
+
+        .opacity-slider {
+            flex: 1;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.2);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .opacity-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #ffffff;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .opacity-slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #ffffff;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .opacity-value {
+            color: #ffffff;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+            min-width: 40px;
+            text-align: right;
+        }
+
+        /* ==================== WEATHER CARD ==================== */
+        .weather-section {
+            height: 10vh;
+            min-height: 80px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 1.5rem;
+            backdrop-filter: var(--backdrop-blur);
+            overflow: hidden;
+        }
+
+        .current-weather {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .weather-icon-large {
+            font-size: 2.5rem;
+            animation: weather-float 3s ease-in-out infinite;
+        }
+
+        .weather-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .weather-temp {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+
+        .weather-condition {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .weather-details {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            opacity: 0.8;
+        }
+
+        .forecast-container {
+            flex: 1;
+            display: flex;
+            gap: 0.8rem;
+            justify-content: flex-end;
+            max-width: 400px;
+        }
+
+        .forecast-day {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.2rem;
+            padding: 0.3rem;
+            border-radius: var(--border-radius);
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            min-width: 45px;
+            max-height: 70px;
+            transition: var(--transition-smooth);
+        }
+
+        .forecast-day:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-base);
+        }
+
+        .forecast-day-name {
+            font-size: 0.6rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            line-height: 1;
+        }
+
+        .forecast-icon {
+            font-size: 1.2rem;
+            line-height: 1;
+        }
+
+        .forecast-temp {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1;
+        }
+
+        .forecast-high {
+            color: var(--accent);
+        }
+
+        .forecast-low {
+            color: var(--text-secondary);
+            opacity: 0.7;
+        }
+
+        @keyframes weather-float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+
+        @keyframes weather-sun-rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes weather-cloud-float {
+            0%, 100% { transform: translateX(0px); }
+            50% { transform: translateX(10px); }
+        }
+
+        @keyframes weather-rain-bounce {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(5px); }
+        }
+
+        /* ==================== MAIN CONTENT ==================== */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 1rem;
+            gap: 1rem;
+            overflow: hidden;
+            height: calc(100vh - 20vh - 10vh - 8vh); /* Adjust for header (20vh), weather (10vh), navigation (8vh) */
+            max-height: calc(100vh - 20vh - 10vh - 8vh);
+        }
+
+        .status-cards {
+            display: flex;
+            gap: 1rem;
+            height: 40vh;
+            min-height: 200px;
+            max-height: 300px;
+        }
+
+        .status-card {
+            flex: 1;
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: var(--backdrop-blur);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-base);
+            transition: var(--transition-smooth);
+        }
+
+        .status-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .card-value {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .card-subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        /* ==================== SYSTEM INDICATORS ==================== */
+        .system-indicators {
+            height: 20vh;
+            display: flex;
+            gap: 1rem;
+            justify-content: space-between;
+        }
+
+        .indicator {
+            flex: 1;
+            background: var(--bg-tertiary);
+            border-radius: var(--border-radius);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: var(--backdrop-blur);
+            border: 1px solid var(--border);
+            transition: var(--transition-bounce);
+            cursor: pointer;
+        }
+
+        .indicator:hover {
+            transform: scale(1.05);
+        }
+
+        .indicator-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .indicator-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* Status colors */
+        .status-excellent { color: var(--status-excellent) !important; }
+        .status-good { color: var(--status-good) !important; }
+        .status-warning { color: var(--status-warning) !important; }
+        .status-critical { color: var(--status-critical) !important; }
+
+        /* ==================== NAVIGATION ==================== */
+        .navigation {
+            height: 8vh;
+            min-height: 60px;
+            display: flex;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            background: var(--bg-secondary);
+            backdrop-filter: var(--backdrop-blur);
+            border-top: 1px solid var(--border);
+        }
+
+        .nav-btn {
+            flex: 1;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: var(--border-radius);
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-bounce);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.2rem;
+            padding: 0.3rem;
+        }
+
+        .nav-btn:hover {
+            background: var(--accent);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .nav-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent-hover);
+        }
+
+        .nav-icon {
+            font-size: 1.2rem;
+        }
+
+        /* ==================== ANIMATIONS ==================== */
+        @keyframes swim {
+            0%, 100% { transform: translateY(0px) rotate(-1deg); }
+            50% { transform: translateY(-5px) rotate(1deg); }
+        }
+
+        @keyframes rainbow-flow {
+            0% { background-position: 200% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes sparkle-float-1 {
+            0% { 
+                opacity: 0; 
+                transform: translateY(0px) translateX(0px) rotate(0deg) scale(0.5); 
+            }
+            25% { 
+                opacity: 1; 
+                transform: translateY(-8px) translateX(5px) rotate(90deg) scale(1); 
+            }
+            50% { 
+                opacity: 0.8; 
+                transform: translateY(-15px) translateX(-3px) rotate(180deg) scale(1.2); 
+            }
+            75% { 
+                opacity: 0.6; 
+                transform: translateY(-20px) translateX(8px) rotate(270deg) scale(0.8); 
+            }
+            100% { 
+                opacity: 0; 
+                transform: translateY(-25px) translateX(0px) rotate(360deg) scale(0.5); 
+            }
+        }
+
+        @keyframes sparkle-float-2 {
+            0% { 
+                opacity: 0; 
+                transform: translateY(0px) translateX(0px) rotate(0deg) scale(0.5); 
+            }
+            30% { 
+                opacity: 1; 
+                transform: translateY(-10px) translateX(-5px) rotate(120deg) scale(1.1); 
+            }
+            60% { 
+                opacity: 0.9; 
+                transform: translateY(-18px) translateX(7px) rotate(240deg) scale(1.3); 
+            }
+            100% { 
+                opacity: 0; 
+                transform: translateY(-28px) translateX(-2px) rotate(360deg) scale(0.6); 
+            }
+        }
+
+        @keyframes sparkle-float-3 {
+            0% { 
+                opacity: 0; 
+                transform: translateY(0px) translateX(0px) rotate(0deg) scale(0.5); 
+            }
+            20% { 
+                opacity: 1; 
+                transform: translateY(-6px) translateX(3px) rotate(60deg) scale(0.9); 
+            }
+            40% { 
+                opacity: 0.8; 
+                transform: translateY(-12px) translateX(-4px) rotate(120deg) scale(1.1); 
+            }
+            60% { 
+                opacity: 0.6; 
+                transform: translateY(-18px) translateX(6px) rotate(180deg) scale(0.8); 
+            }
+            80% { 
+                opacity: 0.4; 
+                transform: translateY(-22px) translateX(-3px) rotate(240deg) scale(0.7); 
+            }
+            100% { 
+                opacity: 0; 
+                transform: translateY(-26px) translateX(0px) rotate(300deg) scale(0.5); 
+            }
+        }
+
+        @keyframes sparkle-float-4 {
+            0% { 
+                opacity: 0; 
+                transform: translateY(0px) translateX(0px) rotate(0deg) scale(0.5); 
+            }
+            25% { 
+                opacity: 1; 
+                transform: translateY(-9px) translateX(-6px) rotate(90deg) scale(1.2); 
+            }
+            50% { 
+                opacity: 0.9; 
+                transform: translateY(-16px) translateX(4px) rotate(180deg) scale(1.4); 
+            }
+            75% { 
+                opacity: 0.7; 
+                transform: translateY(-22px) translateX(-5px) rotate(270deg) scale(1.1); 
+            }
+            100% { 
+                opacity: 0; 
+                transform: translateY(-30px) translateX(0px) rotate(360deg) scale(0.6); 
+            }
+        }
+
+        @keyframes sparkle-float-down-1 {
+            0% { 
+                opacity: 0; 
+                transform: translateY(0px) translateX(0px) rotate(0deg) scale(0.5); 
+            }
+            25% { 
+                opacity: 1; 
+                transform: translateY(8px) translateX(4px) rotate(90deg) scale(1.1); 
+            }
+            50% { 
+                opacity: 0.8; 
+                transform: translateY(15px) translateX(-3px) rotate(180deg) scale(1.3); 
+            }
+            75% { 
+                opacity: 0.6; 
+                transform: translateY(22px) translateX(6px) rotate(270deg) scale(0.9); 
+            }
+            100% { 
+                opacity: 0; 
+                transform: translateY(28px) translateX(0px) rotate(360deg) scale(0.5); 
+            }
+        }
+
+        @keyframes sparkle-float-down-2 {
+            0% { 
+                opacity: 0; 
+                transform: translateY(0px) translateX(0px) rotate(0deg) scale(0.5); 
+            }
+            30% { 
+                opacity: 1; 
+                transform: translateY(10px) translateX(-5px) rotate(120deg) scale(1.2); 
+            }
+            60% { 
+                opacity: 0.9; 
+                transform: translateY(18px) translateX(7px) rotate(240deg) scale(1.4); 
+            }
+            100% { 
+                opacity: 0; 
+                transform: translateY(25px) translateX(-2px) rotate(360deg) scale(0.6); 
+            }
+        }
+
+        @keyframes sparkle-float-down-3 {
+            0% { 
+                opacity: 0; 
+                transform: translateY(0px) translateX(0px) rotate(0deg) scale(0.5); 
+            }
+            20% { 
+                opacity: 1; 
+                transform: translateY(6px) translateX(3px) rotate(60deg) scale(0.9); 
+            }
+            40% { 
+                opacity: 0.8; 
+                transform: translateY(12px) translateX(-4px) rotate(120deg) scale(1.1); 
+            }
+            60% { 
+                opacity: 0.6; 
+                transform: translateY(18px) translateX(6px) rotate(180deg) scale(0.8); 
+            }
+            80% { 
+                opacity: 0.4; 
+                transform: translateY(24px) translateX(-3px) rotate(240deg) scale(0.7); 
+            }
+            100% { 
+                opacity: 0; 
+                transform: translateY(30px) translateX(0px) rotate(300deg) scale(0.5); 
+            }
+        }
+
+        @keyframes star-scroll {
+            0% { background-position: 0px 0px; }
+            100% { background-position: -640px 0px; }
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: var(--star-opacity); transform: scale(1); }
+            50% { opacity: calc(var(--star-opacity) * 2); transform: scale(1.2); }
+        }
+
+        @keyframes moon-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.3); }
+            50% { box-shadow: 0 0 30px rgba(255, 255, 255, 0.6); }
+        }
+
+        @keyframes pulse-gentle {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        @keyframes data-update {
+            0% { background-color: transparent; }
+            50% { background-color: var(--accent); opacity: 0.3; }
+            100% { background-color: transparent; }
+        }
+
+        /* ==================== CAMERA PAGE ==================== */
+        .camera-feed {
+            height: 55vh;
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--text-secondary);
+            border: 2px dashed var(--border);
+        }
+
+        .camera-controls {
+            height: 10vh;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .control-btn {
+            padding: 0.5rem 1rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: var(--border-radius);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+
+        .control-btn:hover {
+            background: var(--accent);
+            color: white;
+        }
+
+        /* ==================== DATA PAGE ==================== */
+        .data-charts {
+            height: 35vh;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .chart-container {
+            flex: 1;
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+        }
+        
+        .chart-container h3 {
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .chart-container p {
+            color: var(--text-secondary);
+            margin: 0.25rem 0;
+        }
+
+        .activity-log {
+            height: 35vh;
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+        }
+        
+        .activity-log h3 {
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .log-entry {
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+            background: var(--bg-tertiary);
+            border-radius: calc(var(--border-radius) / 2);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition-smooth);
+            color: var(--text-primary);
+        }
+
+        .log-entry:hover {
+            background: var(--accent);
+            color: white;
+        }
+
+        /* ==================== RESPONSIVE DESIGN ==================== */
+        @media (max-width: 768px) {
+            .status-cards {
+                flex-direction: column;
+                height: auto;
+            }
+            
+            .system-indicators {
+                flex-wrap: wrap;
+                height: auto;
+            }
+            
+            .theme-selector {
+                display: none; /* Hide on mobile to save space */
+            }
+        }
+    </style>
+</head>
+<body data-theme="classic">
+
+    <!-- Status Overview Page -->
+    <div class="page active" id="status-page">
+        <div class="animated-header">
+            <div class="star-field"></div>
+            <div class="turtle-section">
+                <div class="turtle-trail-row">
+                    <div class="turtle-sprite">🐢</div>
+                    <div class="rainbow-trail">
+                        <div class="sparkle-1">✨</div>
+                        <div class="sparkle-2">✨</div>
+                        <div class="sparkle-3">✨</div>
+                        <div class="sparkle-4">✨</div>
+                        <div class="sparkle-5">✨</div>
+                    </div>
+                </div>
+                <div class="title-text">ShrimpCenter</div>
+            </div>
+            <div class="moon-section">
+                <div class="global-theme-selector">
+                    <div class="theme-toggle-btn" id="theme-toggle-btn" title="Theme Options">🎨</div>
+                    <div class="theme-options" id="theme-options">
+                        <div class="theme-btn active" data-theme="classic" title="Classic"></div>
+                        <div class="theme-btn" data-theme="classic-light" title="Classic Light"></div>
+                        <div class="theme-btn" data-theme="classic-dark" title="Classic Dark"></div>
+                        <div class="theme-btn" data-theme="dark" title="Dark"></div>
+                        <div class="theme-btn" data-theme="dark-light" title="Dark Light"></div>
+                        <div class="theme-btn" data-theme="dark-dark" title="Dark Dark"></div>
+                        <div class="theme-btn" data-theme="ocean" title="Ocean"></div>
+                        <div class="theme-btn" data-theme="ocean-light" title="Ocean Light"></div>
+                        <div class="theme-btn" data-theme="ocean-dark" title="Ocean Dark"></div>
+                        <div class="theme-btn" data-theme="forest" title="Forest"></div>
+                        <div class="theme-btn" data-theme="forest-light" title="Forest Light"></div>
+                        <div class="theme-btn" data-theme="forest-dark" title="Forest Dark"></div>
+                        <div class="theme-btn" data-theme="sunset" title="Sunset"></div>
+                        <div class="theme-btn" data-theme="sunset-light" title="Sunset Light"></div>
+                        <div class="theme-btn" data-theme="sunset-dark" title="Sunset Dark"></div>
+                        <div class="theme-btn" data-theme="custom" title="Custom Colors" id="custom-theme-btn"></div>
+                    </div>
+                </div>
+                <div class="moon"></div>
+            </div>
+        </div>
+
+        <!-- Weather Section -->
+        <div class="weather-section">
+            <div class="current-weather">
+                <div class="weather-icon-large" id="current-weather-icon">🌤️</div>
+                <div class="weather-info">
+                    <div class="weather-temp" id="current-weather-temp">72°F</div>
+                    <div class="weather-condition" id="current-weather-condition">Partly Cloudy</div>
+                    <div class="weather-details">
+                        <span id="current-wind">Wind: 8 mph</span>
+                        <span id="current-humidity">Humidity: 65%</span>
+                        <span id="current-feels-like">Feels like: 74°F</span>
+                    </div>
+                </div>
+            </div>
+            <div class="forecast-container">
+                <div class="forecast-day">
+                    <div class="forecast-day-name">Today</div>
+                    <div class="forecast-icon">🌤️</div>
+                    <div class="forecast-temp">
+                        <div class="forecast-high">75°</div>
+                        <div class="forecast-low">68°</div>
+                    </div>
+                </div>
+                <div class="forecast-day">
+                    <div class="forecast-day-name">Wed</div>
+                    <div class="forecast-icon">☀️</div>
+                    <div class="forecast-temp">
+                        <div class="forecast-high">78°</div>
+                        <div class="forecast-low">70°</div>
+                    </div>
+                </div>
+                <div class="forecast-day">
+                    <div class="forecast-day-name">Thu</div>
+                    <div class="forecast-icon">🌧️</div>
+                    <div class="forecast-temp">
+                        <div class="forecast-high">72°</div>
+                        <div class="forecast-low">65°</div>
+                    </div>
+                </div>
+                <div class="forecast-day">
+                    <div class="forecast-day-name">Fri</div>
+                    <div class="forecast-icon">⛅</div>
+                    <div class="forecast-temp">
+                        <div class="forecast-high">76°</div>
+                        <div class="forecast-low">68°</div>
+                    </div>
+                </div>
+                <div class="forecast-day">
+                    <div class="forecast-day-name">Sat</div>
+                    <div class="forecast-icon">☀️</div>
+                    <div class="forecast-temp">
+                        <div class="forecast-high">80°</div>
+                        <div class="forecast-low">72°</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="status-cards">
+                <div class="status-card">
+                    <div class="card-icon">🔥</div>
+                    <div class="card-title">Basking Area</div>
+                    <div class="card-value" id="basking-temp">95.2°F</div>
+                    <div class="card-subtitle" id="basking-humidity">Humidity: 45%</div>
+                </div>
+                <div class="status-card">
+                    <div class="card-icon">❄️</div>
+                    <div class="card-title">Cool Side</div>
+                    <div class="card-value" id="cool-temp">78.5°F</div>
+                    <div class="card-subtitle" id="cool-humidity">Humidity: 65%</div>
+                </div>
+            </div>
+
+            <div class="system-indicators">
+                <div class="indicator">
+                    <div class="indicator-icon status-excellent">🌡️</div>
+                    <div class="indicator-label">Heater</div>
+                </div>
+                <div class="indicator">
+                    <div class="indicator-icon status-excellent">💡</div>
+                    <div class="indicator-label">UV Light</div>
+                </div>
+                <div class="indicator">
+                    <div class="indicator-icon status-excellent">⚡</div>
+                    <div class="indicator-label">Power</div>
+                </div>
+                <div class="indicator">
+                    <div class="indicator-icon status-excellent">📡</div>
+                    <div class="indicator-label">Network</div>
+                </div>
+                <div class="indicator">
+                    <div class="indicator-icon status-excellent">✅</div>
+                    <div class="indicator-label">Status</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="navigation">
+            <button class="nav-btn active" data-page="status">
+                <div class="nav-icon">📊</div>
+                <div>STATUS</div>
+            </button>
+            <button class="nav-btn" data-page="camera">
+                <div class="nav-icon">📹</div>
+                <div>CAMERA</div>
+            </button>
+            <button class="nav-btn" data-page="data">
+                <div class="nav-icon">📈</div>
+                <div>DATA</div>
+            </button>
+        </div>
+    </div>
+
+    <!-- Camera Page -->
+    <div class="page" id="camera-page">
+        <div class="animated-header">
+            <div class="star-field"></div>
+            <div class="turtle-section">
+                <div class="turtle-sprite">🐢</div>
+                <div class="rainbow-trail"></div>
+                <div class="title-text">Camera View</div>
+            </div>
+            <div class="moon-section">
+                <div class="moon"></div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="camera-feed">
+                📹 LIVE CAMERA FEED
+                <br>
+                <small>Connecting to stream...</small>
+            </div>
+
+            <div class="camera-controls">
+                <button class="control-btn">⚙️ Settings</button>
+                <button class="control-btn">🔄 Refresh</button>
+                <button class="control-btn">← Pan</button>
+                <button class="control-btn">Pan →</button>
+                <button class="control-btn">↑ Tilt</button>
+                <button class="control-btn">Tilt ↓</button>
+                <button class="control-btn">+ Zoom</button>
+                <button class="control-btn">- Zoom</button>
+            </div>
+        </div>
+
+        <div class="navigation">
+            <button class="nav-btn" data-page="status">
+                <div class="nav-icon">📊</div>
+                <div>STATUS</div>
+            </button>
+            <button class="nav-btn active" data-page="camera">
+                <div class="nav-icon">📹</div>
+                <div>CAMERA</div>
+            </button>
+            <button class="nav-btn" data-page="data">
+                <div class="nav-icon">📈</div>
+                <div>DATA</div>
+            </button>
+        </div>
+    </div>
+
+    <!-- Data Page -->
+    <div class="page" id="data-page">
+        <div class="animated-header">
+            <div class="star-field"></div>
+            <div class="turtle-section">
+                <div class="turtle-sprite">🐢</div>
+                <div class="rainbow-trail"></div>
+                <div class="title-text">Data & Logs</div>
+            </div>
+            <div class="moon-section">
+                <div class="moon"></div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="data-charts">
+                <div class="chart-container">
+                    <h3>📈 Temperature</h3>
+                    <p>Basking: 95°F</p>
+                    <p>Cool: 78°F</p>
+                    <div>[24H GRAPH]</div>
+                </div>
+                <div class="chart-container">
+                    <h3>💧 Humidity</h3>
+                    <p>Basking: 45%</p>
+                    <p>Cool: 65%</p>
+                    <div>[24H GRAPH]</div>
+                </div>
+            </div>
+
+            <div class="activity-log">
+                <h3>📋 Recent Activity</h3>
+                <div class="log-entry">
+                    <span>✅</span>
+                    <span>14:32 UV cycle completed</span>
+                </div>
+                <div class="log-entry">
+                    <span>✅</span>
+                    <span>13:15 Temperature check passed</span>
+                </div>
+                <div class="log-entry">
+                    <span>ℹ️</span>
+                    <span>12:45 Motion detected</span>
+                </div>
+                <div class="log-entry">
+                    <span>⚠️</span>
+                    <span>11:30 Humidity slightly low</span>
+                </div>
+                <div class="log-entry">
+                    <span>✅</span>
+                    <span>10:15 System health check</span>
+                </div>
+                <div class="log-entry">
+                    <span>ℹ️</span>
+                    <span>09:00 Daily cycle started</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="navigation">
+            <button class="nav-btn" data-page="status">
+                <div class="nav-icon">📊</div>
+                <div>STATUS</div>
+            </button>
+            <button class="nav-btn" data-page="camera">
+                <div class="nav-icon">📹</div>
+                <div>CAMERA</div>
+            </button>
+            <button class="nav-btn active" data-page="data">
+                <div class="nav-icon">📈</div>
+                <div>DATA</div>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Detect kiosk mode and apply cursor hiding
+        function detectKioskMode() {
+            // Check if running in kiosk mode (Chrome with --kiosk flag)
+            const isKiosk = window.navigator.userAgent.includes('Chrome') && 
+                           (window.screen.width === 1024 && window.screen.height === 600) &&
+                           window.location.href.includes('8123');
+            
+            if (isKiosk) {
+                document.documentElement.classList.add('kiosk-mode');
+                console.log('Kiosk mode detected - cursor hidden');
+            }
+        }
+
+        // ==================== THEME SYSTEM ==================== //
+        class ThemeManager {
+            constructor() {
+                this.themes = [
+                    'classic', 'classic-light', 'classic-dark',
+                    'dark', 'dark-light', 'dark-dark',
+                    'ocean', 'ocean-light', 'ocean-dark',
+                    'forest', 'forest-light', 'forest-dark',
+                    'sunset', 'sunset-light', 'sunset-dark',
+                    'custom'
+                ];
+                this.currentTheme = localStorage.getItem('turtx-theme') || 'classic';
+                this.init();
+            }
+
+            init() {
+                this.applyTheme(this.currentTheme);
+                this.bindEvents();
+            }
+
+            applyTheme(themeName) {
+                if (!this.themes.includes(themeName)) return;
+                
+                // Set the theme attribute on the body element
+                document.body.setAttribute('data-theme', themeName);
+                this.currentTheme = themeName;
+                localStorage.setItem('turtx-theme', themeName);
+                
+                // Update theme selector buttons
+                document.querySelectorAll('.theme-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.theme === themeName);
+                });
+                
+                // Update theme toggle button text based on current theme
+                const themeToggleBtn = document.getElementById('theme-toggle-btn');
+                if (themeToggleBtn) {
+                    const themeEmojis = {
+                        'classic': '🎨',
+                        'classic-light': '☀️',
+                        'classic-dark': '🌙',
+                        'dark': '🌑',
+                        'dark-light': '🌤️',
+                        'dark-dark': '⚫',
+                        'ocean': '🌊',
+                        'ocean-light': '🌅',
+                        'ocean-dark': '🌊',
+                        'forest': '🌲',
+                        'forest-light': '🌿',
+                        'forest-dark': '🌳',
+                        'sunset': '🌅',
+                        'sunset-light': '🌇',
+                        'sunset-dark': '🌆',
+                        'custom': '🎨'
+                    };
+                    themeToggleBtn.textContent = themeEmojis[themeName] || '🎨';
+                }
+
+                // Trigger theme change event
+                document.dispatchEvent(new CustomEvent('themeChanged', { 
+                    detail: { theme: themeName } 
+                }));
+            }
+
+            setTheme(themeName) {
+                this.applyTheme(themeName);
+            }
+
+            bindEvents() {
+                // Theme toggle button
+                const themeToggleBtn = document.getElementById('theme-toggle-btn');
+                const themeOptions = document.getElementById('theme-options');
+                
+                if (themeToggleBtn && themeOptions) {
+                    themeToggleBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        themeOptions.classList.toggle('show');
+                        themeToggleBtn.classList.toggle('active');
+                    });
+                    
+                    // Close theme options when clicking outside
+                    document.addEventListener('click', (e) => {
+                        if (!themeOptions.contains(e.target) && !themeToggleBtn.contains(e.target)) {
+                            themeOptions.classList.remove('show');
+                            themeToggleBtn.classList.remove('active');
+                        }
+                    });
+                }
+                
+                // Theme selection buttons (both global and page-specific)
+                document.querySelectorAll('.theme-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        this.applyTheme(btn.dataset.theme);
+                        
+                        // Close all theme options after selection
+                        const allThemeOptions = document.querySelectorAll('.theme-options');
+                        const allThemeToggleBtns = document.querySelectorAll('.theme-toggle-btn');
+                        
+                        allThemeOptions.forEach(options => options.classList.remove('show'));
+                        allThemeToggleBtns.forEach(btn => btn.classList.remove('active'));
+                    });
+                });
+            }
+        }
+
+        // ==================== NAVIGATION SYSTEM ==================== //
+        class NavigationManager {
+            constructor() {
+                this.currentPage = 'status';
+                this.pages = ['status', 'camera', 'data'];
+                this.init();
+            }
+
+            init() {
+                this.bindEvents();
+                this.showPage(this.currentPage);
+            }
+
+            bindEvents() {
+                document.querySelectorAll('.nav-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        this.showPage(btn.dataset.page);
+                    });
+                });
+
+                // Swipe gestures for touch navigation
+                let startX = 0;
+                let startY = 0;
+
+                document.addEventListener('touchstart', (e) => {
+                    startX = e.touches[0].clientX;
+                    startY = e.touches[0].clientY;
+                });
+
+                document.addEventListener('touchend', (e) => {
+                    const endX = e.changedTouches[0].clientX;
+                    const endY = e.changedTouches[0].clientY;
+                    const diffX = startX - endX;
+                    const diffY = startY - endY;
+
+                    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+                        if (diffX > 0) {
+                            this.nextPage();
+                        } else {
+                            this.prevPage();
+                        }
+                    }
+                });
+
+                // Keyboard navigation
+                document.addEventListener('keydown', (e) => {
+                    switch(e.key) {
+                        case 'ArrowLeft':
+                            this.prevPage();
+                            break;
+                        case 'ArrowRight':
+                            this.nextPage();
+                            break;
+                        case '1':
+                            this.showPage('status');
+                            break;
+                        case '2':
+                            this.showPage('camera');
+                            break;
+                        case '3':
+                            this.showPage('data');
+                            break;
+                    }
+                });
+            }
+
+            showPage(pageName) {
+                if (!this.pages.includes(pageName)) return;
+
+                // Hide all pages
+                document.querySelectorAll('.page').forEach(page => {
+                    page.classList.remove('active');
+                });
+
+                // Show target page
+                const targetPage = document.getElementById(`${pageName}-page`);
+                if (targetPage) {
+                    setTimeout(() => {
+                        targetPage.classList.add('active');
+                    }, 100);
+                }
+
+                // Update navigation buttons
+                document.querySelectorAll('.nav-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.page === pageName);
+                });
+
+                this.currentPage = pageName;
+
+                document.dispatchEvent(new CustomEvent('pageChanged', { 
+                    detail: { page: pageName } 
+                }));
+            }
+
+            nextPage() {
+                const currentIndex = this.pages.indexOf(this.currentPage);
+                const nextIndex = (currentIndex + 1) % this.pages.length;
+                this.showPage(this.pages[nextIndex]);
+            }
+
+            prevPage() {
+                const currentIndex = this.pages.indexOf(this.currentPage);
+                const prevIndex = (currentIndex - 1 + this.pages.length) % this.pages.length;
+                this.showPage(this.pages[prevIndex]);
+            }
+        }
+
+        // ==================== WEATHER MANAGEMENT ==================== //
+        class WeatherManager {
+            constructor() {
+                this.apiKey = 'YOUR_OPENWEATHER_API_KEY'; // Replace with actual key
+                this.location = { lat: 45.5152, lon: -122.6784 }; // Portland, OR
+                this.currentWeather = null;
+                this.forecast = null;
+                this.updateInterval = 600000; // 10 minutes
+                this.init();
+            }
+
+            init() {
+                this.fetchWeatherData();
+                this.startWeatherPolling();
+            }
+
+            async fetchWeatherData() {
+                try {
+                    // Mock weather data for demonstration
+                    // In production, replace with actual OpenWeatherMap API calls
+                    const mockCurrentWeather = {
+                        temp: 72 + Math.random() * 6 - 3,
+                        condition: 'Partly Cloudy',
+                        icon: '🌤️',
+                        wind: 8 + Math.random() * 4 - 2,
+                        humidity: 65 + Math.random() * 10 - 5,
+                        feels_like: 74 + Math.random() * 4 - 2
+                    };
+
+                    const mockForecast = [
+                        { day: 'Today', icon: '🌤️', high: 75, low: 68 },
+                        { day: 'Wed', icon: '☀️', high: 78, low: 70 },
+                        { day: 'Thu', icon: '🌧️', high: 72, low: 65 },
+                        { day: 'Fri', icon: '⛅', high: 76, low: 68 },
+                        { day: 'Sat', icon: '☀️', high: 80, low: 72 }
+                    ];
+
+                    this.updateWeatherDisplay(mockCurrentWeather, mockForecast);
+                    
+                    // Real API calls would look like:
+                    // const currentResponse = await fetch(
+                    //     `https://api.openweathermap.org/data/2.5/weather?lat=${this.location.lat}&lon=${this.location.lon}&appid=${this.apiKey}&units=imperial`
+                    // );
+                    // const forecastResponse = await fetch(
+                    //     `https://api.openweathermap.org/data/2.5/forecast?lat=${this.location.lat}&lon=${this.location.lon}&appid=${this.apiKey}&units=imperial`
+                    // );
+                    
+                } catch (error) {
+                    console.error('Weather fetch error:', error);
+                    this.handleWeatherError();
+                }
+            }
+
+            updateWeatherDisplay(current, forecast) {
+                // Update current weather
+                const currentIcon = document.getElementById('current-weather-icon');
+                const currentTemp = document.getElementById('current-weather-temp');
+                const currentCondition = document.getElementById('current-weather-condition');
+                const currentWind = document.getElementById('current-wind');
+                const currentHumidity = document.getElementById('current-humidity');
+                const currentFeelsLike = document.getElementById('current-feels-like');
+
+                if (currentIcon) {
+                    currentIcon.textContent = current.icon;
+                    this.animateWeatherIcon(currentIcon, current.condition);
+                }
+                if (currentTemp) currentTemp.textContent = `${Math.round(current.temp)}°F`;
+                if (currentCondition) currentCondition.textContent = current.condition;
+                if (currentWind) currentWind.textContent = `Wind: ${Math.round(current.wind)} mph`;
+                if (currentHumidity) currentHumidity.textContent = `Humidity: ${Math.round(current.humidity)}%`;
+                if (currentFeelsLike) currentFeelsLike.textContent = `Feels like: ${Math.round(current.feels_like)}°F`;
+
+                // Update forecast
+                const forecastContainer = document.querySelector('.forecast-container');
+                if (forecastContainer && forecast) {
+                    forecastContainer.innerHTML = '';
+                    forecast.forEach(day => {
+                        const forecastDay = document.createElement('div');
+                        forecastDay.className = 'forecast-day';
+                        forecastDay.innerHTML = `
+                            <div class="forecast-day-name">${day.day}</div>
+                            <div class="forecast-icon">${day.icon}</div>
+                            <div class="forecast-temp">
+                                <div class="forecast-high">${day.high}°</div>
+                                <div class="forecast-low">${day.low}°</div>
+                            </div>
+                        `;
+                        forecastContainer.appendChild(forecastDay);
+                    });
+                }
+            }
+
+            animateWeatherIcon(iconElement, condition) {
+                // Remove existing animations
+                iconElement.style.animation = 'none';
+                
+                // Apply appropriate animation based on condition
+                if (condition.toLowerCase().includes('sunny') || condition.toLowerCase().includes('clear')) {
+                    iconElement.style.animation = 'weather-sun-rotate 20s linear infinite';
+                } else if (condition.toLowerCase().includes('cloud')) {
+                    iconElement.style.animation = 'weather-cloud-float 3s ease-in-out infinite';
+                } else if (condition.toLowerCase().includes('rain')) {
+                    iconElement.style.animation = 'weather-rain-bounce 1s ease-in-out infinite';
+                } else {
+                    iconElement.style.animation = 'weather-float 3s ease-in-out infinite';
+                }
+            }
+
+            handleWeatherError() {
+                const weatherElements = document.querySelectorAll('.weather-temp, .weather-condition, .weather-details');
+                weatherElements.forEach(element => {
+                    element.textContent = 'Weather unavailable';
+                    element.style.opacity = '0.5';
+                });
+            }
+
+            startWeatherPolling() {
+                this.weatherInterval = setInterval(() => {
+                    this.fetchWeatherData();
+                }, this.updateInterval);
+            }
+
+            stopWeatherPolling() {
+                if (this.weatherInterval) {
+                    clearInterval(this.weatherInterval);
+                }
+            }
+        }
+
+        // ==================== DATA MANAGEMENT ==================== //
+        class DataManager {
+            constructor() {
+                this.apiBase = 'http://10.0.20.69/api';
+                this.updateInterval = 2000;
+                this.isConnected = false;
+                this.lastData = null;
+                this.init();
+            }
+
+            init() {
+                this.startDataPolling();
+                this.bindEvents();
+            }
+
+            bindEvents() {
+                document.addEventListener('pageChanged', (e) => {
+                    if (e.detail.page === 'status') {
+                        this.updateInterval = 2000;
+                    } else {
+                        this.updateInterval = 5000;
+                    }
+                    this.restartPolling();
+                });
+            }
+
+            async fetchLatestData() {
+                try {
+                    // Mock data for demonstration
+                    const mockData = {
+                        basking_area: {
+                            temperature: 95.2 + Math.random() * 2 - 1,
+                            humidity: 45 + Math.random() * 5 - 2.5,
+                            temperature_unit: "F"
+                        },
+                        cooling_area: {
+                            temperature: 78.5 + Math.random() * 2 - 1,
+                            humidity: 65 + Math.random() * 5 - 2.5,
+                            temperature_unit: "F"
+                        },
+                        system_status: {
+                            heater: Math.random() > 0.3 ? "on" : "off",
+                            uv_light: Math.random() > 0.2 ? "on" : "off",
+                            power: "stable",
+                            network: "connected",
+                            alerts: Math.random() > 0.8 ? "temperature_warning" : "none"
+                        }
+                    };
+
+                    this.handleDataSuccess(mockData);
+                    return mockData;
+                } catch (error) {
+                    this.handleDataError(error);
+                    return null;
+                }
+            }
+
+            handleDataSuccess(data) {
+                this.isConnected = true;
+                this.lastData = data;
+                this.updateDashboard(data);
+            }
+
+            handleDataError(error) {
+                this.isConnected = false;
+                console.error('Data fetch error:', error);
+                if (this.lastData) {
+                    this.updateDashboard(this.lastData, true);
+                }
+            }
+
+            updateDashboard(data, isStale = false) {
+                const baskingTemp = document.getElementById('basking-temp');
+                const coolTemp = document.getElementById('cool-temp');
+                const baskingHumidity = document.getElementById('basking-humidity');
+                const coolHumidity = document.getElementById('cool-humidity');
+
+                if (baskingTemp && data.basking_area) {
+                    this.animateValueChange(baskingTemp, `${data.basking_area.temperature.toFixed(1)}°${data.basking_area.temperature_unit || 'F'}`);
+                }
+
+                if (coolTemp && data.cooling_area) {
+                    this.animateValueChange(coolTemp, `${data.cooling_area.temperature.toFixed(1)}°${data.cooling_area.temperature_unit || 'F'}`);
+                }
+
+                if (baskingHumidity && data.basking_area) {
+                    baskingHumidity.textContent = `Humidity: ${Math.round(data.basking_area.humidity)}%`;
+                }
+
+                if (coolHumidity && data.cooling_area) {
+                    coolHumidity.textContent = `Humidity: ${Math.round(data.cooling_area.humidity)}%`;
+                }
+
+                this.updateSystemIndicators(data.system_status || {});
+            }
+
+            animateValueChange(element, newValue) {
+                if (!element) return;
+                
+                const oldValue = element.textContent;
+                if (oldValue !== newValue) {
+                    element.style.animation = 'data-update 0.5s ease-in-out';
+                    element.textContent = newValue;
+                    
+                    setTimeout(() => {
+                        element.style.animation = '';
+                    }, 500);
+                }
+            }
+
+            updateSystemIndicators(status) {
+                const indicators = {
+                    heater: '🌡️',
+                    uv_light: '💡',
+                    power: '⚡',
+                    network: '📡',
+                    alerts: '✅'
+                };
+
+                Object.entries(indicators).forEach(([key, icon]) => {
+                    const indicator = document.querySelector(`.indicator:has(.indicator-icon:contains("${icon}"))`);
+                    if (!indicator) return;
+
+                    const iconElement = indicator.querySelector('.indicator-icon');
+                    const statusValue = status[key] || 'unknown';
+                    
+                    iconElement.classList.remove('status-excellent', 'status-good', 'status-warning', 'status-critical');
+                    
+                    switch (statusValue.toLowerCase()) {
+                        case 'on':
+                        case 'connected':
+                        case 'stable':
+                        case 'none':
+                            iconElement.classList.add('status-excellent');
+                            break;
+                        case 'warning':
+                        case 'low':
+                            iconElement.classList.add('status-warning');
+                            break;
+                        case 'critical':
+                        case 'off':
+                        case 'error':
+                        case 'disconnected':
+                            iconElement.classList.add('status-critical');
+                            break;
+                        default:
+                            iconElement.classList.add('status-excellent');
+                    }
+                });
+            }
+
+            startDataPolling() {
+                this.pollingInterval = setInterval(() => {
+                    this.fetchLatestData();
+                }, this.updateInterval);
+            }
+
+            stopDataPolling() {
+                if (this.pollingInterval) {
+                    clearInterval(this.pollingInterval);
+                }
+            }
+
+            restartPolling() {
+                this.stopDataPolling();
+                this.startDataPolling();
+            }
+        }
+
+        // ==================== CUSTOM COLOR PICKER ==================== //
+        class CustomColorPicker {
+            constructor() {
+                this.overlay = document.getElementById('color-picker-overlay');
+                this.picker = document.getElementById('custom-color-picker');
+                this.closeBtn = document.getElementById('color-picker-close');
+                this.cancelBtn = document.getElementById('color-picker-cancel');
+                this.applyBtn = document.getElementById('color-picker-apply');
+                this.customThemeBtn = document.getElementById('custom-theme-btn');
+                
+                this.colorInputs = {
+                    primary: document.getElementById('primary-color'),
+                    primaryDark: document.getElementById('primary-dark'),
+                    accent: document.getElementById('accent-color'),
+                    accentDark: document.getElementById('accent-color-dark'),
+                    cardBg: document.getElementById('card-bg'),
+                    cardText: document.getElementById('card-text'),
+                    secondaryText: document.getElementById('secondary-text')
+                };
+                
+                this.colorValues = {
+                    primary: document.getElementById('primary-color-value'),
+                    primaryDark: document.getElementById('primary-dark-value'),
+                    accent: document.getElementById('accent-color-value'),
+                    accentDark: document.getElementById('accent-color-dark-value'),
+                    cardBg: document.getElementById('card-bg-value'),
+                    cardText: document.getElementById('card-text-value'),
+                    secondaryText: document.getElementById('secondary-text-value')
+                };
+                
+                // Gradient and opacity controls
+                this.gradientControls = {
+                    direction: document.getElementById('gradient-direction'),
+                    type: document.getElementById('gradient-type')
+                };
+                
+                this.opacityControls = {
+                    cardBgOpacity: document.getElementById('card-bg-opacity'),
+                    cardOpacity: document.getElementById('card-opacity'),
+                    backdropBlur: document.getElementById('backdrop-blur')
+                };
+                
+                this.opacityValues = {
+                    cardBgOpacity: document.getElementById('card-bg-opacity-value'),
+                    cardOpacity: document.getElementById('card-opacity-value'),
+                    backdropBlur: document.getElementById('backdrop-blur-value')
+                };
+                
+                this.init();
+            }
+            
+            init() {
+                this.customThemeBtn.addEventListener('click', () => this.show());
+                this.closeBtn.addEventListener('click', () => this.hide());
+                this.cancelBtn.addEventListener('click', () => this.hide());
+                this.applyBtn.addEventListener('click', () => this.applyTheme());
+                this.overlay.addEventListener('click', () => this.hide());
+                
+                // Update color value displays when color inputs change
+                Object.entries(this.colorInputs).forEach(([key, input]) => {
+                    input.addEventListener('input', (e) => {
+                        this.colorValues[key].value = e.target.value;
+                    });
+                });
+                
+                // Update color inputs when value inputs change
+                Object.entries(this.colorValues).forEach(([key, input]) => {
+                    input.addEventListener('input', (e) => {
+                        this.colorInputs[key].value = e.target.value;
+                    });
+                });
+                
+                // Handle opacity slider changes
+                Object.entries(this.opacityControls).forEach(([key, slider]) => {
+                    slider.addEventListener('input', (e) => {
+                        const value = e.target.value;
+                        const displayElement = this.opacityValues[key];
+                        
+                        if (key === 'backdropBlur') {
+                            displayElement.textContent = `${value}px`;
+                        } else {
+                            displayElement.textContent = `${value}%`;
+                        }
+                        
+                        // Update live preview
+                        this.updatePreview();
+                    });
+                });
+                
+                // Add preview update to all color inputs
+                Object.values(this.colorInputs).forEach(input => {
+                    input.addEventListener('input', () => this.updatePreview());
+                });
+                
+                // Add preview update to gradient controls
+                Object.values(this.gradientControls).forEach(control => {
+                    control.addEventListener('change', () => this.updatePreview());
+                });
+            }
+            
+            show() {
+                this.overlay.classList.add('show');
+                this.picker.classList.add('show');
+                this.updatePreview(); // Initialize preview
+            }
+            
+            hide() {
+                this.overlay.classList.remove('show');
+                this.picker.classList.remove('show');
+            }
+            
+            updatePreview() {
+                const previewCard = document.getElementById('theme-preview-card');
+                if (!previewCard) return;
+                
+                // Get current values
+                const customColors = {
+                    primary: this.colorInputs.primary.value,
+                    primaryDark: this.colorInputs.primaryDark.value,
+                    accent: this.colorInputs.accent.value,
+                    accentDark: this.colorInputs.accentDark.value,
+                    cardBg: this.colorInputs.cardBg.value,
+                    cardText: this.colorInputs.cardText.value,
+                    secondaryText: this.colorInputs.secondaryText.value
+                };
+                
+                const cardBgOpacity = this.opacityControls.cardBgOpacity.value;
+                const backdropBlur = this.opacityControls.backdropBlur.value;
+                
+                // Convert hex to rgba for opacity
+                const hexToRgba = (hex, alpha) => {
+                    const r = parseInt(hex.slice(1, 3), 16);
+                    const g = parseInt(hex.slice(3, 5), 16);
+                    const b = parseInt(hex.slice(5, 7), 16);
+                    return `rgba(${r}, ${g}, ${b}, ${alpha / 100})`;
+                };
+                
+                // Update preview card styles
+                previewCard.style.setProperty('--custom-card-bg', hexToRgba(customColors.cardBg, cardBgOpacity));
+                previewCard.style.setProperty('--custom-card-text', customColors.cardText);
+                previewCard.style.setProperty('--custom-secondary-text', customColors.secondaryText);
+                previewCard.style.setProperty('--custom-backdrop-blur', `blur(${backdropBlur}px)`);
+                
+                // Update preview card background and text colors
+                previewCard.style.background = hexToRgba(customColors.cardBg, cardBgOpacity);
+                previewCard.style.backdropFilter = `blur(${backdropBlur}px)`;
+                
+                // Update text colors in preview
+                const previewHeader = previewCard.querySelector('.preview-header');
+                const previewValues = previewCard.querySelectorAll('.preview-item .preview-value');
+                const previewLabels = previewCard.querySelectorAll('.preview-item .preview-label');
+                
+                if (previewHeader) previewHeader.style.color = customColors.cardText;
+                previewValues.forEach(el => el.style.color = customColors.cardText);
+                previewLabels.forEach(el => el.style.color = customColors.secondaryText);
+            }
+            
+            applyTheme() {
+                const customColors = {
+                    primary: this.colorInputs.primary.value,
+                    primaryDark: this.colorInputs.primaryDark.value,
+                    accent: this.colorInputs.accent.value,
+                    accentDark: this.colorInputs.accentDark.value,
+                    cardBg: this.colorInputs.cardBg.value,
+                    cardText: this.colorInputs.cardText.value,
+                    secondaryText: this.colorInputs.secondaryText.value
+                };
+                
+                // Get gradient and opacity values
+                const gradientDirection = this.gradientControls.direction.value;
+                const gradientType = this.gradientControls.type.value;
+                const cardBgOpacity = this.opacityControls.cardBgOpacity.value;
+                const cardOpacity = this.opacityControls.cardOpacity.value;
+                const backdropBlur = this.opacityControls.backdropBlur.value;
+                
+                // Convert hex to rgba for opacity
+                const hexToRgba = (hex, alpha) => {
+                    const r = parseInt(hex.slice(1, 3), 16);
+                    const g = parseInt(hex.slice(3, 5), 16);
+                    const b = parseInt(hex.slice(5, 7), 16);
+                    return `rgba(${r}, ${g}, ${b}, ${alpha / 100})`;
+                };
+                
+                // Set CSS custom properties
+                document.documentElement.style.setProperty('--custom-primary', customColors.primary);
+                document.documentElement.style.setProperty('--custom-primary-dark', customColors.primaryDark);
+                document.documentElement.style.setProperty('--custom-accent', customColors.accent);
+                document.documentElement.style.setProperty('--custom-accent-dark', customColors.accentDark);
+                document.documentElement.style.setProperty('--custom-card-bg', hexToRgba(customColors.cardBg, cardBgOpacity));
+                document.documentElement.style.setProperty('--custom-card-text', customColors.cardText);
+                document.documentElement.style.setProperty('--custom-secondary-text', customColors.secondaryText);
+                document.documentElement.style.setProperty('--custom-gradient-direction', gradientDirection);
+                document.documentElement.style.setProperty('--custom-gradient-type', gradientType);
+                document.documentElement.style.setProperty('--custom-card-opacity', `${cardOpacity}%`);
+                document.documentElement.style.setProperty('--custom-backdrop-blur', `blur(${backdropBlur}px)`);
+                
+                // Apply custom theme
+                window.themeManager.setTheme('custom');
+                
+                this.hide();
+                
+                console.log('🎨 Custom theme applied:', {
+                    colors: customColors,
+                    gradient: { direction: gradientDirection, type: gradientType },
+                    opacity: { cardBg: cardBgOpacity, card: cardOpacity, backdrop: backdropBlur }
+                });
+            }
+        }
+
+        // ==================== INITIALIZATION ==================== //
+        document.addEventListener('DOMContentLoaded', () => {
+            // Detect kiosk mode first
+            detectKioskMode();
+            
+            window.themeManager = new ThemeManager();
+            window.navigationManager = new NavigationManager();
+            window.dataManager = new DataManager();
+            window.weatherManager = new WeatherManager();
+            window.customColorPicker = new CustomColorPicker();
+
+            console.log('🐢 TurtX Dashboard initialized successfully!');
+            console.log('Available themes:', window.themeManager.themes);
+            console.log('Current theme:', window.themeManager.currentTheme);
+            console.log('Weather system: Active');
+            console.log('🎨 Custom color picker: Active');
+        });
+    </script>
+
+    <!-- Custom Color Picker Modal -->
+    <div class="overlay" id="color-picker-overlay"></div>
+    <div class="custom-color-picker" id="custom-color-picker">
+        <div class="color-picker-header">
+            <div class="color-picker-title">🎨 Custom Theme Colors</div>
+            <button class="color-picker-close" id="color-picker-close">×</button>
+        </div>
+        
+        <!-- Live Preview Section -->
+        <div class="color-picker-preview">
+            <div class="preview-label">👁️ Live Preview</div>
+            <div class="preview-card" id="theme-preview-card">
+                <div class="preview-header">ShrimpCenter</div>
+                <div class="preview-content">
+                    <div class="preview-item">
+                        <span class="preview-label">Temperature:</span>
+                        <span class="preview-value">95.2°F</span>
+                    </div>
+                    <div class="preview-item">
+                        <span class="preview-label">Humidity:</span>
+                        <span class="preview-value">45%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="color-input-group">
+            <label class="color-input-label">Primary Color</label>
+            <div class="color-input-row">
+                <input type="color" class="color-input" id="primary-color" value="#667eea">
+                <input type="text" class="color-input-value" id="primary-color-value" value="#667eea" readonly>
+            </div>
+        </div>
+        
+        <div class="color-input-group">
+            <label class="color-input-label">Primary Dark</label>
+            <div class="color-input-row">
+                <input type="color" class="color-input" id="primary-dark" value="#764ba2">
+                <input type="text" class="color-input-value" id="primary-dark-value" value="#764ba2" readonly>
+            </div>
+        </div>
+        
+        <div class="color-input-group">
+            <label class="color-input-label">Accent Color</label>
+            <div class="color-input-row">
+                <input type="color" class="color-input" id="accent-color" value="#3182ce">
+                <input type="text" class="color-input-value" id="accent-color-value" value="#3182ce" readonly>
+            </div>
+        </div>
+        
+        <div class="color-input-group">
+            <label class="color-input-label">Accent Dark</label>
+            <div class="color-input-row">
+                <input type="color" class="color-input" id="accent-color-dark" value="#2c5aa0">
+                <input type="text" class="color-input-value" id="accent-color-dark-value" value="#2c5aa0" readonly>
+            </div>
+        </div>
+        
+        <div class="color-input-group">
+            <label class="color-input-label">Card Background</label>
+            <div class="color-input-row">
+                <input type="color" class="color-input" id="card-bg" value="#ffffff">
+                <input type="text" class="color-input-value" id="card-bg-value" value="#ffffff" readonly>
+            </div>
+        </div>
+        
+        <div class="color-input-group">
+            <label class="color-input-label">Card Text</label>
+            <div class="color-input-row">
+                <input type="color" class="color-input" id="card-text" value="#1a202c">
+                <input type="text" class="color-input-value" id="card-text-value" value="#1a202c" readonly>
+            </div>
+        </div>
+        
+        <div class="color-input-group">
+            <label class="color-input-label">Secondary Text</label>
+            <div class="color-input-row">
+                <input type="color" class="color-input" id="secondary-text" value="#4a5568">
+                <input type="text" class="color-input-value" id="secondary-text-value" value="#4a5568" readonly>
+            </div>
+        </div>
+        
+        <!-- Gradient Controls -->
+        <div class="color-input-group">
+            <label class="color-input-label">🎨 Gradient Options</label>
+            <div class="gradient-controls">
+                <div class="gradient-row">
+                    <label class="gradient-label">Direction:</label>
+                    <select class="gradient-select" id="gradient-direction">
+                        <option value="135deg">Diagonal (135°)</option>
+                        <option value="90deg">Vertical (90°)</option>
+                        <option value="0deg">Horizontal (0°)</option>
+                        <option value="45deg">Diagonal (45°)</option>
+                        <option value="180deg">Vertical (180°)</option>
+                        <option value="270deg">Horizontal (270°)</option>
+                    </select>
+                </div>
+                <div class="gradient-row">
+                    <label class="gradient-label">Type:</label>
+                    <select class="gradient-select" id="gradient-type">
+                        <option value="linear">Linear</option>
+                        <option value="radial">Radial</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Opacity Controls -->
+        <div class="color-input-group">
+            <label class="color-input-label">🌫️ Opacity Controls</label>
+            <div class="opacity-controls">
+                <div class="opacity-row">
+                    <label class="opacity-label">Card Background Opacity:</label>
+                    <input type="range" class="opacity-slider" id="card-bg-opacity" min="0" max="100" value="100">
+                    <span class="opacity-value" id="card-bg-opacity-value">100%</span>
+                </div>
+                <div class="opacity-row">
+                    <label class="opacity-label">Card Opacity:</label>
+                    <input type="range" class="opacity-slider" id="card-opacity" min="0" max="100" value="95">
+                    <span class="opacity-value" id="card-opacity-value">95%</span>
+                </div>
+                <div class="opacity-row">
+                    <label class="opacity-label">Backdrop Blur:</label>
+                    <input type="range" class="opacity-slider" id="backdrop-blur" min="0" max="20" value="10">
+                    <span class="opacity-value" id="backdrop-blur-value">10px</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="color-picker-actions">
+            <button class="color-picker-btn secondary" id="color-picker-cancel">Cancel</button>
+            <button class="color-picker-btn primary" id="color-picker-apply">Apply Theme</button>
+        </div>
+    </div>
+</body>
+</html> 

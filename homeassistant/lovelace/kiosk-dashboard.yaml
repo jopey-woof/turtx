@@ -11,14 +11,10 @@ views:
     panel: false
     cards:
       
-      # Welcome Header with enhanced styling
+      # Welcome Header - Ultra compact single-line design
       - type: markdown
         content: |
-          # 🐢 Eastern Box Turtle Monitor
-          ### {{ now().strftime("%A, %B %d, %Y - %I:%M %p") }}
-          ---
-          **System Status:** Online ✅  
-          **Theme:** Enhanced Cute Design 🌸
+          # 🐢 TurtX Monitor
         card_mod:
           style: |
             ha-card {
@@ -27,21 +23,22 @@ views:
                 rgba(74, 124, 89, 0.6) 50%, 
                 rgba(139, 69, 19, 0.7) 100%);
               border: 2px solid rgba(212, 165, 116, 0.5);
-              border-radius: 20px;
+              border-radius: 12px;
               backdrop-filter: blur(15px);
-              box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+              box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+              padding: 4px 12px;
+              margin-bottom: 4px;
             }
             h1 {
               background: linear-gradient(45deg, #D4A574, #F0E68C, #DEB887);
               -webkit-background-clip: text;
               -webkit-text-fill-color: transparent;
               background-clip: text;
-              font-weight: 700;
-              letter-spacing: 2px;
-            }
-            h3 {
-              color: #F5DEB3;
-              font-weight: 300;
+              font-weight: 600;
+              font-size: 1.2em;
+              text-align: center;
+              margin: 0;
+              line-height: 1.1;
             }
       
       # Main Dashboard Grid - Enhanced 3 Column Layout

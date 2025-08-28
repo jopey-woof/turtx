@@ -62,4 +62,4 @@ exec google-chrome-stable \
     --disable-session-crashed-bubble \
     --disable-translate \
     --disable-web-security \
-    "http://localhost:8123" 2>/dev/null
+    "http://localhost:8080/index.html" 2>/dev/null

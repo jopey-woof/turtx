@@ -55,7 +55,18 @@ xset s noblank || true
 xset r off || true
 # Set gamma to prevent display issues
 xgamma -gamma 1.0 || true
-echo "Display configured"
+
+# Disable GNOME screen saver and power management
+echo "Disabling screen saver and sleep..."
+gsettings set org.gnome.desktop.screensaver idle-activation-enabled false 2>/dev/null || true
+gsettings set org.gnome.desktop.session idle-delay 0 2>/dev/null || true
+
+# Start keep-alive service to prevent sleep
+echo "Starting keep-alive service..."
+pkill -f "kiosk-keep-alive.sh" 2>/dev/null || true
+nohup /home/shrimp/turtx/turtle-monitor/kiosk/kiosk-keep-alive.sh > /tmp/kiosk-keep-alive.log 2>&1 &
+
+echo "Display configured and sleep prevention enabled"
 
 sleep 2
 
@@ -73,7 +84,7 @@ mkdir -p /home/shrimp/.chrome-kiosk
         # Start Chrome with turtle monitor kiosk - optimized for clean display
         exec google-chrome-stable \
             --kiosk \
-            --app="http://10.0.20.69" \
+            --app="http://10.0.20.69:8123/lovelace/kiosk" \
             --no-sandbox \
             --disable-dev-shm-usage \
             --window-size=1024,600 \

@@ -762,7 +762,7 @@ app.include_router(camera_router)
 async def root():
     """Serve the main HTML page"""
     try:
-        with open("/app/frontend/index.html", "r") as f:
+        with open("/home/shrimp/turtx/turtle-monitor/frontend/index.html", "r") as f:
             return HTMLResponse(content=f.read())
     except FileNotFoundError:
         return HTMLResponse(content="<h1>🐢 Turtle Monitor</h1><p>Frontend not found</p>")
@@ -771,7 +771,7 @@ async def root():
 async def serve_css(filename: str):
     """Serve CSS files"""
     try:
-        return FileResponse(f"/app/frontend/css/{filename}")
+        return FileResponse(f"/home/shrimp/turtx/turtle-monitor/frontend/css/{filename}")
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="CSS file not found")
 
@@ -779,7 +779,7 @@ async def serve_css(filename: str):
 async def serve_js(filename: str):
     """Serve JavaScript files"""
     try:
-        return FileResponse(f"/app/frontend/js/{filename}")
+        return FileResponse(f"/home/shrimp/turtx/turtle-monitor/frontend/js/{filename}")
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="JavaScript file not found")
 

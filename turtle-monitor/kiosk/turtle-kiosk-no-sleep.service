@@ -1,0 +1,16 @@
+[Unit]
+Description=Turtle Monitor Kiosk Sleep Prevention
+After=graphical-session.target
+Wants=graphical-session.target
+
+[Service]
+Type=simple
+User=shrimp
+Environment=DISPLAY=:0
+Environment=HOME=/home/shrimp
+ExecStart=/home/shrimp/turtx/turtle-monitor/kiosk/kiosk-keep-alive.sh
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=graphical-session.target 
