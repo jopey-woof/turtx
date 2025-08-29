@@ -1,657 +1,822 @@
-// ===== TURTX MONITOR DASHBOARD - MAIN SCRIPT =====
-// Professional Turtle Life Support Monitoring System
+/* TurtX Professional Monitoring System - Complete JavaScript */
 
-class TurtXMonitor {
+class TurtXMonitoringSystem {
     constructor() {
-        this.apiBaseUrl = 'http://10.0.20.69/api/';
-        this.weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Replace with actual key
-        this.weatherLocation = { lat: 45.5152, lon: -122.6784 }; // Portland, OR
-        this.currentTheme = 'day';
-        this.isConnected = false;
-        this.lastData = null;
-        this.dataPollingInterval = null;
-        this.weatherPollingInterval = null;
-        this.logs = [];
-        
+        this.config = {
+            apiBaseUrl: 'http://10.0.20.69/api',
+            updateInterval: 2000, // 2 seconds
+            weatherUpdateInterval: 600000, // 10 minutes
+            location: { lat: 45.5152, lon: -122.6784 }, // Portland, Oregon
+            openWeatherApiKey: 'YOUR_API_KEY_HERE' // Replace with actual key
+        };
+
+        this.state = {
+            currentPage: 'status',
+            theme: 'theme-night',
+            lastDataUpdate: null,
+            connectionStatus: 'connecting',
+            sensorData: null,
+            weatherData: null,
+            activityLog: []
+        };
+
+        this.intervals = {
+            dataPolling: null,
+            weatherPolling: null,
+            moonUpdate: null
+        };
+
         this.init();
     }
 
-    // ===== INITIALIZATION =====
     async init() {
-        console.log('🐢 Initializing TurtX Monitor...');
+        console.log('🐢 TurtX Professional Monitoring System Initializing...');
         
-        // Initialize all systems
-        this.initializeTheme();
+        // Initialize all subsystems
+        this.initializeThemeSystem();
+        this.initializeNavigationSystem();
         this.initializeAnimatedHeader();
         this.initializeWeatherSystem();
         this.initializeLogSystem();
-        this.initializeNavigation();
-        this.initializeEventListeners();
+        this.initializeConnectionMonitoring();
         
         // Start data polling
-        await this.startDataPolling();
+        this.startDataPolling();
         this.startWeatherPolling();
         
-        // Hide loading overlay
-        setTimeout(() => {
-            document.getElementById('loading-overlay').classList.add('hidden');
-        }, 2000);
-        
-        console.log('✅ TurtX Monitor initialized successfully');
+        console.log('✅ TurtX System Fully Operational');
     }
 
-    // ===== THEME MANAGEMENT =====
-    initializeTheme() {
-        const hour = new Date().getHours();
-        const isDay = hour >= 6 && hour < 18;
-        this.currentTheme = isDay ? 'day' : 'night';
-        this.applyTheme(this.currentTheme);
+    /* ========== THEME MANAGEMENT ========== */
+    initializeThemeSystem() {
+        this.state.theme = localStorage.getItem('turtx-theme') || 'theme-night';
+        this.applyTheme(this.state.theme);
         
-        // Theme toggle functionality
+        // Auto theme detection based on time
+        this.setupAutoTheme();
+        
+        // Theme toggle button
         const themeToggle = document.getElementById('theme-toggle');
         if (themeToggle) {
-            themeToggle.addEventListener('click', () => {
-                this.currentTheme = this.currentTheme === 'day' ? 'night' : 'day';
-                this.applyTheme(this.currentTheme);
-            });
+            themeToggle.addEventListener('click', () => this.toggleTheme());
         }
     }
 
     applyTheme(theme) {
-        document.body.className = `theme-${theme}`;
-        const themeIcon = document.querySelector('.theme-icon');
-        if (themeIcon) {
-            themeIcon.textContent = theme === 'day' ? '🌙' : '☀️';
+        document.body.classList.remove('theme-day', 'theme-night');
+        document.body.classList.add(theme);
+        this.state.theme = theme;
+        localStorage.setItem('turtx-theme', theme);
+        
+        // Update theme toggle icon
+        const themeToggle = document.getElementById('theme-toggle');
+        if (themeToggle) {
+            themeToggle.textContent = theme === 'theme-day' ? '🌙' : '☀️';
         }
     }
 
-    // ===== ANIMATED HEADER SYSTEM =====
-    initializeAnimatedHeader() {
-        this.updateMoonPhase();
-        this.updateMoonPosition();
-        this.animateStarField();
-        this.animateTurtleSprite();
-        
-        // Update moon position every minute
-        setInterval(() => {
-            this.updateMoonPosition();
-        }, 60000);
+    toggleTheme() {
+        const newTheme = this.state.theme === 'theme-day' ? 'theme-night' : 'theme-day';
+        this.applyTheme(newTheme);
+        localStorage.setItem('manual-theme-override', 'true');
     }
 
-    updateMoonPhase() {
-        const date = new Date();
-        const year = date.getFullYear();
-        const month = date.getMonth() + 1;
-        const day = date.getDate();
+    setupAutoTheme() {
+        // Auto-switch based on time (6 AM - 7 PM = day theme)
+        const hour = new Date().getHours();
+        const autoTheme = (hour >= 6 && hour < 19) ? 'theme-day' : 'theme-night';
         
-        // Calculate moon phase (0-29.5 days)
-        const phase = this.calculateMoonPhase(year, month, day);
-        const moonElement = document.getElementById('moon');
+        if (this.state.theme !== autoTheme && !localStorage.getItem('manual-theme-override')) {
+            this.applyTheme(autoTheme);
+        }
+    }
+
+    /* ========== NAVIGATION SYSTEM ========== */
+    initializeNavigationSystem() {
+        const navButtons = document.querySelectorAll('.nav-btn');
+        navButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetPage = btn.getAttribute('data-page');
+                this.showPage(targetPage);
+            });
+        });
+
+        // Touch gesture support
+        this.initializeTouchNavigation();
+    }
+
+    showPage(pageName) {
+        if (!['status', 'camera', 'data'].includes(pageName)) return;
+
+        // Update page visibility
+        document.querySelectorAll('.page').forEach(page => {
+            page.classList.remove('active');
+        });
         
-        if (moonElement) {
-            // Update moon appearance based on phase
-            if (phase < 3.5 || phase > 26.5) {
-                moonElement.style.background = 'radial-gradient(circle at 30% 30%, #fff, #ddd)';
-            } else if (phase < 10.5) {
-                moonElement.style.background = 'radial-gradient(circle at 70% 30%, #fff, #ddd)';
-            } else if (phase < 17.5) {
-                moonElement.style.background = 'radial-gradient(circle at 50% 50%, #fff, #ddd)';
-            } else if (phase < 24.5) {
-                moonElement.style.background = 'radial-gradient(circle at 30% 70%, #fff, #ddd)';
+        const targetPage = document.getElementById(`${pageName}-page`);
+        if (targetPage) {
+            targetPage.classList.add('active');
+        }
+
+        // Update navigation buttons
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.querySelectorAll(`[data-page="${pageName}"]`).forEach(btn => {
+            btn.classList.add('active');
+        });
+
+        this.state.currentPage = pageName;
+        
+        // Page-specific initialization
+        if (pageName === 'camera') {
+            this.initializeCameraPage();
+        } else if (pageName === 'data') {
+            this.refreshDataCharts();
+        }
+    }
+
+    initializeTouchNavigation() {
+        let startX = 0;
+        let startY = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            const endX = e.changedTouches[0].clientX;
+            const endY = e.changedTouches[0].clientY;
+            const deltaX = endX - startX;
+            const deltaY = endY - startY;
+
+            // Only trigger if horizontal swipe is primary
+            if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) {
+                const pages = ['status', 'camera', 'data'];
+                const currentIndex = pages.indexOf(this.state.currentPage);
+                
+                let newIndex;
+                if (deltaX > 0 && currentIndex > 0) {
+                    newIndex = currentIndex - 1; // Swipe right = previous page
+                } else if (deltaX < 0 && currentIndex < pages.length - 1) {
+                    newIndex = currentIndex + 1; // Swipe left = next page
+                }
+                
+                if (newIndex !== undefined) {
+                    this.showPage(pages[newIndex]);
+                }
             }
-        }
+        });
     }
 
-    calculateMoonPhase(year, month, day) {
-        // Simplified moon phase calculation
-        const date = new Date(year, month - 1, day);
-        const knownNewMoon = new Date(2000, 0, 6); // Known new moon date
-        const daysSinceKnown = (date - knownNewMoon) / (1000 * 60 * 60 * 24);
-        return (daysSinceKnown % 29.53058867);
+    /* ========== LOG MANAGEMENT SYSTEM ========== */
+    initializeLogSystem() {
+        // Initialize with sample logs
+        this.state.activityLog = [
+            {
+                id: 'init-1',
+                timestamp: new Date().toISOString(),
+                type: 'info',
+                message: 'TurtX Monitoring System started',
+                severity: 'info'
+            }
+        ];
+
+        // Set up filter buttons
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const filterType = btn.getAttribute('data-filter');
+                this.filterLogs(filterType);
+                
+                // Update active filter
+                filterButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+
+        this.updateLogDisplay();
     }
 
-    updateMoonPosition() {
-        const date = new Date();
-        const hour = date.getHours() + date.getMinutes() / 60;
+    addLogEntry(severity, message, timestamp = new Date().toISOString()) {
+        const logEntry = {
+            id: `log-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+            timestamp,
+            type: severity,
+            message,
+            severity
+        };
+
+        this.state.activityLog.unshift(logEntry);
         
-        // Calculate moon position based on time (simplified)
-        const moonElements = document.querySelectorAll('.moon');
-        moonElements.forEach(moon => {
-            const xPos = 20 + (hour / 24) * 60; // Move across 60% of header width
-            moon.style.left = `${xPos}%`;
+        // Keep only last 100 entries
+        if (this.state.activityLog.length > 100) {
+            this.state.activityLog = this.state.activityLog.slice(0, 100);
+        }
+
+        this.updateLogDisplay();
+        this.updateLogCounters();
+    }
+
+    updateLogDisplay() {
+        const logContainer = document.getElementById('log-entries');
+        if (!logContainer) return;
+
+        // Clear existing entries
+        logContainer.innerHTML = '';
+
+        // Show only the 6 most recent entries to fit exactly in viewport
+        const recentLogs = this.state.activityLog.slice(0, 6);
+        
+        recentLogs.forEach(log => {
+            const logElement = this.createLogElement(log);
+            logContainer.appendChild(logElement);
         });
     }
 
-    animateStarField() {
-        const starFields = document.querySelectorAll('.star-field');
-        starFields.forEach(field => {
-            field.style.animation = 'twinkle 4s ease-in-out infinite';
+    createLogElement(log) {
+        const logEntry = document.createElement('div');
+        logEntry.className = `log-entry ${log.severity}`;
+        logEntry.setAttribute('data-log-id', log.id);
+
+        const timeAgo = this.formatTimeAgo(new Date(log.timestamp));
+        const icon = this.getLogIcon(log.severity);
+
+        logEntry.innerHTML = `
+            <div class="log-time">${timeAgo}</div>
+            <div class="log-icon">${icon}</div>
+            <div class="log-message">${log.message}</div>
+            <div class="log-actions">
+                <button class="log-action-btn" onclick="turtxSystem.viewLogDetail('${log.id}')">View</button>
+            </div>
+        `;
+
+        logEntry.addEventListener('click', () => this.expandLogEntry(log.id));
+        return logEntry;
+    }
+
+    getLogIcon(severity) {
+        const iconMap = {
+            critical: '🔴',
+            warning: '🟡',
+            info: '🔵',
+            success: '🟢'
+        };
+        return iconMap[severity] || '🔵';
+    }
+
+    formatTimeAgo(timestamp) {
+        const now = new Date();
+        const diff = now - timestamp;
+        const minutes = Math.floor(diff / 60000);
+        const hours = Math.floor(minutes / 60);
+        const days = Math.floor(hours / 24);
+
+        if (days > 0) return `${days}d ago`;
+        if (hours > 0) return `${hours}h ago`;
+        if (minutes > 0) return `${minutes}m ago`;
+        return 'Just now';
+    }
+
+    updateLogCounters() {
+        const counts = {
+            all: this.state.activityLog.length,
+            critical: this.state.activityLog.filter(log => log.severity === 'critical').length,
+            warning: this.state.activityLog.filter(log => log.severity === 'warning').length,
+            info: this.state.activityLog.filter(log => log.severity === 'info').length
+        };
+
+        Object.entries(counts).forEach(([type, count]) => {
+            const countElement = document.getElementById(`count-${type}`);
+            if (countElement) {
+                countElement.textContent = count;
+            }
         });
     }
 
-    animateTurtleSprite() {
-        const turtles = document.querySelectorAll('.turtle-sprite');
-        turtles.forEach(turtle => {
-            turtle.style.animation = 'swim 3s ease-in-out infinite';
-        });
-    }
-
-    updateTurtleExpression(systemHealth) {
-        const turtles = document.querySelectorAll('.turtle-sprite');
-        turtles.forEach(turtle => {
-            if (systemHealth === 'excellent') {
-                turtle.textContent = '🐢';
-            } else if (systemHealth === 'warning') {
-                turtle.textContent = '😐';
+    filterLogs(filterType) {
+        const logEntries = document.querySelectorAll('.log-entry');
+        
+        logEntries.forEach(entry => {
+            const entryType = entry.classList.contains('critical') ? 'critical' :
+                           entry.classList.contains('warning') ? 'warning' :
+                           entry.classList.contains('info') ? 'info' : 'info';
+            
+            if (filterType === 'all' || filterType === entryType) {
+                entry.style.display = 'flex';
             } else {
-                turtle.textContent = '😰';
+                entry.style.display = 'none';
             }
         });
     }
 
-    // ===== WEATHER SYSTEM INTEGRATION =====
-    initializeWeatherSystem() {
-        this.fetchWeatherData();
+    expandLogEntry(logId) {
+        const log = this.state.activityLog.find(l => l.id === logId);
+        if (log) {
+            console.log('Log details:', log);
+        }
+    }
+
+    viewLogDetail(logId) {
+        this.expandLogEntry(logId);
+    }
+
+    /* ========== CAMERA FUNCTIONALITY ========== */
+    initializeCameraPage() {
+        const refreshBtn = document.getElementById('refresh-camera');
+        const settingsBtn = document.getElementById('camera-settings');
+        const fullscreenBtn = document.getElementById('fullscreen-camera');
+
+        if (refreshBtn) {
+            refreshBtn.addEventListener('click', () => this.refreshCameraStream());
+        }
+
+        if (settingsBtn) {
+            settingsBtn.addEventListener('click', () => this.showCameraSettings());
+        }
+
+        if (fullscreenBtn) {
+            fullscreenBtn.addEventListener('click', () => this.toggleCameraFullscreen());
+        }
+
+        this.updateCameraStatus();
+    }
+
+    refreshCameraStream() {
+        const cameraStream = document.getElementById('camera-stream');
+        if (cameraStream) {
+            const timestamp = new Date().getTime();
+            cameraStream.src = `http://10.0.20.69:8000/api/camera/live?t=${timestamp}`;
+            this.addLogEntry('info', 'Camera stream refreshed', new Date().toISOString());
+        }
+    }
+
+    updateCameraStatus() {
+        const statusElement = document.getElementById('stream-status');
+        if (statusElement) {
+            statusElement.innerHTML = `
+                <div class="status-dot"></div>
+                <span>STREAMING</span>
+            `;
+        }
+    }
+
+    showCameraSettings() {
+        this.addLogEntry('info', 'Camera settings accessed', new Date().toISOString());
+    }
+
+    toggleCameraFullscreen() {
+        const cameraFeed = document.getElementById('camera-feed');
+        if (cameraFeed) {
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
+            } else {
+                cameraFeed.requestFullscreen();
+            }
+        }
+    }
+
+    refreshDataCharts() {
+        if (this.state.sensorData) {
+            const dataPolling = new DataPollingSystem(this);
+            dataPolling.updateDataCharts(this.state.sensorData);
+        }
+    }
+
+    /* ========== UTILITY FUNCTIONS ========== */
+    animateValueChange(element) {
+        element.classList.add('data-updated');
+        setTimeout(() => {
+            element.classList.remove('data-updated');
+        }, 500);
+    }
+
+    hasActiveCriticalAlerts() {
+        return this.state.activityLog.some(log => 
+            log.severity === 'critical' && 
+            new Date() - new Date(log.timestamp) < 300000 // Last 5 minutes
+        );
+    }
+
+    updateConnectionStatus(status) {
+        this.state.connectionStatus = status;
+        
+        const connectionStatus = document.getElementById('connection-status');
+        if (!connectionStatus) return;
+
+        const statusConfig = {
+            connecting: { icon: '📡', text: 'Connecting...', visible: true },
+            connected: { icon: '✅', text: 'Connected', visible: false },
+            error: { icon: '❌', text: 'Connection Error', visible: true },
+            offline: { icon: '📶', text: 'Offline', visible: true }
+        };
+
+        const config = statusConfig[status];
+        if (config) {
+            connectionStatus.querySelector('.connection-icon').textContent = config.icon;
+            connectionStatus.querySelector('.connection-text').textContent = config.text;
+            
+            if (config.visible) {
+                connectionStatus.classList.add('visible');
+                setTimeout(() => {
+                    if (this.state.connectionStatus === 'connected') {
+                        connectionStatus.classList.remove('visible');
+                    }
+                }, 3000);
+            } else {
+                connectionStatus.classList.remove('visible');
+            }
+        }
+    }
+
+    showCriticalAlert(message) {
+        const alertOverlay = document.getElementById('critical-alert');
+        const alertMessage = document.getElementById('alert-message');
+        const alertDismiss = document.getElementById('alert-dismiss');
+
+        if (alertOverlay && alertMessage) {
+            alertMessage.textContent = message;
+            alertOverlay.classList.add('visible');
+
+            const dismissHandler = () => {
+                alertOverlay.classList.remove('visible');
+                alertDismiss.removeEventListener('click', dismissHandler);
+            };
+
+            alertDismiss.addEventListener('click', dismissHandler);
+            setTimeout(dismissHandler, 10000);
+        }
+    }
+
+    /* ========== INITIALIZATION HELPERS ========== */
+    initializeConnectionMonitoring() {
+        window.addEventListener('online', () => {
+            this.updateConnectionStatus('connected');
+            this.addLogEntry('success', 'Network connection restored', new Date().toISOString());
+        });
+
+        window.addEventListener('offline', () => {
+            this.updateConnectionStatus('offline');
+            this.addLogEntry('critical', 'Network connection lost', new Date().toISOString());
+        });
+    }
+
+    async startWeatherPolling() {
+        this.intervals.weatherPolling = setInterval(async () => {
+            const weather = new WeatherSystem(this);
+            await weather.fetchWeatherData();
+        }, this.config.weatherUpdateInterval);
+    }
+
+    /* ========== CLEANUP ========== */
+    destroy() {
+        Object.values(this.intervals).forEach(interval => {
+            if (interval) clearInterval(interval);
+        });
+        console.log('🐢 TurtX System Shutdown Complete');
+    }
+
+    /* ========== WEATHER INTEGRATION ========== */
+    async initializeWeatherSystem() {
+        await this.fetchWeatherData();
     }
 
     async fetchWeatherData() {
         try {
-            // For demo purposes, using mock data
-            // In production, replace with actual OpenWeatherMap API call
+            // Mock weather data for demo (replace with actual OpenWeatherMap API)
             const mockWeatherData = {
-                temp: 72,
-                condition: 'Partly Cloudy',
-                wind: 8,
-                humidity: 65,
-                aqi: 45,
-                icon: '🌤️'
+                main: { temp: 72 + Math.random() * 10, humidity: 65 + Math.random() * 20 },
+                weather: [{ main: 'Clear', description: 'clear sky', icon: '01d' }],
+                wind: { speed: 5.2 + Math.random() * 3 }
             };
             
+            this.state.weatherData = mockWeatherData;
             this.updateWeatherDisplay(mockWeatherData);
-            
-            // Real API call would look like:
-            // const response = await fetch(
-            //     `https://api.openweathermap.org/data/2.5/weather?lat=${this.weatherLocation.lat}&lon=${this.weatherLocation.lon}&appid=${this.weatherApiKey}&units=imperial`
-            // );
-            // const data = await response.json();
-            // this.updateWeatherDisplay(this.formatWeatherData(data));
-            
         } catch (error) {
-            console.error('Weather fetch error:', error);
+            console.error('Weather fetch failed:', error);
             this.handleWeatherError();
         }
     }
 
     updateWeatherDisplay(weatherData) {
-        const iconElement = document.getElementById('weather-icon');
-        const tempElement = document.getElementById('weather-temp');
-        const conditionElement = document.getElementById('weather-condition');
-        const windElement = document.getElementById('weather-wind');
-        const humidityElement = document.getElementById('weather-humidity');
-        const aqiElement = document.getElementById('weather-aqi');
+        const elements = {
+            'weather-temp': `${Math.round(weatherData.main.temp)}°F`,
+            'weather-desc': weatherData.weather[0].description,
+            'weather-wind': `Wind: ${weatherData.wind.speed.toFixed(1)} mph`,
+            'weather-humidity': `Humidity: ${Math.round(weatherData.main.humidity)}%`
+        };
 
-        if (iconElement) {
-            iconElement.textContent = weatherData.icon;
-            this.animateWeatherIcon(weatherData.condition);
-        }
-        if (tempElement) tempElement.textContent = `${weatherData.temp}°F`;
-        if (conditionElement) conditionElement.textContent = weatherData.condition;
-        if (windElement) windElement.textContent = `${weatherData.wind} mph`;
-        if (humidityElement) humidityElement.textContent = `${weatherData.humidity}%`;
-        if (aqiElement) aqiElement.textContent = `AQI ${weatherData.aqi}`;
+        Object.entries(elements).forEach(([id, value]) => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.textContent = value;
+                this.animateValueChange(element);
+            }
+        });
+        
+        this.animateWeatherIcon(weatherData.weather[0].main);
     }
 
     animateWeatherIcon(condition) {
         const iconElement = document.getElementById('weather-icon');
         if (!iconElement) return;
-
-        // Remove existing animations
-        iconElement.style.animation = 'none';
         
-        // Apply appropriate animation based on condition
-        if (condition.toLowerCase().includes('sunny') || condition.toLowerCase().includes('clear')) {
-            iconElement.style.animation = 'weather-sun-rotate 20s linear infinite';
-        } else if (condition.toLowerCase().includes('cloud')) {
-            iconElement.style.animation = 'weather-cloud-float 3s ease-in-out infinite';
-        } else if (condition.toLowerCase().includes('rain')) {
-            iconElement.style.animation = 'weather-rain-bounce 1s ease-in-out infinite';
-        }
+        const iconMap = {
+            'Clear': '☀️', 'Clouds': '☁️', 'Rain': '🌧️', 'Snow': '❄️',
+            'Thunderstorm': '⛈️', 'Drizzle': '🌦️', 'Mist': '🌫️'
+        };
+        
+        iconElement.textContent = iconMap[condition] || '🌤️';
+        iconElement.style.animation = 'weather-float 4s ease-in-out infinite';
     }
 
     handleWeatherError() {
-        const weatherElements = document.querySelectorAll('.weather-temp, .weather-condition, .weather-details');
-        weatherElements.forEach(element => {
-            element.textContent = 'Weather unavailable';
-            element.style.opacity = '0.5';
+        const elements = ['weather-temp', 'weather-desc', 'weather-wind', 'weather-humidity'];
+        elements.forEach(id => {
+            const element = document.getElementById(id);
+            if (element) element.textContent = '--';
         });
+        
+        const iconElement = document.getElementById('weather-icon');
+        if (iconElement) iconElement.textContent = '❓';
     }
 
-    startWeatherPolling() {
-        this.weatherPollingInterval = setInterval(() => {
-            this.fetchWeatherData();
-        }, 600000); // Every 10 minutes
-    }
-
-    // ===== DATA FETCHING & API INTEGRATION =====
+    /* ========== DATA POLLING INTEGRATION ========== */
     async startDataPolling() {
-        await this.fetchLatestData();
-        this.dataPollingInterval = setInterval(async () => {
+        const dataPoller = new DataPollingSystem(this);
+        await dataPoller.startDataPolling();
+    }
+
+    async updateDashboard(data) {
+        const dataPoller = new DataPollingSystem(this);
+        await dataPoller.updateDashboard(data);
+    }
+}
+
+/* ========== DATA POLLING SYSTEM CLASS ========== */
+class DataPollingSystem {
+    constructor(turtxSystem) {
+        this.system = turtxSystem;
+    }
+
+    async startDataPolling() {
+        this.system.intervals.dataPolling = setInterval(async () => {
             await this.fetchLatestData();
-        }, 2000); // Every 2 seconds
+        }, this.system.config.updateInterval);
+        
+        await this.fetchLatestData();
     }
 
     async fetchLatestData() {
         try {
-            // For demo purposes, using mock data
-            // In production, replace with actual API call
+            this.system.updateConnectionStatus('connecting');
+            
+            // Mock data for demo (replace with actual API call)
             const mockData = {
                 timestamp: new Date().toISOString(),
                 basking_area: {
-                    temperature: 95.2 + Math.random() * 2 - 1,
-                    humidity: 45 + Math.random() * 5 - 2.5,
-                    temperature_unit: "F"
+                    temperature: 95.2 + (Math.random() - 0.5) * 2,
+                    humidity: 45 + Math.random() * 5,
+                    temperature_unit: 'F'
                 },
                 cooling_area: {
-                    temperature: 78.5 + Math.random() * 2 - 1,
-                    humidity: 65 + Math.random() * 5 - 2.5,
-                    temperature_unit: "F"
+                    temperature: 78.5 + (Math.random() - 0.5) * 2,
+                    humidity: 65 + Math.random() * 10,
+                    temperature_unit: 'F'
                 },
                 system_status: {
-                    heater: Math.random() > 0.3 ? "on" : "off",
-                    uv_light: Math.random() > 0.2 ? "on" : "off",
-                    power: "stable",
-                    network: "connected",
-                    alerts: Math.random() > 0.8 ? "temperature_warning" : "none"
+                    heater: Math.random() > 0.8 ? 'off' : 'on',
+                    uv_light: 'on',
+                    power: 'stable',
+                    network: 'connected',
+                    alerts: this.generateRandomAlert()
                 }
             };
 
-            this.updateDashboard(mockData);
-            this.updateConnectionStatus(true);
+            this.system.state.sensorData = mockData;
+            this.system.state.lastDataUpdate = new Date();
             
-            // Real API call would look like:
-            // const response = await fetch(`${this.apiBaseUrl}latest`);
-            // const data = await response.json();
-            // this.updateDashboard(data);
+            await this.updateDashboard(mockData);
+            this.system.updateConnectionStatus('connected');
+            
+            this.system.addLogEntry('info', 'Data update completed', mockData.timestamp);
             
         } catch (error) {
-            console.error('Data fetch error:', error);
-            this.updateConnectionStatus(false);
-            this.handleGracefulDegradation();
+            console.error('Data fetch failed:', error);
+            this.system.updateConnectionStatus('error');
+            this.system.addLogEntry('critical', `Connection failed: ${error.message}`, new Date().toISOString());
         }
     }
 
-    updateDashboard(data) {
-        // Update temperature values
-        this.updateValue('basking-temp', `${data.basking_area.temperature.toFixed(1)}°F`);
-        this.updateValue('basking-humidity', `${Math.round(data.basking_area.humidity)}%`);
-        this.updateValue('cooling-temp', `${data.cooling_area.temperature.toFixed(1)}°F`);
-        this.updateValue('cooling-humidity', `${Math.round(data.cooling_area.humidity)}%`);
+    generateRandomAlert() {
+        const alerts = ['none', 'none', 'none', 'temperature_high', 'humidity_low'];
+        return alerts[Math.floor(Math.random() * alerts.length)];
+    }
 
-        // Update chart values
-        this.updateValue('chart-basking-temp', `${data.basking_area.temperature.toFixed(1)}°F`);
-        this.updateValue('chart-basking-humidity', `${Math.round(data.basking_area.humidity)}%`);
-        this.updateValue('chart-cooling-temp', `${data.cooling_area.temperature.toFixed(1)}°F`);
-        this.updateValue('chart-cooling-humidity', `${Math.round(data.cooling_area.humidity)}%`);
-
-        // Update system indicators
+    async updateDashboard(data) {
+        this.updateTemperatureDisplay('basking', data.basking_area);
+        this.updateTemperatureDisplay('cooling', data.cooling_area);
         this.updateSystemIndicators(data.system_status);
-
-        // Check temperature thresholds
-        this.checkTemperatureThresholds(data.basking_area.temperature, 'basking');
-        this.checkTemperatureThresholds(data.cooling_area.temperature, 'cooling');
-
-        // Update turtle expression based on system health
-        const systemHealth = this.calculateSystemHealth(data.system_status);
-        this.updateTurtleExpression(systemHealth);
-
-        // Store last known good data
-        this.lastData = data;
+        
+        if (this.system.state.currentPage === 'data') {
+            this.updateDataCharts(data);
+        }
+        
+        this.checkCriticalConditions(data);
+        this.system.updateTurtleExpression();
+        this.updateLastUpdateTime();
     }
 
-    updateValue(elementId, newValue) {
-        const element = document.getElementById(elementId);
-        if (element && element.textContent !== newValue) {
-            const oldValue = element.textContent;
-            element.textContent = newValue;
-            element.classList.add('data-update-flash');
-            setTimeout(() => {
-                element.classList.remove('data-update-flash');
-            }, 500);
+    updateTemperatureDisplay(zone, sensorData) {
+        const tempElement = document.getElementById(`${zone}-temp`);
+        const humidityElement = document.getElementById(`${zone}-humidity`);
+        const statusElement = document.getElementById(`${zone}-status`);
+
+        if (tempElement) {
+            const oldValue = tempElement.textContent;
+            const newValue = sensorData.temperature.toFixed(1);
+            
+            if (oldValue !== newValue) {
+                tempElement.textContent = newValue;
+                this.system.animateValueChange(tempElement);
+            }
+            
+            const tempClass = this.getTemperatureClass(sensorData.temperature, zone);
+            tempElement.className = `temp-value ${tempClass}`;
+        }
+
+        if (humidityElement) {
+            const oldValue = humidityElement.textContent;
+            const newValue = `${Math.round(sensorData.humidity)}%`;
+            
+            if (oldValue !== newValue) {
+                humidityElement.textContent = newValue;
+                this.system.animateValueChange(humidityElement);
+            }
+        }
+
+        if (statusElement) {
+            const status = this.calculateZoneStatus(sensorData.temperature, sensorData.humidity, zone);
+            statusElement.className = `status-indicator ${status}`;
         }
     }
 
-    updateSystemIndicators(status) {
+    getTemperatureClass(temp, zone) {
+        const ranges = {
+            basking: { optimal: [92, 98], acceptable: [88, 102] },
+            cooling: { optimal: [75, 82], acceptable: [70, 88] }
+        };
+        
+        const range = ranges[zone];
+        if (temp >= range.optimal[0] && temp <= range.optimal[1]) return 'temp-optimal';
+        if (temp >= range.acceptable[0] && temp <= range.acceptable[1]) return 'temp-acceptable';
+        if (temp < range.acceptable[0] || temp > range.acceptable[1]) return 'temp-critical';
+        return 'temp-warning';
+    }
+
+    calculateZoneStatus(temp, humidity, zone) {
+        const tempClass = this.getTemperatureClass(temp, zone);
+        const humidityOk = humidity >= 40 && humidity <= 80;
+        
+        if (tempClass === 'temp-optimal' && humidityOk) return 'status-excellent';
+        if (tempClass === 'temp-acceptable' && humidityOk) return 'status-good';
+        if (tempClass === 'temp-warning') return 'status-warning';
+        return 'status-critical';
+    }
+
+    updateSystemIndicators(systemStatus) {
         const indicators = {
-            'heater-status': status.heater,
-            'uv-status': status.uv_light,
-            'power-status': status.power,
-            'network-status': status.network,
-            'alert-status': status.alerts
+            heater: systemStatus.heater === 'on' ? 'status-excellent' : 'status-info',
+            uv: systemStatus.uv_light === 'on' ? 'status-excellent' : 'status-warning',
+            power: systemStatus.power === 'stable' ? 'status-excellent' : 'status-critical',
+            network: systemStatus.network === 'connected' ? 'status-excellent' : 'status-critical',
+            alert: systemStatus.alerts === 'none' ? 'status-excellent' : 'status-warning'
         };
 
-        Object.entries(indicators).forEach(([id, value]) => {
+        Object.entries(indicators).forEach(([key, statusClass]) => {
+            const statusElement = document.getElementById(`${key === 'uv' ? 'uv' : key}-status`);
+            if (statusElement) {
+                statusElement.className = `indicator-status ${statusClass}`;
+                statusElement.textContent = this.getStatusText(key, systemStatus);
+            }
+        });
+
+        if (systemStatus.alerts !== 'none') {
+            this.system.showCriticalAlert(`System Alert: ${systemStatus.alerts.replace('_', ' ').toUpperCase()}`);
+        }
+    }
+
+    getStatusText(indicator, systemStatus) {
+        const statusMap = {
+            heater: systemStatus.heater.toUpperCase(),
+            uv: systemStatus.uv_light.toUpperCase(),
+            power: systemStatus.power.toUpperCase(),
+            network: systemStatus.network.toUpperCase(),
+            alert: systemStatus.alerts === 'none' ? 'CLEAR' : 'ACTIVE'
+        };
+        return statusMap[indicator] || 'UNKNOWN';
+    }
+
+    updateDataCharts(data) {
+        const elements = {
+            'chart-basking-temp': `${data.basking_area.temperature.toFixed(1)}°F`,
+            'chart-cooling-temp': `${data.cooling_area.temperature.toFixed(1)}°F`,
+            'chart-basking-humidity': `${Math.round(data.basking_area.humidity)}%`,
+            'chart-cooling-humidity': `${Math.round(data.cooling_area.humidity)}%`
+        };
+
+        Object.entries(elements).forEach(([id, value]) => {
             const element = document.getElementById(id);
             if (element) {
-                const oldStatus = element.textContent;
-                element.textContent = value === 'on' ? 'ON' : value === 'off' ? 'OFF' : value.toUpperCase();
-                
-                // Update status colors
-                element.className = 'indicator-status';
-                if (value === 'on' || value === 'stable' || value === 'connected') {
-                    element.classList.add('success');
-                } else if (value === 'none') {
-                    element.classList.add('success');
-                } else {
-                    element.classList.add('warning');
-                }
+                element.textContent = value;
+                this.system.animateValueChange(element);
             }
         });
     }
 
-    checkTemperatureThresholds(temp, zone) {
-        const baskingMin = 85;
-        const baskingMax = 105;
-        const coolingMin = 70;
-        const coolingMax = 85;
-
-        let min, max;
-        if (zone === 'basking') {
-            min = baskingMin;
-            max = baskingMax;
-        } else {
-            min = coolingMin;
-            max = coolingMax;
-        }
-
-        const statusElement = document.getElementById(`${zone}-status`);
-        if (statusElement) {
-            if (temp < min || temp > max) {
-                statusElement.className = 'status-indicator critical';
-                this.showCriticalAlert(`Temperature ${temp.toFixed(1)}°F in ${zone} area is outside safe range!`, 'critical');
-            } else if (temp < min + 5 || temp > max - 5) {
-                statusElement.className = 'status-indicator warning';
-            } else {
-                statusElement.className = 'status-indicator';
-            }
+    updateLastUpdateTime() {
+        const lastUpdateElement = document.getElementById('last-update-time');
+        if (lastUpdateElement && this.system.state.lastDataUpdate) {
+            lastUpdateElement.textContent = this.formatTimeAgo(this.system.state.lastDataUpdate);
         }
     }
 
-    calculateSystemHealth(status) {
-        const alerts = status.alerts;
-        if (alerts === 'none') return 'excellent';
-        if (alerts.includes('warning')) return 'warning';
-        return 'critical';
-    }
-
-    // ===== SMART LOG MANAGEMENT SYSTEM =====
-    initializeLogSystem() {
-        this.logs = [
-            { id: 1, time: '14:32', message: 'UV cycle completed', type: 'success', severity: 'info' },
-            { id: 2, time: '13:15', message: 'Temperature check', type: 'success', severity: 'info' },
-            { id: 3, time: '12:45', message: 'Motion detected', type: 'info', severity: 'info' },
-            { id: 4, time: '12:30', message: 'System startup', type: 'success', severity: 'info' },
-            { id: 5, time: '12:00', message: 'Daily maintenance', type: 'info', severity: 'info' },
-            { id: 6, time: '11:45', message: 'Humidity check', type: 'success', severity: 'info' }
-        ];
-        
-        this.updateLogDisplay();
-        this.updateLogCounters();
-    }
-
-    updateLogDisplay(filter = 'all') {
-        const logEntries = document.getElementById('log-entries');
-        if (!logEntries) return;
-
-        const filteredLogs = filter === 'all' ? 
-            this.logs : 
-            this.logs.filter(log => log.severity === filter);
-
-        logEntries.innerHTML = '';
-        
-        filteredLogs.slice(0, 6).forEach(log => {
-            const logEntry = document.createElement('div');
-            logEntry.className = 'log-entry';
-            logEntry.innerHTML = `
-                <span class="log-time">${log.time}</span>
-                <span class="log-message">${log.message} ${this.getLogIcon(log.type)}</span>
-            `;
-            logEntries.appendChild(logEntry);
-        });
-    }
-
-    getLogIcon(type) {
-        const icons = {
-            'success': '✅',
-            'warning': '⚠️',
-            'error': '❌',
-            'info': 'ℹ️',
-            'critical': '🚨'
-        };
-        return icons[type] || 'ℹ️';
-    }
-
-    updateLogCounters() {
-        const filters = ['all', 'critical', 'warning', 'info'];
-        filters.forEach(filter => {
-            const count = filter === 'all' ? 
-                this.logs.length : 
-                this.logs.filter(log => log.severity === filter).length;
-            
-            const filterBtn = document.querySelector(`[data-filter="${filter}"]`);
-            if (filterBtn) {
-                filterBtn.textContent = filter === 'all' ? 'All' : `${filter.charAt(0).toUpperCase() + filter.slice(1)} (${count})`;
-            }
-        });
-    }
-
-    addLogEntry(message, type = 'info', severity = 'info') {
+    formatTimeAgo(timestamp) {
         const now = new Date();
-        const time = now.toLocaleTimeString('en-US', { 
-            hour: '2-digit', 
-            minute: '2-digit',
-            hour12: false 
-        });
-        
-        const newLog = {
-            id: Date.now(),
-            time: time,
-            message: message,
-            type: type,
-            severity: severity
-        };
-        
-        this.logs.unshift(newLog);
-        this.logs = this.logs.slice(0, 50); // Keep only last 50 logs
-        
-        this.updateLogDisplay();
-        this.updateLogCounters();
+        const diff = now - timestamp;
+        const minutes = Math.floor(diff / 60000);
+        const hours = Math.floor(minutes / 60);
+
+        if (hours > 0) return `${hours}h ago`;
+        if (minutes > 0) return `${minutes}m ago`;
+        return 'Just now';
     }
 
-    // ===== NAVIGATION SYSTEM =====
-    initializeNavigation() {
-        const navButtons = document.querySelectorAll('.nav-btn');
-        navButtons.forEach(button => {
-            button.addEventListener('click', (e) => {
-                const targetPage = e.currentTarget.getAttribute('data-page');
-                this.navigateToPage(targetPage);
-            });
-        });
+    checkCriticalConditions(data) {
+        const criticalTemp = this.checkTemperatureThresholds(data);
+        if (criticalTemp) {
+            this.system.addLogEntry('critical', criticalTemp, data.timestamp);
+        }
+
+        if (data.system_status.power !== 'stable') {
+            this.system.showCriticalAlert('⚡ POWER SYSTEM FAILURE - Check power supply immediately!');
+            this.system.addLogEntry('critical', 'Power system unstable', data.timestamp);
+        }
+
+        if (data.system_status.network !== 'connected') {
+            this.system.addLogEntry('warning', 'Network connectivity issues detected', data.timestamp);
+        }
     }
 
-    navigateToPage(pageId) {
-        // Hide all pages
-        document.querySelectorAll('.page').forEach(page => {
-            page.classList.remove('active');
-        });
+    checkTemperatureThresholds(data) {
+        const { basking_area, cooling_area } = data;
         
-        // Show target page
-        const targetPage = document.getElementById(pageId);
-        if (targetPage) {
-            targetPage.classList.add('active');
+        if (basking_area.temperature < 85 || basking_area.temperature > 105) {
+            return `🔥 CRITICAL: Basking temperature ${basking_area.temperature.toFixed(1)}°F is outside safe range (85-105°F)`;
         }
         
-        // Update navigation buttons
-        document.querySelectorAll('.nav-btn').forEach(btn => {
-            btn.classList.remove('active');
-        });
+        if (cooling_area.temperature < 65 || cooling_area.temperature > 90) {
+            return `❄️ CRITICAL: Cool zone temperature ${cooling_area.temperature.toFixed(1)}°F is outside safe range (65-90°F)`;
+        }
         
-        const activeBtn = document.querySelector(`[data-page="${pageId}"]`);
-        if (activeBtn) {
-            activeBtn.classList.add('active');
-        }
-    }
-
-    // ===== EVENT LISTENERS =====
-    initializeEventListeners() {
-        // Log filter buttons
-        const filterButtons = document.querySelectorAll('.filter-btn');
-        filterButtons.forEach(button => {
-            button.addEventListener('click', (e) => {
-                const filter = e.currentTarget.getAttribute('data-filter');
-                
-                // Update active filter
-                filterButtons.forEach(btn => btn.classList.remove('active'));
-                e.currentTarget.classList.add('active');
-                
-                this.updateLogDisplay(filter);
-            });
-        });
-
-        // Camera controls
-        const refreshCamera = document.getElementById('refresh-camera');
-        if (refreshCamera) {
-            refreshCamera.addEventListener('click', () => {
-                this.refreshCameraFeed();
-            });
-        }
-
-        const cameraSettings = document.getElementById('camera-settings');
-        if (cameraSettings) {
-            cameraSettings.addEventListener('click', () => {
-                this.openCameraSettings();
-            });
-        }
-    }
-
-    // ===== CAMERA SYSTEM =====
-    refreshCameraFeed() {
-        const video = document.getElementById('camera-video');
-        const placeholder = document.getElementById('camera-placeholder');
-        
-        if (video && placeholder) {
-            // Simulate camera refresh
-            placeholder.style.display = 'flex';
-            video.style.display = 'none';
-            
-            setTimeout(() => {
-                placeholder.style.display = 'none';
-                video.style.display = 'block';
-            }, 1000);
-        }
-    }
-
-    openCameraSettings() {
-        // Placeholder for camera settings modal
-        console.log('Opening camera settings...');
-        this.addLogEntry('Camera settings accessed', 'info', 'info');
-    }
-
-    // ===== UTILITY FUNCTIONS =====
-    updateConnectionStatus(connected) {
-        this.isConnected = connected;
-        const statusElement = document.getElementById('connection-status');
-        if (statusElement) {
-            if (connected) {
-                statusElement.classList.remove('offline');
-                statusElement.querySelector('.status-text').textContent = 'Connected';
-            } else {
-                statusElement.classList.add('offline');
-                statusElement.querySelector('.status-text').textContent = 'Offline';
-            }
-        }
-    }
-
-    showCriticalAlert(message, severity) {
-        console.warn(`Critical Alert: ${message}`);
-        this.addLogEntry(message, severity, 'critical');
-        
-        // Visual alert animation
-        const alertIndicator = document.getElementById('alert-indicator');
-        if (alertIndicator) {
-            alertIndicator.classList.add('critical');
-            setTimeout(() => {
-                alertIndicator.classList.remove('critical');
-            }, 3000);
-        }
-    }
-
-    handleGracefulDegradation() {
-        if (this.lastData) {
-            console.log('Using last known good data due to connection issues');
-            this.updateDashboard(this.lastData);
-        }
-    }
-
-    displayLastUpdateTime() {
-        const now = new Date();
-        console.log(`Last update: ${now.toLocaleTimeString()}`);
-    }
-
-    // ===== CLEANUP =====
-    destroy() {
-        if (this.dataPollingInterval) {
-            clearInterval(this.dataPollingInterval);
-        }
-        if (this.weatherPollingInterval) {
-            clearInterval(this.weatherPollingInterval);
-        }
+        return null;
     }
 }
 
-// ===== INITIALIZE APPLICATION =====
+/* ========== GLOBAL INITIALIZATION ========== */
+let turtxSystem;
+
 document.addEventListener('DOMContentLoaded', () => {
-    window.turtXMonitor = new TurtXMonitor();
+    turtxSystem = new TurtXMonitoringSystem();
 });
 
-// ===== GLOBAL UTILITY FUNCTIONS =====
-function showDataUpdateAnimation() {
-    const elements = document.querySelectorAll('.temp-value, .humidity-value');
-    elements.forEach(element => {
-        element.classList.add('data-update-flash');
-        setTimeout(() => {
-            element.classList.remove('data-update-flash');
-        }, 500);
-    });
-}
-
-function animateValueChange(element, oldValue, newValue) {
-    if (element && oldValue !== newValue) {
-        element.classList.add('data-update-flash');
-        setTimeout(() => {
-            element.classList.remove('data-update-flash');
-        }, 500);
+// Handle page visibility changes for optimization
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+        console.log('🐢 TurtX going to sleep mode');
+    } else {
+        console.log('🐢 TurtX waking up');
+        if (turtxSystem) {
+            turtxSystem.fetchLatestData();
+        }
     }
-}
+});
 
-// ===== ERROR HANDLING =====
+// Handle window beforeunload for cleanup
+window.addEventListener('beforeunload', () => {
+    if (turtxSystem) {
+        turtxSystem.destroy();
+    }
+});
+
+// Global error handler
 window.addEventListener('error', (event) => {
-    console.error('Global error:', event.error);
-    if (window.turtXMonitor) {
-        window.turtXMonitor.addLogEntry(`System error: ${event.error.message}`, 'error', 'critical');
+    console.error('🚨 TurtX System Error:', event.error);
+    if (turtxSystem) {
+        turtxSystem.addLogEntry('critical', `System error: ${event.message}`, new Date().toISOString());
     }
 });
 
-// ===== PERFORMANCE OPTIMIZATION =====
-let resizeTimeout;
-window.addEventListener('resize', () => {
-    clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(() => {
-        // Handle resize events efficiently
-        console.log('Window resized, updating layout...');
-    }, 250);
-});
-
-// ===== EXPORT FOR TESTING =====
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = TurtXMonitor;
-} 
+// Export for debugging
+window.turtxSystem = turtxSystem;
