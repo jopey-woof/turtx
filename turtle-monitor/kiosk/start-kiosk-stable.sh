@@ -101,4 +101,4 @@ exec google-chrome-stable \
     --disable-web-resources \
     --disable-webgl \
     --disable-webgl2 \
-    "http://localhost:8123/local/secure-kiosk-login.html" 2>/dev/null 
+    "http://localhost:8123/local/index.html" 2>/dev/null 

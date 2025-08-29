@@ -84,7 +84,7 @@ mkdir -p /home/shrimp/.chrome-kiosk
         # Start Chrome with turtle monitor kiosk - optimized for clean display
         exec google-chrome-stable \
             --kiosk \
-            --app="http://10.0.20.69:8123/lovelace/kiosk" \
+            --app="http://10.0.20.69:8123/local/index.html" \
             --no-sandbox \
             --disable-dev-shm-usage \
             --window-size=1024,600 \

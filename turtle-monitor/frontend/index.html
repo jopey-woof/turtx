@@ -698,6 +698,37 @@
             }
         }
 
+        /* Camera Status Styles */
+        .camera-status {
+            position: absolute;
+            top: 1vh;
+            left: 1vw;
+            padding: 0.5vh 1vw;
+            border-radius: 20px;
+            font-size: clamp(0.8rem, 1.5vw, 1rem);
+            font-weight: 500;
+            z-index: 10;
+        }
+        
+        .camera-status.offline {
+            background: var(--error);
+            color: white;
+        }
+        
+        .camera-status.online {
+            background: var(--success);
+            color: white;
+        }
+        
+        .camera-placeholder.show {
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: clamp(1.2rem, 3vw, 2rem);
+            text-align: center;
+        }
+
         /* Kiosk Mode - Hide Cursor */
         @media (width: 1024px) and (height: 600px) {
             * {
@@ -790,15 +821,31 @@
             <div class="page" id="camera-page">
                 <div class="camera-content">
                     <div class="camera-feed">
-                        <div class="camera-placeholder">
-                            📹 Live Camera Feed<br>
-                            <small>Connecting to stream...</small>
+                        <div class="camera-status offline" id="camera-status">
+                            📹 Camera Offline
+                        </div>
+                        
+                        <!-- Live Camera Stream -->
+                        <img class="camera-stream" 
+                             id="camera-stream" 
+                             style="display: none; width: 100%; height: auto; border-radius: 16px;"
+                             alt="Turtle Camera Feed" />
+                        
+                        <!-- Camera Placeholder -->
+                        <div class="camera-placeholder show" id="camera-placeholder">
+                            📹 Connecting to Camera...
+                        </div>
+                        
+                        <!-- Camera Error Message -->
+                        <div class="camera-error" id="camera-error" style="display: none; color: #ef4444; text-align: center; padding: 2rem;">
+                            ⚠️ Camera Connection Failed<br/>
+                            <small>Check camera connection and try refresh</small>
                         </div>
                     </div>
                     <div class="camera-controls">
-                        <button class="nav-button">⚙️ Settings</button>
-                        <button class="nav-button">🔄 Refresh</button>
-                        <button class="nav-button">🎯 Focus</button>
+                        <button class="nav-button" onclick="refreshCamera()">🔄 Refresh</button>
+                        <button class="nav-button" onclick="switchCamera()">📷 Switch</button>
+                        <button class="nav-button" onclick="toggleFullscreen()">🔍 Fullscreen</button>
                     </div>
                 </div>
             </div>
@@ -1151,9 +1198,132 @@
             }
         }
 
+        // Camera Management
+        let currentCamera = 0;
+        const cameraUrls = [
+            'http://10.0.20.69:8000/api/camera/stream',  // Primary MJPEG stream
+            'http://10.0.20.69:8000/api/camera/live',    // Live still frames
+            '/api/camera/stream',                        // Local proxy
+            '/api/camera/live'                           // Local proxy fallback
+        ];
+
+        function initializeCamera() {
+            console.log('🎥 Initializing camera system...');
+            tryNextCamera();
+        }
+
+        function tryNextCamera() {
+            if (currentCamera >= cameraUrls.length) {
+                showCameraError();
+                return;
+            }
+
+            const cameraStream = document.getElementById('camera-stream');
+            const cameraPlaceholder = document.getElementById('camera-placeholder');
+            const cameraError = document.getElementById('camera-error');
+            const cameraStatus = document.getElementById('camera-status');
+
+            if (cameraPlaceholder) cameraPlaceholder.style.display = 'block';
+            if (cameraError) cameraError.style.display = 'none';
+            
+            if (cameraStatus) {
+                cameraStatus.textContent = '📹 Connecting...';
+                cameraStatus.className = 'camera-status offline';
+            }
+
+            console.log(`📹 Trying camera URL: ${cameraUrls[currentCamera]}`);
+
+            if (cameraStream) {
+                // Add aggressive cache-busting to avoid browser cache issues
+                const streamUrl = cameraUrls[currentCamera] + '?cache_bust=' + Date.now() + '&r=' + Math.random();
+                
+                cameraStream.onload = () => {
+                    console.log('✅ Camera connected successfully!');
+                    showCameraStream();
+                };
+                
+                cameraStream.onerror = () => {
+                    console.log(`❌ Camera failed: ${cameraUrls[currentCamera]}`);
+                    currentCamera++;
+                    setTimeout(tryNextCamera, 2000);
+                };
+                
+                // Clear src first to force reload
+                cameraStream.src = '';
+                setTimeout(() => {
+                    cameraStream.src = streamUrl;
+                }, 100);
+            }
+        }
+
+        function showCameraStream() {
+            const cameraStream = document.getElementById('camera-stream');
+            const cameraPlaceholder = document.getElementById('camera-placeholder');
+            const cameraError = document.getElementById('camera-error');
+            const cameraStatus = document.getElementById('camera-status');
+
+            if (cameraStream) cameraStream.style.display = 'block';
+            if (cameraPlaceholder) cameraPlaceholder.style.display = 'none';
+            if (cameraError) cameraError.style.display = 'none';
+            
+            if (cameraStatus) {
+                cameraStatus.textContent = '📹 Live Feed';
+                cameraStatus.className = 'camera-status online';
+            }
+        }
+
+        function showCameraError() {
+            const cameraStream = document.getElementById('camera-stream');
+            const cameraPlaceholder = document.getElementById('camera-placeholder');
+            const cameraError = document.getElementById('camera-error');
+            const cameraStatus = document.getElementById('camera-status');
+
+            if (cameraStream) cameraStream.style.display = 'none';
+            if (cameraPlaceholder) cameraPlaceholder.style.display = 'none';
+            if (cameraError) cameraError.style.display = 'block';
+            
+            if (cameraStatus) {
+                cameraStatus.textContent = '📹 No Camera';
+                cameraStatus.className = 'camera-status offline';
+            }
+
+            console.log('❌ All camera sources failed');
+        }
+
+        // Camera Control Functions
+        function refreshCamera() {
+            console.log('🔄 Refreshing camera...');
+            currentCamera = 0;
+            tryNextCamera();
+        }
+
+        function switchCamera() {
+            console.log('📷 Switching to next camera...');
+            currentCamera = (currentCamera + 1) % cameraUrls.length;
+            tryNextCamera();
+        }
+
+        function toggleFullscreen() {
+            const cameraFeed = document.querySelector('.camera-feed');
+            if (cameraFeed) {
+                if (!document.fullscreenElement) {
+                    cameraFeed.requestFullscreen().catch(err => {
+                        console.log('Fullscreen failed:', err);
+                    });
+                } else {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
         // Initialize Dashboard
         window.addEventListener('DOMContentLoaded', () => {
             window.dashboard = new TurtXDashboard();
+            
+            // Initialize camera when switching to camera page
+            document.querySelector('[onclick="showPage(\'camera\')"]').addEventListener('click', () => {
+                setTimeout(initializeCamera, 500);
+            });
         });
     </script>
 </body>

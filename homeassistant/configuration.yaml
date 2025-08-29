@@ -91,6 +91,9 @@ camera:
     name: "Turtle Camera"
     still_image_url: /local/icons/turtle-placeholder.svg
     stream_source: ""
+  - platform: mjpeg
+    name: "Turtle Enclosure Camera"
+    mjpeg_url: http://10.0.20.69/api/camera/stream
 
 # Lovelace dashboards
 lovelace:

@@ -753,7 +753,7 @@ app.add_middleware(
 )
 
 # Mount static files (commented out - serving through nginx)
-# app.mount("/static", StaticFiles(directory="/app/frontend"), name="static")
+app.mount("/static", StaticFiles(directory="/app/frontend"), name="static")
 
 # Include camera routes
 app.include_router(camera_router)
