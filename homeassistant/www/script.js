@@ -347,8 +347,12 @@ class TurtXMonitoringSystem {
         const cameraStream = document.getElementById('camera-stream');
         if (cameraStream) {
             const timestamp = new Date().getTime();
-            cameraStream.src = `http://10.0.20.69:8000/api/camera/live?t=${timestamp}`;
-            this.addLogEntry('info', 'Camera stream refreshed', new Date().toISOString());
+            const cacheBust = `cache_bust=${timestamp}&r=${Math.random()}`;
+            cameraStream.src = '';  // Clear first
+            setTimeout(() => {
+                cameraStream.src = `http://10.0.20.69:8000/api/camera/live?${cacheBust}`;
+            }, 100);
+            this.addLogEntry('info', 'Camera stream refreshed with cache bust', new Date().toISOString());
         }
     }
 

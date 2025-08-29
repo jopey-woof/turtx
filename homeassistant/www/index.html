@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🐢 TurtX Monitor</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <style>
         * {
             margin: 0;
@@ -1303,8 +1306,8 @@
             console.log(`📹 Trying camera URL: ${cameraUrls[currentCamera]}`);
 
             if (cameraStream) {
-                // Add timestamp to avoid caching
-                const streamUrl = cameraUrls[currentCamera] + '?t=' + Date.now();
+                // Add aggressive cache-busting to avoid browser cache issues
+                const streamUrl = cameraUrls[currentCamera] + '?cache_bust=' + Date.now() + '&r=' + Math.random();
                 
                 cameraStream.onload = () => {
                     console.log('✅ Camera connected successfully!');
@@ -1314,10 +1317,14 @@
                 cameraStream.onerror = () => {
                     console.log(`❌ Camera failed: ${cameraUrls[currentCamera]}`);
                     currentCamera++;
-                    setTimeout(tryNextCamera, 1000);
+                    setTimeout(tryNextCamera, 2000); // Longer timeout between attempts
                 };
                 
-                cameraStream.src = streamUrl;
+                // Clear src first to force reload
+                cameraStream.src = '';
+                setTimeout(() => {
+                    cameraStream.src = streamUrl;
+                }, 100);
             }
         }
 
