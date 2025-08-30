@@ -158,6 +158,12 @@ This is an active development project. For contributions:
 4. Ensure kiosk stability
 5. Preserve Home Assistant functionality
 
+## 📧 Contact
+
+- **Developer**: bitkittyy
+- **Email**: bitkittyy@pm.me
+- **Project**: TurtX Turtle Monitoring System
+
 ## 🐛 Known Issues
 
 - Camera streaming can be unstable
