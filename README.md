@@ -1,225 +1,161 @@
-# Turtle Monitor System
+# TurtX - Turtle Monitoring System 🐢
 
-## 🎉 **MAJOR MILESTONE ACHIEVED - AUGUST 23, 2024**
+## 🎉 Status: PRODUCTION READY ✅
 
-A complete IoT turtle monitoring system with **professional Nginx architecture**, **2-second real-time sensor updates**, and **API-based kiosk system**, successfully deployed and running on Ubuntu Server with Docker and Home Assistant integration.
+The TurtX turtle monitoring system is now **fully deployed and operational** with a beautiful, stable dashboard and kiosk interface.
 
-## ✅ **Current Status - ALL SYSTEMS OPERATIONAL**
+## 🌟 Live System
 
-- **🐢 Turtle Monitor Dashboard**: ✅ **ACTIVE** - Professional web interface at `http://10.0.20.69/`
-- **🌡️ Real-time Temperature Monitoring**: ✅ **ACTIVE** - 2-second sensor updates (15x faster!)
-- **📊 API Server**: ✅ **ACTIVE** - FastAPI with real-time data access
-- **🖥️ Professional Web Setup**: ✅ **ACTIVE** - Nginx consolidation with security headers
-- **🔧 System Services**: ✅ **ACTIVE** - All services running and optimized
+- **Dashboard**: http://10.0.20.69/
+- **API**: http://10.0.20.69/api/latest
+- **Home Assistant**: http://10.0.20.69:8123 (for automations)
 
-## 🚀 **Quick Start**
+## 🚀 Features
 
-The system is **already deployed and running**. To check status:
+### Dashboard
+- **Real-time sensor data** - Temperature and humidity from both sensors
+- **Multi-page navigation** - Status, Camera, and Data pages
+- **Moon phase display** - Current lunar phase calculation
+- **Live camera feed** - Integrated camera streaming
+- **Responsive design** - Optimized for 1024x600 touchscreen
+- **Beautiful animations** - Star field and Nyan turtle animations
+- **Theme system** - CSS custom properties for easy customization
 
+### Infrastructure
+- **FastAPI backend** - Serving sensor data and camera streams
+- **Nginx proxy** - Properly configured with host networking
+- **Docker containers** - API and nginx running with `network_mode: host`
+- **Systemd kiosk service** - Stable Chrome kiosk with auto-restart
+- **Home Assistant integration** - Preserved for automation needs
+
+## 📊 Current Status
+
+### ✅ Working Components
+- **Sensors**: Both sensor1 and sensor2 reporting data
+- **Dashboard**: Beautiful, functional TurtX interface
+- **API**: Real-time data flowing correctly
+- **Kiosk**: Stable Chrome instance displaying dashboard
+- **Camera**: Live streaming functional
+- **Home Assistant**: Running for automations
+
+### 🔧 Services
 ```bash
-# Check dashboard access
-curl http://10.0.20.69/health
-
-# Check API health
-curl http://10.0.20.69/api/latest
-
-# Check MQTT sensor data
-mosquitto_sub -h localhost -t "turtle/sensors/+/temperature" -C 1
+# Check system status
+docker ps                    # API and nginx containers
+systemctl --user status kiosk.service  # Kiosk service
+ps aux | grep chrome        # Chrome processes
 ```
 
-## 📱 **What You'll See**
-
-The professional dashboard displays:
-- **Real-time Sensor Data**: Updates every 2 seconds
-- **Basking Area**: Temperature and humidity with live updates
-- **Cooling Area**: Temperature and humidity with live updates  
-- **Status Indicators**: Visual health status for each zone
-- **Professional UI**: Clean, responsive design with security headers
-- **Single URL Access**: Everything at `http://10.0.20.69/`
-
-## 🏗️ **Architecture - Professional Setup**
+## 🏗️ Architecture
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   TEMPerHUM     │    │   MQTT Broker   │    │   FastAPI       │
-│   Sensors       │───▶│   (Mosquitto)   │───▶│   Server        │
-│   (2s updates)  │    │                 │    │   (Port 8001)   │
+│   Touchscreen   │    │   FastAPI       │    │   Home          │
+│   Kiosk         │◄──►│   Backend       │◄──►│   Assistant     │
+│   (Chrome)      │    │   (Docker)      │    │   (Automations) │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
-                                                       │
-                                                       ▼
-                                              ┌─────────────────┐
-                                              │   Nginx Proxy   │
-                                              │   (Port 80)     │
-                                              │   Professional  │
-                                              └─────────────────┘
-                                                       │
-                                                       ▼
-                                              ┌─────────────────┐
-                                              │   Dashboard     │
-                                              │   http://10.0.  │
-                                              │   20.69/        │
-                                              └─────────────────┘
+         │                       │                       │
+         │              ┌─────────────────┐              │
+         └──────────────►│   Nginx Proxy   │◄─────────────┘
+                        │   (Docker)      │
+                        └─────────────────┘
+                                │
+                                ▼
+                        ┌─────────────────┐
+                        │   Sensors       │
+                        │   (MQTT)        │
+                        └─────────────────┘
 ```
 
-## 📁 **Project Structure**
+## 📁 Project Structure
 
 ```
 turtx/
-├── turtle-monitor/              # ✅ Main application
-│   ├── api/                    # FastAPI server (optimized)
-│   ├── deployment/             # Docker & deployment
-│   └── kiosk/                  # Kiosk scripts & services
-├── hardware/                   # TEMPerHUM sensor integration
-│   ├── temperhum_config.json   # 2-second update configuration
-│   └── temperhum_mqtt_service.py # Real-time sensor service
-├── homeassistant/              # Home Assistant integration
-└── docs/                       # Documentation
+├── turtle-monitor/
+│   ├── frontend/
+│   │   └── index.html              # Production dashboard
+│   ├── kiosk/
+│   │   └── start-turtle-monitor-kiosk-simple.sh  # Stable kiosk script
+│   └── turtle-monitor/
+│       ├── deployment/
+│       │   └── docker-compose.yml  # Docker services
+│       ├── config/
+│       │   └── nginx.conf          # Nginx configuration
+│       └── api/                    # FastAPI backend
+├── homeassistant/                  # Home Assistant configs
+├── hardware/                       # Sensor configurations
+└── docs/                          # Documentation
 ```
 
-## 🔧 **Key Features - MAJOR UPGRADES**
+## 🚀 Quick Start
 
-- **⚡ Real-time Monitoring**: 2-second sensor updates (was 30s)
-- **🌐 Professional Web Setup**: Nginx consolidation with security headers
-- **🔒 Single URL Access**: Everything at `http://10.0.20.69/`
-- **📊 API Optimization**: Real-time data access with caching
-- **🎨 Beautiful UI**: Turtle-themed, responsive design
-- **🔧 System Optimization**: All services stable and optimized
-- **📈 Performance**: 15x faster updates for cooling system control
+The system is already deployed and running. To check status:
 
-## 📊 **Performance - OPTIMIZED**
-
-- **API Response**: < 50ms (improved)
-- **Update Frequency**: Every 2 seconds (15x faster!)
-- **Memory Usage**: Optimized across all services
-- **CPU Usage**: < 3% (improved)
-- **Uptime**: 100% stable (no crashes)
-- **Sensor Accuracy**: ±0.5°C, ±2% humidity
-- **Data Freshness**: Maximum 2-3 second delay
-
-## 🛠️ **Technology Stack - ENHANCED**
-
-- **Backend**: FastAPI (Python 3.11) - Optimized
-- **Frontend**: HTML5, CSS3, JavaScript (Vanilla) - Enhanced
-- **Database**: SQLite - Optimized
-- **MQTT**: Mosquitto broker - Real-time
-- **Web Server**: Nginx - Professional setup
-- **Container**: Docker & Docker Compose
-- **System**: Ubuntu Server 22.04 LTS
-- **Sensors**: TEMPerHUM V4.1 USB - 2-second updates
-- **Security**: Headers, caching, compression
-
-## 🌐 **Access Points**
-
-- **Main Dashboard**: `http://10.0.20.69/`
-- **API Endpoint**: `http://10.0.20.69/api/latest`
-- **Health Check**: `http://10.0.20.69/health`
-- **Static Assets**: Automatically served by Nginx
-
-## 📖 **Documentation**
-
-- **[TODAYS_WINS_SUMMARY.md](TODAYS_WINS_SUMMARY.md)**: Complete session summary
-- **[TOMORROWS_AGENDA.md](TOMORROWS_AGENDA.md)**: Next session agenda
-- **[SESSION_COMPLETE.md](SESSION_COMPLETE.md)**: Final completion summary
-- **[KIOSK_DEPLOYMENT_SUCCESS.md](docs/KIOSK_DEPLOYMENT_SUCCESS.md)**: Previous deployment guide
-
-## 🔍 **Troubleshooting**
-
-### **Dashboard Issues**
 ```bash
-# Check Nginx status
-sudo systemctl status nginx
+# SSH to the server
+ssh shrimp@10.0.20.69
 
-# Check dashboard access
-curl http://10.0.20.69/health
+# Check services
+docker ps
+systemctl --user status kiosk.service
 
-# View Nginx logs
-sudo tail -f /var/log/nginx/turtle-dashboard-error.log
+# View logs
+docker logs turtle-monitor-api
+journalctl --user -u kiosk.service
 ```
 
-### **API Issues**
-```bash
-# Check API health
-curl http://10.0.20.69/api/latest
+## 🔧 Configuration
 
-# Check API process
-ps aux | grep uvicorn
+### Kiosk Service
+- **Location**: `/home/shrimp/.config/systemd/user/kiosk.service`
+- **Script**: `start-turtle-monitor-kiosk-simple.sh`
+- **URL**: `http://10.0.20.69/`
 
-# Restart API if needed
-pkill -f "uvicorn main:app"
-cd /home/shrimp/turtx/turtle-monitor/api && python3 -m uvicorn main:app --host 0.0.0.0 --port 8001 &
-```
+### Docker Services
+- **API**: `turtle-monitor-api` (port 8000)
+- **Nginx**: `turtle-monitor-nginx` (port 80)
+- **Network**: Both using `network_mode: host`
 
-### **Sensor Issues**
-```bash
-# Check MQTT data (2-second updates)
-mosquitto_sub -h localhost -t "turtle/sensors/+/temperature" -C 3
+## 📈 Monitoring
 
-# Check sensor service
-sudo systemctl status temperhum-mqtt.service
+### Dashboard Features
+- Real-time temperature and humidity display
+- Sensor connection status
+- Data freshness indicators
+- Error count tracking
+- Connection alerts
 
-# Restart sensor service
-sudo systemctl restart temperhum-mqtt.service
-```
+### API Endpoints
+- `GET /` - Dashboard interface
+- `GET /api/latest` - Sensor data
+- `GET /api/health` - System health
+- `GET /api/camera/stream` - Camera feed
 
-### **System Time Issues**
-```bash
-# Check system time
-date
+## 🎯 Success Metrics
 
-# Fix if needed
-sudo timedatectl set-ntp false
-sudo timedatectl set-time "2024-08-23 00:00:00"
-sudo timedatectl set-ntp true
-```
+- ✅ **Single, production-ready dashboard**
+- ✅ **Real-time sensor data display**
+- ✅ **Stable kiosk configuration**
+- ✅ **No crashes or reloads**
+- ✅ **Beautiful, functional UI**
+- ✅ **Proper API integration**
+- ✅ **Home Assistant preserved**
 
-## 🎯 **Success Metrics - ACHIEVED**
+## 📚 Documentation
 
-✅ **Nginx Consolidation**: Single professional URL access  
-✅ **2-Second Updates**: 15x faster sensor feedback  
-✅ **System Time**: Corrected and synchronized  
-✅ **API Optimization**: Real-time data access  
-✅ **Performance**: Optimized across all services  
-✅ **User Experience**: Professional, responsive interface  
-✅ **Cooling System Ready**: Perfect for real-time control  
+- [Session Complete Summary](SESSION_COMPLETE.md) - Detailed deployment summary
+- [Hardware Setup](hardware/README.md) - Sensor configuration
+- [Home Assistant Config](homeassistant/) - Automation setup
 
-## 📝 **Maintenance**
+## 🤝 Contributing
 
-The system is designed for minimal maintenance:
-- **Auto-restart**: Services restart automatically if they crash
-- **Logging**: Comprehensive logging for troubleshooting
-- **Monitoring**: Health checks for all components
-- **Backup**: Configuration and data backup procedures
-- **Professional Setup**: Industry-standard Nginx configuration
+The system is now in production. For enhancements or issues:
 
-## 🔒 **Security - ENHANCED**
-
-- **Nginx Security Headers**: X-Frame-Options, X-Content-Type-Options, etc.
-- **Local Network Only**: No external access
-- **MQTT Broker**: Configured for localhost
-- **API Access**: Proxied through Nginx with security
-- **Gzip Compression**: Optimized performance
-- **Caching**: Static assets cached for performance
-
-## 🚀 **Recent Major Accomplishments**
-
-### **August 23, 2024 - Major Milestone**
-- ✅ **Nginx Consolidation**: Professional web setup
-- ✅ **2-Second Sensor Updates**: 15x faster monitoring
-- ✅ **System Time Fix**: Corrected timestamp issues
-- ✅ **API Optimization**: Real-time data pipeline
-- ✅ **Performance Improvements**: Across all services
-
-### **Ready for Next Phase**
-- 📷 **Camera Integration**: Arducam 1080P USB camera
-- 🎨 **Dashboard Enhancement**: UI/UX improvements
-- 🤖 **Automation Setup**: Smart control systems
-- 🔧 **System Polish**: SSL/TLS, monitoring, backups
+1. Test changes thoroughly
+2. Update documentation
+3. Ensure kiosk stability
+4. Preserve Home Assistant functionality
 
 ---
 
-**Status**: ✅ **PRODUCTION READY - MAJOR MILESTONE ACHIEVED**  
-**Last Updated**: August 23, 2024  
-**Uptime**: 100% stable  
-**Update Frequency**: Every 2 seconds  
-**Next Phase**: Camera integration and automations
-# Cleanup completed successfully - Thu Aug 28 02:02:39 PM PDT 2025
+**TurtX is live and monitoring! 🐢✨**

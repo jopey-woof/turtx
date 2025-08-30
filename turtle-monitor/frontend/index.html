@@ -2,376 +2,382 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>🐢 TurtX Professional Monitoring System</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐢 TurtX Monitor</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <style>
-        /* CRITICAL: Prevent scrolling and ensure exact 100vh fit */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        :root {
-            /* Day Theme - Professional Medical Grade */
-            --day-bg-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --day-bg-secondary: rgba(255, 255, 255, 0.95);
-            --day-bg-card: rgba(255, 255, 255, 0.9);
-            --day-text-primary: #1a202c;
-            --day-text-secondary: #4a5568;
-            --day-accent: #3182ce;
-            --day-success: #10B981;
-            --day-warning: #F59E0B;
-            --day-error: #EF4444;
-            --day-info: #3B82F6;
-            
-            /* Night Theme - Easy on Eyes */
-            --night-bg-primary: linear-gradient(135deg, #0c4a6e 0%, #1e3a8a 100%);
-            --night-bg-secondary: rgba(15, 23, 42, 0.95);
-            --night-bg-card: rgba(30, 41, 59, 0.9);
-            --night-text-primary: #f8fafc;
-            --night-text-secondary: #cbd5e1;
-            --night-accent: #60a5fa;
-            --night-success: #34d399;
-            --night-warning: #fbbf24;
-            --night-error: #f87171;
-            --night-info: #60a5fa;
-            
-            /* Animation Variables */
-            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            --shadow-glass: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-            --backdrop-blur: blur(8px);
         }
 
         html, body {
             height: 100vh;
             width: 100vw;
-            overflow: hidden; /* CRITICAL: No scrollbars ever */
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
         }
 
-        /* Theme System */
-        .theme-day {
-            --bg-primary: var(--day-bg-primary);
-            --bg-secondary: var(--day-bg-secondary);
-            --bg-card: var(--day-bg-card);
-            --text-primary: var(--day-text-primary);
-            --text-secondary: var(--day-text-secondary);
-            --accent: var(--day-accent);
-            --success: var(--day-success);
-            --warning: var(--day-warning);
-            --error: var(--day-error);
-            --info: var(--day-info);
-        }
-
-        .theme-night {
-            --bg-primary: var(--night-bg-primary);
-            --bg-secondary: var(--night-bg-secondary);
-            --bg-card: var(--night-bg-card);
-            --text-primary: var(--night-text-primary);
-            --text-secondary: var(--night-text-secondary);
-            --accent: var(--night-accent);
-            --success: var(--night-success);
-            --warning: var(--night-warning);
-            --error: var(--night-error);
-            --info: var(--night-info);
-        }
-
-        body {
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            transition: var(--transition-smooth);
-            user-select: none;
-            touch-action: manipulation;
-        }
-
-        /* Main Container - EXACTLY 100vh */
-        .dashboard-container {
+        /* Page Management */
+        .page {
             height: 100vh;
             width: 100vw;
-            display: flex;
+            display: none;
             flex-direction: column;
-            overflow: hidden;
-            position: relative;
-        }
-
-        /* ANIMATED TURTLE HEADER - 15vh */
-        .animated-header {
-            height: 15vh;
-            background: linear-gradient(135deg, #0c1445 0%, #1a237e 50%, #000051 100%);
-            position: relative;
-            overflow: hidden;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 2vw;
-        }
-
-        .theme-day .animated-header {
-            background: linear-gradient(135deg, #87CEEB 0%, #98D8E8 50%, #B6E5F0 100%);
-        }
-
-        /* Star Field Background */
-        .star-field {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                radial-gradient(2px 2px at 20px 30px, #eee, transparent),
-                radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
-                radial-gradient(1px 1px at 90px 40px, #fff, transparent),
-                radial-gradient(1px 1px at 130px 80px, rgba(255,255,255,0.6), transparent);
-            background-size: 200px 100px;
-            animation: twinkle 4s ease-in-out infinite;
-        }
-
-        .theme-day .star-field {
-            opacity: 0.3;
-        }
-
-        /* Turtle with Rainbow Trail */
-        .turtle-container {
-            display: flex;
-            align-items: center;
-            position: relative;
-            z-index: 10;
-        }
-
-        .turtle-sprite {
-            font-size: clamp(2rem, 4vw, 3rem);
-            animation: swim 3s ease-in-out infinite;
-            margin-right: 1rem;
-        }
-
-        .rainbow-trail {
-            width: 200px;
-            height: 20px;
-            background: linear-gradient(
-                90deg,
-                #ff0000, #ff7700, #ffdd00, #00ff00, 
-                #0077ff, #4400ff, #ff0088, #ff0000
-            );
-            background-size: 400% 100%;
-            animation: rainbow-flow 2s linear infinite;
-            border-radius: 10px;
-            opacity: 0.8;
-        }
-
-        /* Title and Moon */
-        .title-section {
-            text-align: center;
-            z-index: 10;
-        }
-
-        .title-text {
-            color: white;
-            font-size: clamp(1.2rem, 3vw, 2rem);
-            font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-            margin: 0;
-        }
-
-        .subtitle-text {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: clamp(0.8rem, 1.5vw, 1rem);
-            margin: 0;
-        }
-
-        .moon-weather-section {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            z-index: 10;
-        }
-
-        .moon {
-            width: clamp(30px, 5vw, 50px);
-            height: clamp(30px, 5vw, 50px);
-            border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, #fff, #ddd);
-            animation: moon-glow 6s ease-in-out infinite;
-            transition: var(--transition-smooth);
-        }
-
-        .theme-day .moon {
-            background: radial-gradient(circle at 30% 30%, #FFD700, #FFA500);
-        }
-
-        /* Weather Card */
-        .weather-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: var(--backdrop-blur);
-            border-radius: 12px;
-            padding: 0.5rem 1rem;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            min-width: 120px;
-        }
-
-        .weather-temp {
-            font-size: clamp(1rem, 2vw, 1.2rem);
-            font-weight: 600;
-            color: white;
-            margin: 0;
-        }
-
-        .weather-desc {
-            font-size: clamp(0.7rem, 1.2vw, 0.8rem);
-            color: rgba(255, 255, 255, 0.8);
-            margin: 0;
-        }
-
-        /* Pages Container - 65vh (100vh - 15vh header - 20vh navigation) */
-        .pages-container {
-            height: 65vh;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .page {
             position: absolute;
             top: 0;
             left: 0;
-            width: 100vw;
-            height: 65vh;
-            display: flex;
-            flex-direction: column;
-            opacity: 0;
-            transform: translateX(100vw);
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            overflow: hidden;
+            transition: all 0.3s ease;
         }
 
         .page.active {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        /* STATUS PAGE */
-        .status-main-content {
-            height: 45vh;
             display: flex;
-            gap: 1vw;
-            padding: 1vh 2vw;
         }
 
-        .temperature-card {
-            flex: 1;
-            background: var(--bg-card);
-            backdrop-filter: var(--backdrop-blur);
-            border-radius: 20px;
-            padding: 2vh 2vw;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: var(--shadow-glass);
+        /* Animated Header - 15vh */
+        .header {
+            height: 15vh;
+            position: relative;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0c29 100%);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Twinkling Star Field Background */
+        .star-field {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .star {
+            position: absolute;
+            background: #fff;
+            border-radius: 50%;
+            animation: twinkle 3s ease-in-out infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* Moon Phase Display */
+        .moon-phase {
+            position: absolute;
+            top: 1vh;
+            right: 2vw;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            position: relative;
+            z-index: 10;
+            color: #fff;
+            text-align: center;
+        }
+
+        .moon-icon {
+            font-size: clamp(1.5rem, 3vw, 2.5rem);
+            margin-bottom: 0.5vh;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+            animation: moon-glow 4s ease-in-out infinite alternate;
+        }
+
+        .moon-info {
+            font-size: clamp(0.6rem, 1.2vw, 0.8rem);
+            font-weight: 600;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+        }
+
+        .moon-phase-name {
+            font-size: clamp(0.5rem, 1vw, 0.7rem);
+            opacity: 0.9;
+            margin-top: 0.2vh;
+        }
+
+        @keyframes moon-glow {
+            0% { filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5)); }
+            100% { filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.8)); }
+        }
+
+        /* Nyan Turtle Container */
+        .nyan-turtle-container {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 100%;
+            height: 8vh;
+            z-index: 5;
             overflow: hidden;
         }
 
-        .basking-card {
-            background: linear-gradient(135deg, rgba(255, 107, 107, 0.9) 0%, rgba(255, 154, 0, 0.8) 100%);
-        }
-
-        .cooling-card {
-            background: linear-gradient(135deg, rgba(116, 185, 255, 0.9) 0%, rgba(45, 134, 208, 0.8) 100%);
-        }
-
-        .card-icon {
+        .nyan-turtle-visible {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
             font-size: clamp(2rem, 4vw, 3rem);
+            z-index: 8;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+        }
+
+        .nyan-star-overlay {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 6;
+            pointer-events: none;
+        }
+
+        .nyan-star {
+            position: absolute;
+            color: #fff;
+            font-size: 0.8rem;
+            animation: nyan-star-fall 2s linear infinite;
+        }
+
+        @keyframes nyan-star-fall {
+            0% { transform: translateX(0) translateY(0); opacity: 1; }
+            100% { transform: translateX(-100px) translateY(20px); opacity: 0; }
+        }
+
+        /* Header Title */
+        .header-title {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            z-index: 10;
+            position: relative;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .header-subtitle {
+            position: absolute;
+            bottom: 1vh;
+            font-size: clamp(0.8rem, 1.5vw, 1rem);
+            opacity: 0.8;
+            z-index: 10;
+        }
+
+        /* Main Cards - 45vh */
+        .main-cards {
+            height: 45vh;
+            display: flex;
+            gap: 2vw;
+            padding: 2vh 2vw;
+            overflow: hidden;
+        }
+
+        .sensor-card {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2vh 1vw;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .sensor-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .zone-icon {
+            font-size: clamp(2rem, 5vw, 3rem);
             margin-bottom: 1vh;
         }
 
-        .card-title {
-            font-size: clamp(1rem, 2vw, 1.3rem);
+        .zone-title {
+            font-size: clamp(1rem, 2.5vw, 1.5rem);
             font-weight: 600;
-            color: white;
-            margin-bottom: 1vh;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            margin-bottom: 2vh;
         }
 
-        .temperature-value {
-            font-size: clamp(2rem, 6vw, 4rem);
-            font-weight: 800;
-            color: white;
-            line-height: 1;
-            margin-bottom: 0.5vh;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        .temp-value {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: bold;
+            margin-bottom: 1vh;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
         }
 
         .humidity-value {
-            font-size: clamp(1.2rem, 3vw, 2rem);
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.9);
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            font-size: clamp(0.9rem, 2vw, 1.1rem);
+            margin-bottom: 2vh;
+            opacity: 0.9;
+        }
+
+        .status-bar {
+            width: 100%;
+            height: 4px;
+            border-radius: 2px;
+            margin-top: auto;
+        }
+
+        .status-excellent { background: #4ade80; }
+        .status-warning { background: #facc15; }
+        .status-critical { background: #ef4444; }
+
+        /* Weather Card - 10vh */
+        .weather-card {
+            height: 10vh;
+            margin: 0 2vw;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1vh 2vw;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 2vw;
+        }
+
+        .weather-icon {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+        }
+
+        .weather-info {
+            flex: 1;
+            font-size: clamp(0.8rem, 2vw, 1rem);
         }
 
         /* System Indicators - 20vh */
         .system-indicators {
             height: 20vh;
             display: flex;
-            flex-wrap: wrap;
-            gap: 1vw;
-            padding: 1vh 2vw;
+            justify-content: space-around;
             align-items: center;
-            justify-content: center;
+            padding: 0 2vw;
+            gap: 1vw;
         }
 
         .indicator {
-            background: var(--bg-card);
-            backdrop-filter: var(--backdrop-blur);
-            border-radius: 16px;
-            padding: 1vh 1.5vw;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            flex: 1;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 0.5vw;
-            transition: var(--transition-bounce);
-            min-width: 120px;
-            justify-content: center;
+            gap: 1vh;
+            padding: 1vh;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .indicator:hover {
+            transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.2);
         }
 
         .indicator-icon {
-            font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+            font-size: clamp(1.5rem, 3vw, 2rem);
         }
 
-        .indicator-text {
+        .indicator-label {
+            font-size: clamp(0.7rem, 1.5vw, 0.9rem);
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .indicator-status {
+            font-size: clamp(0.6rem, 1.2vw, 0.8rem);
+            font-weight: 600;
+            padding: 0.2vh 0.5vw;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Navigation - 10vh */
+        .navigation {
+            height: 10vh;
+            display: flex;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-btn {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5vh;
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
             font-size: clamp(0.8rem, 1.5vw, 1rem);
-            font-weight: 500;
-            color: var(--text-primary);
         }
 
-        .indicator.active {
-            background: var(--success);
-            color: white;
-            transform: scale(1.05);
-            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
         }
 
-        .indicator.warning {
-            background: var(--warning);
-            color: white;
-            transform: scale(1.05);
-            box-shadow: 0 4px 20px rgba(245, 158, 11, 0.3);
+        .nav-btn.active {
+            background: rgba(255, 255, 255, 0.2);
+            border-bottom: 3px solid #4ade80;
         }
 
-        .indicator.error {
-            background: var(--error);
-            color: white;
-            animation: alert-pulse 2s ease-in-out infinite;
+        .nav-icon {
+            font-size: clamp(1.5rem, 3vw, 2rem);
         }
 
-        /* CAMERA PAGE */
-        .camera-content {
+        /* Connection Status */
+        .connection-status {
+            position: fixed;
+            top: 1vh;
+            left: 2vw;
+            display: flex;
+            align-items: center;
+            gap: 0.5vw;
+            padding: 0.5vh 1vw;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 20px;
+            font-size: clamp(0.7rem, 1.2vw, 0.9rem);
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .connection-status.connected {
+            background: rgba(74, 222, 128, 0.8);
+        }
+
+        .connection-status.disconnected {
+            background: rgba(239, 68, 68, 0.8);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Camera Page Styles */
+        .camera-container {
             height: 55vh;
             display: flex;
             flex-direction: column;
-            padding: 1vh 2vw;
+            padding: 2vh 2vw;
+            gap: 2vh;
         }
 
         .camera-feed {
@@ -381,821 +387,644 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 1vh;
-            overflow: hidden;
             position: relative;
+            overflow: hidden;
         }
 
-        .camera-placeholder {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: clamp(1.2rem, 3vw, 2rem);
+        .camera-stream {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 15px;
+        }
+
+        .camera-status {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: clamp(1.2rem, 2.5vw, 1.8rem);
             text-align: center;
+            z-index: 10;
+        }
+
+        .camera-status.online {
+            color: #4ade80;
+        }
+
+        .camera-status.offline {
+            color: #ef4444;
         }
 
         .camera-controls {
-            height: 10vh;
             display: flex;
             gap: 1vw;
-            align-items: center;
             justify-content: center;
         }
 
-        /* DATA PAGE */
-        .data-content {
-            height: 65vh;
-            display: flex;
-            flex-direction: column;
+        .control-btn {
             padding: 1vh 2vw;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: clamp(0.8rem, 1.5vw, 1rem);
+        }
+
+        .control-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Data Page Specific */
+        .page-header {
+            height: 10vh;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2vw;
+            background: rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .data-charts {
-            height: 30vh;
+            height: 35vh;
             display: flex;
-            gap: 1vw;
-            margin-bottom: 1vh;
+            gap: 2vw;
+            padding: 2vh 2vw;
         }
 
         .chart-card {
             flex: 1;
-            background: var(--bg-card);
-            backdrop-filter: var(--backdrop-blur);
-            border-radius: 16px;
-            padding: 1vh 1vw;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2vh 1vw;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
             display: flex;
             flex-direction: column;
+        }
+
+        .chart-title {
+            font-size: clamp(0.9rem, 2.2vw, 1.2rem);
+            font-weight: 600;
+            margin-bottom: 1vh;
+            text-align: center;
+        }
+
+        .chart-values {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 2vh;
+            font-size: clamp(0.8rem, 1.8vw, 1rem);
+        }
+
+        .chart-placeholder {
+            flex: 1;
+            display: flex;
             align-items: center;
             justify-content: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            font-size: clamp(0.7rem, 1.5vw, 0.9rem);
+            opacity: 0.7;
         }
 
         .activity-log {
-            height: 34vh;
-            background: var(--bg-card);
-            backdrop-filter: var(--backdrop-blur);
-            border-radius: 16px;
-            padding: 1vh 1vw;
+            height: 35vh;
+            margin: 0 2vw;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2vh;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            overflow: hidden;
         }
 
         .log-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1vh;
-            padding: 0 0.5vw;
+            margin-bottom: 2vh;
         }
 
-        .log-title {
-            font-size: clamp(1rem, 2vw, 1.3rem);
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .filter-buttons {
+        .log-filters {
             display: flex;
             gap: 0.5vw;
         }
 
         .filter-btn {
-            background: var(--bg-secondary);
-            border: 1px solid var(--accent);
-            border-radius: 20px;
             padding: 0.5vh 1vw;
-            font-size: clamp(0.7rem, 1.2vw, 0.8rem);
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 15px;
+            color: #fff;
             cursor: pointer;
-            transition: var(--transition-smooth);
-            color: var(--text-primary);
-            position: relative;
+            font-size: clamp(0.6rem, 1.2vw, 0.8rem);
+            transition: all 0.3s ease;
         }
 
         .filter-btn.active {
-            background: var(--accent);
-            color: white;
-        }
-
-        .filter-badge {
-            position: absolute;
-            top: -0.5vh;
-            right: -0.5vw;
-            background: var(--error);
-            color: white;
-            border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.7rem;
-            font-weight: bold;
+            background: rgba(74, 222, 128, 0.6);
         }
 
         .log-entries {
-            height: 30vh;
-            overflow: hidden;
+            height: calc(100% - 4vh);
+            overflow-y: auto;
+            font-size: clamp(0.7rem, 1.4vw, 0.9rem);
         }
 
         .log-entry {
-            display: flex;
-            align-items: center;
-            gap: 1vw;
-            padding: 0.8vh 1vw;
-            margin-bottom: 0.5vh;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
-            border-left: 3px solid var(--info);
-            transition: var(--transition-smooth);
-            cursor: pointer;
+            padding: 0.5vh 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .log-entry:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateX(0.5vw);
-        }
-
-        .log-entry.warning {
-            border-left-color: var(--warning);
-        }
-
-        .log-entry.error {
-            border-left-color: var(--error);
-        }
-
-        .log-time {
-            font-size: clamp(0.7rem, 1.2vw, 0.8rem);
-            color: var(--text-secondary);
-            min-width: 60px;
-        }
-
-        .log-message {
-            flex: 1;
-            font-size: clamp(0.8rem, 1.4vw, 0.9rem);
-            color: var(--text-primary);
-        }
-
-        .log-icon {
-            font-size: clamp(1rem, 1.8vw, 1.2rem);
-        }
-
-        /* Navigation Bar - 20vh */
-        .navigation {
-            height: 20vh;
-            background: var(--bg-secondary);
-            backdrop-filter: var(--backdrop-blur);
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 2vw;
-            padding: 0 2vw;
-        }
-
-        .nav-button {
-            flex: 1;
-            max-width: 200px;
-            height: 12vh;
-            background: var(--bg-card);
-            border: 2px solid var(--accent);
-            border-radius: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: var(--transition-bounce);
-            color: var(--text-primary);
-            font-weight: 600;
-        }
-
-        .nav-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-        }
-
-        .nav-button.active {
-            background: var(--accent);
-            color: white;
-            transform: scale(1.05);
-        }
-
-        .nav-icon {
-            font-size: clamp(1.5rem, 3vw, 2rem);
-            margin-bottom: 0.5vh;
-        }
-
-        .nav-text {
-            font-size: clamp(0.9rem, 1.8vw, 1.1rem);
-        }
-
-        /* Animations */
-        @keyframes swim {
-            0%, 100% { transform: translateY(0px) rotate(-2deg); }
-            50% { transform: translateY(-10px) rotate(2deg); }
-        }
-
-        @keyframes rainbow-flow {
-            0% { background-position: 0% 50%; }
-            100% { background-position: 200% 50%; }
-        }
-
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.3; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.2); }
-        }
-
-        @keyframes moon-glow {
-            0%, 100% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.3); }
-            50% { box-shadow: 0 0 30px rgba(255, 255, 255, 0.6); }
-        }
-
-        @keyframes alert-pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); box-shadow: 0 0 20px var(--error); }
-        }
-
-        @keyframes data-update {
-            0% { background-color: transparent; }
-            50% { background-color: var(--accent); opacity: 0.7; }
-            100% { background-color: transparent; }
-        }
-
-        .data-flash {
-            animation: data-update 0.5s ease;
-        }
-
-        /* Connection Status */
-        .connection-status {
-            position: absolute;
-            top: 1vh;
-            left: 1vw;
-            background: var(--success);
-            color: white;
-            padding: 0.5vh 1vw;
-            border-radius: 20px;
-            font-size: clamp(0.7rem, 1.2vw, 0.8rem);
-            font-weight: 500;
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            gap: 0.5vw;
-        }
-
-        .connection-status.disconnected {
-            background: var(--error);
-        }
-
-        .connection-status.connecting {
-            background: var(--warning);
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: currentColor;
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        /* Theme Toggle */
-        .theme-toggle {
-            position: absolute;
-            top: 1vh;
-            right: 1vw;
-            background: var(--bg-card);
-            border: 1px solid var(--accent);
-            border-radius: 20px;
-            padding: 0.5vh 1vw;
-            cursor: pointer;
-            color: var(--text-primary);
-            font-size: clamp(0.8rem, 1.5vw, 1rem);
-            z-index: 1000;
-            transition: var(--transition-smooth);
-        }
-
-        .theme-toggle:hover {
-            background: var(--accent);
-            color: white;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .system-indicators {
-                gap: 0.5vw;
-            }
-            
-            .indicator {
-                min-width: 100px;
-                padding: 0.8vh 1vw;
-            }
-            
-            .temperature-card {
-                padding: 1vh 1vw;
-            }
-        }
-
-        /* Camera Status Styles */
-        .camera-status {
-            position: absolute;
-            top: 1vh;
-            left: 1vw;
-            padding: 0.5vh 1vw;
-            border-radius: 20px;
-            font-size: clamp(0.8rem, 1.5vw, 1rem);
-            font-weight: 500;
-            z-index: 10;
-        }
-        
-        .camera-status.offline {
-            background: var(--error);
-            color: white;
-        }
-        
-        .camera-status.online {
-            background: var(--success);
-            color: white;
-        }
-        
-        .camera-placeholder.show {
-            display: flex !important;
-            align-items: center;
-            justify-content: center;
-            color: rgba(255, 255, 255, 0.6);
-            font-size: clamp(1.2rem, 3vw, 2rem);
-            text-align: center;
-        }
-
-        /* Kiosk Mode - Hide Cursor */
-        @media (width: 1024px) and (height: 600px) {
-            * {
-                cursor: none !important;
-            }
+        .log-entry:last-child {
+            border-bottom: none;
         }
     </style>
 </head>
-<body class="theme-day">
-    <!-- Connection Status -->
-    <div class="connection-status connecting">
-        <div class="status-dot"></div>
-        <span id="connection-text">Connecting...</span>
-    </div>
+<body>
+    <!-- Page 1: Status Overview -->
+    <div class="page active" id="status-page">
+        <!-- Connection Status -->
+        <div class="connection-status" id="connection-status">
+            <span class="connection-icon">📡</span>
+            <span class="connection-text">Connecting...</span>
+        </div>
 
-    <!-- Theme Toggle -->
-    <div class="theme-toggle" onclick="toggleTheme()">
-        <span id="theme-text">🌙 Night</span>
-    </div>
-
-    <div class="dashboard-container">
         <!-- Animated Header - 15vh -->
-        <header class="animated-header">
-            <div class="star-field"></div>
-            
-            <div class="turtle-container">
-                <div class="turtle-sprite">🐢</div>
-                <div class="rainbow-trail"></div>
+        <div class="header">
+            <!-- Twinkling Star Field -->
+            <div class="star-field" id="star-field"></div>
+
+            <!-- Moon Phase Display -->
+            <div class="moon-phase" id="moon-phase">
+                <div class="moon-icon" id="moon-icon">🌙</div>
+                <div class="moon-info" id="moon-info">Loading...</div>
+                <div class="moon-phase-name" id="moon-phase-name"></div>
             </div>
 
-            <div class="title-section">
-                <h1 class="title-text">TurtX Monitor</h1>
-                <p class="subtitle-text">Professional Life Support System</p>
+            <!-- Nyan Turtle Container -->
+            <div class="nyan-turtle-container">
+                <!-- Nyan Turtle (Using emoji for now, ready for GIF replacement) -->
+                <div class="nyan-turtle-visible">🐢</div>
+                
+                <!-- Star Overlay Trail -->
+                <div class="nyan-star-overlay" id="nyan-star-overlay"></div>
             </div>
 
-            <div class="moon-weather-section">
-                <div class="weather-card" id="weather-card">
-                    <div class="weather-temp" id="weather-temp">--°F</div>
-                    <div class="weather-desc" id="weather-desc">Loading...</div>
-                </div>
-                <div class="moon" id="moon"></div>
+            <!-- Header Title -->
+            <h1 class="header-title">TurtX Monitor</h1>
+            <div class="header-subtitle">Live Habitat Monitoring System</div>
+        </div>
+
+        <!-- Main Cards - 45vh -->
+        <div class="main-cards">
+            <div class="sensor-card">
+                <div class="zone-icon">🔥</div>
+                <div class="zone-title">Basking Zone</div>
+                <div class="temp-value" id="basking-temp">--°F</div>
+                <div class="humidity-value">Humidity: <span id="basking-humidity">--%</span></div>
+                <div class="status-bar status-excellent" id="basking-status"></div>
             </div>
-        </header>
-
-        <!-- Pages Container - 65vh -->
-        <main class="pages-container">
-            <!-- STATUS PAGE -->
-            <div class="page active" id="status-page">
-                <div class="status-main-content">
-                    <div class="temperature-card basking-card">
-                        <div class="card-icon">🔥</div>
-                        <div class="card-title">BASKING AREA</div>
-                        <div class="temperature-value" id="basking-temp">--°F</div>
-                        <div class="humidity-value" id="basking-humidity">--%</div>
-                    </div>
-                    
-                    <div class="temperature-card cooling-card">
-                        <div class="card-icon">❄️</div>
-                        <div class="card-title">COOLING AREA</div>
-                        <div class="temperature-value" id="cooling-temp">--°F</div>
-                        <div class="humidity-value" id="cooling-humidity">--%</div>
-                    </div>
-                </div>
-
-                <div class="system-indicators">
-                    <div class="indicator" id="heater-indicator">
-                        <span class="indicator-icon">🌡️</span>
-                        <span class="indicator-text">Heater</span>
-                    </div>
-                    <div class="indicator" id="uv-indicator">
-                        <span class="indicator-icon">💡</span>
-                        <span class="indicator-text">UV Light</span>
-                    </div>
-                    <div class="indicator" id="power-indicator">
-                        <span class="indicator-icon">⚡</span>
-                        <span class="indicator-text">Power</span>
-                    </div>
-                    <div class="indicator" id="network-indicator">
-                        <span class="indicator-icon">📡</span>
-                        <span class="indicator-text">Network</span>
-                    </div>
-                    <div class="indicator" id="alerts-indicator">
-                        <span class="indicator-icon">🚨</span>
-                        <span class="indicator-text">Alerts</span>
-                    </div>
-                </div>
+            <div class="sensor-card">
+                <div class="zone-icon">❄️</div>
+                <div class="zone-title">Cool Zone</div>
+                <div class="temp-value" id="cooling-temp">--°F</div>
+                <div class="humidity-value">Humidity: <span id="cooling-humidity">--%</span></div>
+                <div class="status-bar status-excellent" id="cooling-status"></div>
             </div>
+        </div>
 
-            <!-- CAMERA PAGE -->
-            <div class="page" id="camera-page">
-                <div class="camera-content">
-                    <div class="camera-feed">
-                        <div class="camera-status offline" id="camera-status">
-                            📹 Camera Offline
-                        </div>
-                        
-                        <!-- Live Camera Stream -->
-                        <img class="camera-stream" 
-                             id="camera-stream" 
-                             style="display: none; width: 100%; height: auto; border-radius: 16px;"
-                             alt="Turtle Camera Feed" />
-                        
-                        <!-- Camera Placeholder -->
-                        <div class="camera-placeholder show" id="camera-placeholder">
-                            📹 Connecting to Camera...
-                        </div>
-                        
-                        <!-- Camera Error Message -->
-                        <div class="camera-error" id="camera-error" style="display: none; color: #ef4444; text-align: center; padding: 2rem;">
-                            ⚠️ Camera Connection Failed<br/>
-                            <small>Check camera connection and try refresh</small>
-                        </div>
-                    </div>
-                    <div class="camera-controls">
-                        <button class="nav-button" onclick="refreshCamera()">🔄 Refresh</button>
-                        <button class="nav-button" onclick="switchCamera()">📷 Switch</button>
-                        <button class="nav-button" onclick="toggleFullscreen()">🔍 Fullscreen</button>
-                    </div>
-                </div>
+        <!-- Weather Card - 10vh -->
+        <div class="weather-card">
+            <div class="weather-icon">🌤️</div>
+            <div class="weather-info">
+                <div>Portland, OR - <span id="weather-temp">--°F</span> - <span id="weather-desc">Loading...</span></div>
+                <div>Wind: <span id="weather-wind">-- mph</span> | Humidity: <span id="weather-humidity">--%</span></div>
             </div>
+        </div>
 
-            <!-- DATA PAGE -->
-            <div class="page" id="data-page">
-                <div class="data-content">
-                    <div class="data-charts">
-                        <div class="chart-card">
-                            <h3>📈 Temperature Trends</h3>
-                            <div style="flex: 1; display: flex; align-items: center; justify-content: center; color: var(--text-secondary);">
-                                Chart visualization coming soon
-                            </div>
-                        </div>
-                        <div class="chart-card">
-                            <h3>💧 Humidity Trends</h3>
-                            <div style="flex: 1; display: flex; align-items: center; justify-content: center; color: var(--text-secondary);">
-                                Chart visualization coming soon
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="activity-log">
-                        <div class="log-header">
-                            <h3 class="log-title">📋 Recent Activity</h3>
-                            <div class="filter-buttons">
-                                <button class="filter-btn active" data-filter="all">
-                                    All <span class="filter-badge" id="badge-all">0</span>
-                                </button>
-                                <button class="filter-btn" data-filter="critical">
-                                    🔴 <span class="filter-badge" id="badge-critical">0</span>
-                                </button>
-                                <button class="filter-btn" data-filter="warning">
-                                    🟡 <span class="filter-badge" id="badge-warning">0</span>
-                                </button>
-                                <button class="filter-btn" data-filter="info">
-                                    🔵 <span class="filter-badge" id="badge-info">0</span>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="log-entries" id="log-entries">
-                            <!-- Log entries will be populated by JavaScript -->
-                        </div>
-                    </div>
-                </div>
+        <!-- System Indicators - 20vh -->
+        <div class="system-indicators">
+            <div class="indicator">
+                <div class="indicator-icon">🌡️</div>
+                <div class="indicator-label">Heater</div>
+                <div class="indicator-status status-excellent">ON</div>
             </div>
-        </main>
+            <div class="indicator">
+                <div class="indicator-icon">💡</div>
+                <div class="indicator-label">UV Light</div>
+                <div class="indicator-status status-excellent">ON</div>
+            </div>
+            <div class="indicator">
+                <div class="indicator-icon">⚡</div>
+                <div class="indicator-label">Power</div>
+                <div class="indicator-status status-excellent">OK</div>
+            </div>
+            <div class="indicator">
+                <div class="indicator-icon">📡</div>
+                <div class="indicator-label">Network</div>
+                <div class="indicator-status" id="network-status">OK</div>
+            </div>
+            <div class="indicator">
+                <div class="indicator-icon">🚨</div>
+                <div class="indicator-label">Alerts</div>
+                <div class="indicator-status" id="alerts-status">0</div>
+            </div>
+        </div>
 
-        <!-- Navigation Bar - 20vh -->
-        <nav class="navigation">
-            <button class="nav-button active" onclick="showPage('status')">
+        <!-- Navigation - 10vh -->
+        <div class="navigation">
+            <button class="nav-btn active" onclick="showPage('status')">
                 <div class="nav-icon">🏠</div>
-                <div class="nav-text">STATUS</div>
+                <div>STATUS</div>
             </button>
-            <button class="nav-button" onclick="showPage('camera')">
+            <button class="nav-btn" onclick="showPage('camera')">
                 <div class="nav-icon">📹</div>
-                <div class="nav-text">CAMERA</div>
+                <div>CAMERA</div>
             </button>
-            <button class="nav-button" onclick="showPage('data')">
+            <button class="nav-btn" onclick="showPage('data')">
                 <div class="nav-icon">📊</div>
-                <div class="nav-text">DATA</div>
+                <div>DATA</div>
             </button>
-        </nav>
+        </div>
+    </div>
+
+    <!-- Page 2: Camera View -->
+    <div class="page" id="camera-page">
+        <!-- Header - 15vh -->
+        <div class="header">
+            <h1>📹 Live Camera Feed</h1>
+        </div>
+
+        <!-- Camera Container - 55vh -->
+        <div class="camera-container">
+            <div class="camera-feed">
+                <!-- Camera Status Indicator -->
+                <div class="camera-status offline" id="camera-status">
+                    📹 Camera Offline
+                </div>
+                
+                <!-- Live Camera Stream -->
+                <img class="camera-stream"
+                     id="camera-stream"
+                     style="display: none;"
+                     alt="Turtle Camera Feed" />
+                
+                <!-- Camera Placeholder -->
+                <div class="camera-placeholder" id="camera-placeholder">
+                    🐢 Turtle Habitat Camera
+                </div>
+            </div>
+
+                    <!-- Camera Controls - 20vh -->
+        <div class="camera-controls">
+            <button class="control-btn" onclick="refreshCamera()">🔄 Refresh</button>
+            <button class="control-btn" onclick="switchCamera()">📷 Switch Camera</button>
+            <button class="control-btn" onclick="takeSnapshot()">📸 Snapshot</button>
+        </div>
+
+        <!-- Navigation - 10vh -->
+        <div class="navigation">
+            <button class="nav-btn" onclick="showPage('status')">
+                <div class="nav-icon">🏠</div>
+                <div>STATUS</div>
+            </button>
+            <button class="nav-btn active" onclick="showPage('camera')">
+                <div class="nav-icon">📹</div>
+                <div>CAMERA</div>
+            </button>
+            <button class="nav-btn" onclick="showPage('data')">
+                <div class="nav-icon">📊</div>
+                <div>DATA</div>
+            </button>
+        </div>
+    </div>
+</div>
+
+    <!-- Page 3: Data & Logs -->
+    <div class="page" id="data-page">
+        <!-- Page Header - 10vh -->
+        <div class="page-header">
+            <h2>📈 Data Analysis & Activity Log</h2>
+            <div>Last updated: <span id="last-update">Just now</span></div>
+        </div>
+
+        <!-- Data Charts - 35vh -->
+        <div class="data-charts">
+            <div class="chart-card">
+                <div class="chart-title">🌡️ Temperature Trends</div>
+                <div class="chart-values">
+                    <div>Basking: <span id="chart-basking-temp">--°F</span></div>
+                    <div>Cool: <span id="chart-cooling-temp">--°F</span></div>
+                </div>
+                <div class="chart-placeholder">[24H Graph Placeholder]</div>
+            </div>
+            <div class="chart-card">
+                <div class="chart-title">💧 Humidity Trends</div>
+                <div class="chart-values">
+                    <div>Basking: <span id="chart-basking-humidity">--%</span></div>
+                    <div>Cool: <span id="chart-cooling-humidity">--%</span></div>
+                </div>
+                <div class="chart-placeholder">[24H Graph Placeholder]</div>
+            </div>
+        </div>
+
+        <!-- Activity Log - 35vh -->
+        <div class="activity-log">
+            <div class="log-header">
+                <h4>📋 Recent Activity</h4>
+                <div class="log-filters">
+                    <button class="filter-btn active">All</button>
+                    <button class="filter-btn">🔴 Critical</button>
+                    <button class="filter-btn">🟡 Warning</button>
+                    <button class="filter-btn">🔵 Info</button>
+                </div>
+            </div>
+            <div class="log-entries" id="log-entries">
+                <div class="log-entry">🟢 System initialized - All sensors online</div>
+                <div class="log-entry">📡 API connection established</div>
+                <div class="log-entry">🌡️ Temperature reading: Basking 84.6°F, Cool 84.8°F</div>
+                <div class="log-entry">💧 Humidity reading: Basking 38.6%, Cool 38.5%</div>
+                <div class="log-entry">✅ All systems operating normally</div>
+            </div>
+        </div>
+
+        <!-- Navigation - 10vh -->
+        <div class="navigation">
+            <button class="nav-btn" onclick="showPage('status')">
+                <div class="nav-icon">🏠</div>
+                <div>STATUS</div>
+            </button>
+            <button class="nav-btn" onclick="showPage('camera')">
+                <div class="nav-icon">📹</div>
+                <div>CAMERA</div>
+            </button>
+            <button class="nav-btn active" onclick="showPage('data')">
+                <div class="nav-icon">📊</div>
+                <div>DATA</div>
+            </button>
+        </div>
     </div>
 
     <script>
-        // TurtX Professional Monitoring Dashboard
-        class TurtXDashboard {
-            constructor() {
-                this.apiBaseUrl = 'http://10.0.20.69/api';
-                this.currentTheme = 'day';
-                this.currentPage = 'status';
-                this.isConnected = false;
-                this.updateInterval = null;
-                this.weatherInterval = null;
-                this.logEntries = [];
-                this.weatherApiKey = 'YOUR_OPENWEATHERMAP_API_KEY'; // Replace with actual key
-                
-                this.init();
-            }
+        let currentPage = 'status';
 
-            async init() {
-                console.log('🐢 Initializing TurtX Professional Dashboard...');
-                
-                this.initializeTheme();
-                this.initializeEventListeners();
-                this.startDataPolling();
-                this.startWeatherUpdates();
-                this.initializeMockLogs(); // For demo purposes
-                
-                // Set initial moon phase
-                this.updateMoonPhase();
-                
-                console.log('✅ Dashboard initialized successfully');
-            }
-
-            initializeTheme() {
-                const hour = new Date().getHours();
-                const shouldBeNight = hour < 6 || hour > 20;
-                this.currentTheme = shouldBeNight ? 'night' : 'day';
-                document.body.className = `theme-${this.currentTheme}`;
-                document.getElementById('theme-text').textContent = 
-                    this.currentTheme === 'day' ? '🌙 Night' : '☀️ Day';
-            }
-
-            initializeEventListeners() {
-                // Filter buttons
-                document.querySelectorAll('.filter-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        const filter = e.target.dataset.filter;
-                        this.filterLogs(filter);
-                    });
-                });
-                
-                // Log entries
-                document.getElementById('log-entries').addEventListener('click', (e) => {
-                    const logEntry = e.target.closest('.log-entry');
-                    if (logEntry) {
-                        this.expandLogEntry(logEntry);
-                    }
-                });
-            }
-
-            async startDataPolling() {
-                this.updateInterval = setInterval(() => {
-                    this.fetchLatestData();
-                }, 2000);
-                
-                // Initial fetch
-                await this.fetchLatestData();
-            }
-
-            async fetchLatestData() {
-                try {
-                    const response = await fetch(`${this.apiBaseUrl}/latest`);
-                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                    
-                    const data = await response.json();
-                    this.updateDashboard(data);
-                    this.updateConnectionStatus(true);
-                    
-                } catch (error) {
-                    console.error('Failed to fetch data:', error);
-                    this.updateConnectionStatus(false);
-                }
-            }
-
-            updateDashboard(data) {
-                // Flash animation for data update
-                document.querySelectorAll('.temperature-value, .humidity-value').forEach(el => {
-                    el.classList.add('data-flash');
-                    setTimeout(() => el.classList.remove('data-flash'), 500);
-                });
-
-                // Update temperature displays
-                if (data.basking_area) {
-                    document.getElementById('basking-temp').textContent = 
-                        `${data.basking_area.temperature.toFixed(1)}°F`;
-                    document.getElementById('basking-humidity').textContent = 
-                        `${data.basking_area.humidity}%`;
-                }
-
-                if (data.cooling_area) {
-                    document.getElementById('cooling-temp').textContent = 
-                        `${data.cooling_area.temperature.toFixed(1)}°F`;
-                    document.getElementById('cooling-humidity').textContent = 
-                        `${data.cooling_area.humidity}%`;
-                }
-
-                // Update system indicators
-                if (data.system_status) {
-                    this.updateSystemIndicators(data.system_status);
-                }
-            }
-
-            updateSystemIndicators(status) {
-                const indicators = {
-                    'heater': status.heater === 'on',
-                    'uv': status.uv_light === 'on',
-                    'power': status.power === 'stable',
-                    'network': status.network === 'connected',
-                    'alerts': status.alerts === 'none'
-                };
-
-                Object.entries(indicators).forEach(([key, isActive]) => {
-                    const indicator = document.getElementById(`${key}-indicator`);
-                    indicator.className = 'indicator';
-                    if (isActive) {
-                        indicator.classList.add('active');
-                    } else if (key === 'alerts' && !isActive) {
-                        indicator.classList.add('error');
-                    } else {
-                        indicator.classList.add('warning');
-                    }
-                });
-            }
-
-            updateConnectionStatus(connected) {
-                const statusEl = document.querySelector('.connection-status');
-                const textEl = document.getElementById('connection-text');
-                
-                if (connected) {
-                    statusEl.className = 'connection-status';
-                    textEl.textContent = 'Connected';
-                    this.isConnected = true;
-                } else {
-                    statusEl.className = 'connection-status disconnected';
-                    textEl.textContent = 'Disconnected';
-                    this.isConnected = false;
-                }
-            }
-
-            async startWeatherUpdates() {
-                // Update every 10 minutes
-                this.weatherInterval = setInterval(() => {
-                    this.fetchWeatherData();
-                }, 600000);
-                
-                // Initial fetch
-                await this.fetchWeatherData();
-            }
-
-            async fetchWeatherData() {
-                try {
-                    // Mock weather data for demo (replace with real API call)
-                    const mockWeather = {
-                        temp: Math.round(65 + Math.random() * 20), // 65-85°F
-                        description: ['Sunny', 'Partly Cloudy', 'Clear'][Math.floor(Math.random() * 3)]
-                    };
-                    
-                    document.getElementById('weather-temp').textContent = `${mockWeather.temp}°F`;
-                    document.getElementById('weather-desc').textContent = mockWeather.description;
-                    
-                } catch (error) {
-                    console.error('Weather fetch failed:', error);
-                    document.getElementById('weather-temp').textContent = '--°F';
-                    document.getElementById('weather-desc').textContent = 'Unavailable';
-                }
-            }
-
-            updateMoonPhase() {
-                const now = new Date();
-                const hour = now.getHours();
-                const moonEl = document.getElementById('moon');
-                
-                // Simple day/night indication
-                if (hour >= 6 && hour <= 18) {
-                    // Daytime - show sun
-                    moonEl.style.background = 'radial-gradient(circle at 30% 30%, #FFD700, #FFA500)';
-                } else {
-                    // Nighttime - show moon
-                    moonEl.style.background = 'radial-gradient(circle at 30% 30%, #fff, #ddd)';
-                }
-            }
-
-            initializeMockLogs() {
-                const mockLogs = [
-                    { time: '14:32', message: 'UV cycle completed successfully', type: 'info', icon: '✅' },
-                    { time: '14:15', message: 'Temperature optimal for basking', type: 'info', icon: '🌡️' },
-                    { time: '13:45', message: 'Humidity levels stable', type: 'info', icon: '💧' },
-                    { time: '13:30', message: 'Motion detected in habitat', type: 'info', icon: 'ℹ️' },
-                    { time: '13:15', message: 'System health check passed', type: 'info', icon: '✅' },
-                    { time: '12:45', message: 'Camera feed quality excellent', type: 'info', icon: '📹' }
-                ];
-
-                this.logEntries = mockLogs;
-                this.renderLogEntries();
-                this.updateLogCounters();
-            }
-
-            renderLogEntries() {
-                const container = document.getElementById('log-entries');
-                container.innerHTML = '';
-
-                this.logEntries.slice(0, 6).forEach(log => { // Max 6 entries to fit 30vh
-                    const entry = document.createElement('div');
-                    entry.className = `log-entry ${log.type}`;
-                    entry.innerHTML = `
-                        <span class="log-icon">${log.icon}</span>
-                        <span class="log-time">${log.time}</span>
-                        <span class="log-message">${log.message}</span>
-                    `;
-                    container.appendChild(entry);
-                });
-            }
-
-            filterLogs(filter) {
-                document.querySelectorAll('.filter-btn').forEach(btn => {
-                    btn.classList.remove('active');
-                });
-                document.querySelector(`[data-filter="${filter}"]`).classList.add('active');
-                
-                // For demo, just showing all logs
-                this.renderLogEntries();
-            }
-
-            updateLogCounters() {
-                const counts = {
-                    all: this.logEntries.length,
-                    critical: this.logEntries.filter(log => log.type === 'critical').length,
-                    warning: this.logEntries.filter(log => log.type === 'warning').length,
-                    info: this.logEntries.filter(log => log.type === 'info').length
-                };
-
-                Object.entries(counts).forEach(([type, count]) => {
-                    const badge = document.getElementById(`badge-${type}`);
-                    if (badge) {
-                        badge.textContent = count;
-                        badge.style.display = count > 0 ? 'flex' : 'none';
-                    }
-                });
-            }
-
-            expandLogEntry(entry) {
-                // Add subtle interaction feedback
-                entry.style.transform = 'translateX(1vw)';
-                setTimeout(() => {
-                    entry.style.transform = '';
-                }, 200);
-            }
-        }
-
-        // Page Navigation
-        function showPage(pageId) {
-            // Update navigation buttons
-            document.querySelectorAll('.nav-button').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.closest('.nav-button').classList.add('active');
-
-            // Update pages
+        function showPage(pageName) {
+            // Hide all pages
             document.querySelectorAll('.page').forEach(page => {
                 page.classList.remove('active');
             });
-            document.getElementById(`${pageId}-page`).classList.add('active');
+
+            // Show target page
+            document.getElementById(pageName + '-page').classList.add('active');
+
+            // Update navigation
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.closest('.nav-btn').classList.add('active');
+
+            // Initialize camera when switching to camera page
+            if (pageName === 'camera') {
+                setTimeout(() => {
+                    console.log('📹 Refreshing camera on page switch...');
+                    refreshCamera();
+                }, 500);
+            }
+
+            currentPage = pageName;
+            console.log('Switched to page:', pageName);
         }
 
-        // Theme Toggle
-        function toggleTheme() {
-            const currentTheme = document.body.classList.contains('theme-day') ? 'day' : 'night';
-            const newTheme = currentTheme === 'day' ? 'night' : 'day';
-            
-            document.body.className = `theme-${newTheme}`;
-            document.getElementById('theme-text').textContent = 
-                newTheme === 'day' ? '🌙 Night' : '☀️ Day';
-            
-            if (window.dashboard) {
-                window.dashboard.currentTheme = newTheme;
-                window.dashboard.updateMoonPhase();
+        // API Configuration
+        const API_BASE_URL = 'http://10.0.20.69/api';
+        const API_ENDPOINTS = {
+            latest: '/latest',
+            health: '/health'
+        };
+
+        let isConnected = false;
+        let lastDataUpdate = null;
+
+        // Connection status update
+        function updateConnectionStatus(connected) {
+            isConnected = connected;
+            const statusElement = document.querySelector('.connection-status');
+            const iconElement = statusElement?.querySelector('.connection-icon');
+            const textElement = statusElement?.querySelector('.connection-text');
+
+            if (statusElement && iconElement && textElement) {
+                statusElement.className = `connection-status ${connected ? 'connected' : 'disconnected'}`;
+                iconElement.textContent = connected ? '📡' : '❌';
+                textElement.textContent = connected ? 'Connected' : 'Disconnected';
             }
+
+            // Update network status indicator
+            const networkStatus = document.getElementById('network-status');
+            if (networkStatus) {
+                networkStatus.textContent = connected ? 'OK' : 'OFF';
+                networkStatus.className = `indicator-status ${connected ? 'status-excellent' : 'status-critical'}`;
+            }
+        }
+
+        // Update sensor data
+        function updateData() {
+            fetch(`${API_BASE_URL}${API_ENDPOINTS.latest}`)
+                .then(response => {
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('📊 Received sensor data:', data);
+                    
+                    // Update connection status
+                    updateConnectionStatus(true);
+                    
+                    // Update sensor readings
+                    if (data.readings) {
+                        const sensor1 = data.readings.sensor1;
+                        const sensor2 = data.readings.sensor2;
+                        
+                        if (sensor1) {
+                            document.getElementById('basking-temp').textContent = `${sensor1.temperature.toFixed(1)}°F`;
+                            document.getElementById('basking-humidity').textContent = `${sensor1.humidity.toFixed(1)}%`;
+                            document.getElementById('chart-basking-temp').textContent = `${sensor1.temperature.toFixed(1)}°F`;
+                            document.getElementById('chart-basking-humidity').textContent = `${sensor1.humidity.toFixed(1)}%`;
+                            
+                            // Update status bar based on temperature
+                            const baskingStatus = document.getElementById('basking-status');
+                            if (sensor1.temperature >= 80 && sensor1.temperature <= 90) {
+                                baskingStatus.className = 'status-bar status-excellent';
+                            } else if (sensor1.temperature >= 75 && sensor1.temperature <= 95) {
+                                baskingStatus.className = 'status-bar status-warning';
+                            } else {
+                                baskingStatus.className = 'status-bar status-critical';
+                            }
+                        }
+                        
+                        if (sensor2) {
+                            document.getElementById('cooling-temp').textContent = `${sensor2.temperature.toFixed(1)}°F`;
+                            document.getElementById('cooling-humidity').textContent = `${sensor2.humidity.toFixed(1)}%`;
+                            document.getElementById('chart-cooling-temp').textContent = `${sensor2.temperature.toFixed(1)}°F`;
+                            document.getElementById('chart-cooling-humidity').textContent = `${sensor2.humidity.toFixed(1)}%`;
+                            
+                            // Update status bar based on temperature
+                            const coolingStatus = document.getElementById('cooling-status');
+                            if (sensor2.temperature >= 70 && sensor2.temperature <= 80) {
+                                coolingStatus.className = 'status-bar status-excellent';
+                            } else if (sensor2.temperature >= 65 && sensor2.temperature <= 85) {
+                                coolingStatus.className = 'status-bar status-warning';
+                            } else {
+                                coolingStatus.className = 'status-bar status-critical';
+                            }
+                        }
+                    }
+                    
+                    // Update last update time
+                    const lastUpdateElement = document.getElementById('last-update');
+                    if (lastUpdateElement) {
+                        lastUpdateElement.textContent = 'Just now';
+                    }
+                    
+                    lastDataUpdate = new Date();
+                })
+                .catch(error => {
+                    console.error('❌ Error fetching data:', error);
+                    updateConnectionStatus(false);
+                });
+        }
+
+        // Touch gesture navigation
+        let startX = 0;
+        document.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            const endX = e.changedTouches[0].clientX;
+            const deltaX = endX - startX;
+            
+            if (Math.abs(deltaX) > 50) {
+                const pages = ['status', 'camera', 'data'];
+                const currentIndex = pages.indexOf(currentPage);
+                
+                let newIndex;
+                if (deltaX > 0 && currentIndex > 0) {
+                    newIndex = currentIndex - 1; // Swipe right = previous page
+                } else if (deltaX < 0 && currentIndex < pages.length - 1) {
+                    newIndex = currentIndex + 1; // Swipe left = next page
+                }
+                
+                if (newIndex !== undefined) {
+                    showPage(pages[newIndex]);
+                }
+            }
+        });
+
+        // Moon Phase Calculations
+        function getMoonPhase(date = new Date()) {
+            const year = date.getFullYear();
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+
+            // Calculate days since known new moon (Jan 6, 2000)
+            const knownNewMoon = new Date(2000, 0, 6);
+            const daysSince = (date - knownNewMoon) / (1000 * 60 * 60 * 24);
+            
+            // Moon cycle is approximately 29.53 days
+            const moonCycle = 29.530588853;
+            const phase = (daysSince % moonCycle) / moonCycle;
+            
+            let phaseName, phaseIcon;
+            
+            if (phase < 0.0625 || phase >= 0.9375) {
+                phaseName = "New Moon";
+                phaseIcon = "🌑";
+            } else if (phase < 0.1875) {
+                phaseName = "Waxing Crescent";
+                phaseIcon = "🌒";
+            } else if (phase < 0.3125) {
+                phaseName = "First Quarter";
+                phaseIcon = "🌓";
+            } else if (phase < 0.4375) {
+                phaseName = "Waxing Gibbous";
+                phaseIcon = "🌔";
+            } else if (phase < 0.5625) {
+                phaseName = "Full Moon";
+                phaseIcon = "🌕";
+            } else if (phase < 0.6875) {
+                phaseName = "Waning Gibbous";
+                phaseIcon = "🌖";
+            } else if (phase < 0.8125) {
+                phaseName = "Last Quarter";
+                phaseIcon = "🌗";
+            } else {
+                phaseName = "Waning Crescent";
+                phaseIcon = "🌘";
+            }
+            
+            // Calculate illumination percentage
+            const illumination = Math.round((1 - Math.abs(phase - 0.5) * 2) * 100);
+            
+            return { phaseName, phaseIcon, illumination };
+        }
+
+        // Create twinkling star field
+        function createStarField() {
+            const starField = document.getElementById('star-field');
+            if (!starField) return;
+            
+            for (let i = 0; i < 50; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.width = Math.random() * 3 + 1 + 'px';
+                star.style.height = star.style.width;
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starField.appendChild(star);
+            }
+        }
+
+        // Create Nyan turtle star trail
+        function createNyanStarOverlay() {
+            const overlay = document.getElementById('nyan-star-overlay');
+            if (!overlay) return;
+            
+            setInterval(() => {
+                const star = document.createElement('div');
+                star.className = 'nyan-star';
+                star.textContent = '✦';
+                star.style.left = '60%';
+                star.style.top = '50%';
+                overlay.appendChild(star);
+                
+                setTimeout(() => {
+                    if (star.parentNode) {
+                        star.parentNode.removeChild(star);
+                    }
+                }, 2000);
+            }, 600); // Create new star every 600ms (less frequent, more natural)
+        }
+
+        // Update Moon Phase Display
+        function updateMoonPhase() {
+            const moonData = getMoonPhase();
+            
+            const moonIcon = document.getElementById('moon-icon');
+            const moonInfo = document.getElementById('moon-info');
+            const moonPhaseName = document.getElementById('moon-phase-name');
+
+            if (moonIcon) moonIcon.textContent = moonData.phaseIcon;
+            if (moonInfo) moonInfo.textContent = `${moonData.illumination}%`;
+            if (moonPhaseName) moonPhaseName.textContent = moonData.phaseName;
+            
+            console.log(`🌙 Moon Phase: ${moonData.phaseName} (${moonData.illumination}% illuminated)`);
         }
 
         // Camera Management
@@ -1203,8 +1032,8 @@
         const cameraUrls = [
             'http://10.0.20.69:8000/api/camera/stream',  // Primary MJPEG stream
             'http://10.0.20.69:8000/api/camera/live',    // Live still frames
-            '/api/camera/stream',                        // Local proxy
-            '/api/camera/live'                           // Local proxy fallback
+            'http://10.0.20.69/api/camera/stream',       // Nginx proxy fallback
+            '/api/camera/live'                           // Local fallback
         ];
 
         function initializeCamera() {
@@ -1218,113 +1047,110 @@
                 return;
             }
 
-            const cameraStream = document.getElementById('camera-stream');
-            const cameraPlaceholder = document.getElementById('camera-placeholder');
-            const cameraError = document.getElementById('camera-error');
-            const cameraStatus = document.getElementById('camera-status');
-
-            if (cameraPlaceholder) cameraPlaceholder.style.display = 'block';
-            if (cameraError) cameraError.style.display = 'none';
+            const url = cameraUrls[currentCamera];
+            console.log(`📹 Trying camera ${currentCamera + 1}/${cameraUrls.length}: ${url}`);
             
-            if (cameraStatus) {
-                cameraStatus.textContent = '📹 Connecting...';
-                cameraStatus.className = 'camera-status offline';
-            }
-
-            console.log(`📹 Trying camera URL: ${cameraUrls[currentCamera]}`);
-
-            if (cameraStream) {
-                // Add aggressive cache-busting to avoid browser cache issues
-                const streamUrl = cameraUrls[currentCamera] + '?cache_bust=' + Date.now() + '&r=' + Math.random();
-                
-                cameraStream.onload = () => {
-                    console.log('✅ Camera connected successfully!');
-                    showCameraStream();
+            const img = document.getElementById('camera-stream');
+            const status = document.getElementById('camera-status');
+            
+            if (img && status) {
+                img.onload = () => {
+                    console.log(`✅ Camera ${currentCamera + 1} working!`);
+                    status.textContent = '📹 Camera Online';
+                    status.className = 'camera-status online';
+                    img.style.display = 'block';
+                    document.getElementById('camera-placeholder').style.display = 'none';
                 };
                 
-                cameraStream.onerror = () => {
-                    console.log(`❌ Camera failed: ${cameraUrls[currentCamera]}`);
+                img.onerror = () => {
+                    console.log(`❌ Camera ${currentCamera + 1} failed`);
                     currentCamera++;
-                    setTimeout(tryNextCamera, 2000);
+                    setTimeout(tryNextCamera, 1000);
                 };
                 
-                // Clear src first to force reload
-                cameraStream.src = '';
-                setTimeout(() => {
-                    cameraStream.src = streamUrl;
-                }, 100);
+                img.src = url + '?t=' + Date.now();
             }
         }
 
-        function showCameraStream() {
-            const cameraStream = document.getElementById('camera-stream');
-            const cameraPlaceholder = document.getElementById('camera-placeholder');
-            const cameraError = document.getElementById('camera-error');
-            const cameraStatus = document.getElementById('camera-status');
-
-            if (cameraStream) cameraStream.style.display = 'block';
-            if (cameraPlaceholder) cameraPlaceholder.style.display = 'none';
-            if (cameraError) cameraError.style.display = 'none';
-            
-            if (cameraStatus) {
-                cameraStatus.textContent = '📹 Live Feed';
-                cameraStatus.className = 'camera-status online';
-            }
-        }
-
-        function showCameraError() {
-            const cameraStream = document.getElementById('camera-stream');
-            const cameraPlaceholder = document.getElementById('camera-placeholder');
-            const cameraError = document.getElementById('camera-error');
-            const cameraStatus = document.getElementById('camera-status');
-
-            if (cameraStream) cameraStream.style.display = 'none';
-            if (cameraPlaceholder) cameraPlaceholder.style.display = 'none';
-            if (cameraError) cameraError.style.display = 'block';
-            
-            if (cameraStatus) {
-                cameraStatus.textContent = '📹 No Camera';
-                cameraStatus.className = 'camera-status offline';
-            }
-
-            console.log('❌ All camera sources failed');
-        }
-
-        // Camera Control Functions
         function refreshCamera() {
             console.log('🔄 Refreshing camera...');
-            currentCamera = 0;
-            tryNextCamera();
+            const img = document.getElementById('camera-stream');
+            if (img) {
+                img.src = cameraUrls[currentCamera] + '?t=' + Date.now();
+            }
         }
 
         function switchCamera() {
-            console.log('📷 Switching to next camera...');
+            console.log('📷 Switching camera...');
             currentCamera = (currentCamera + 1) % cameraUrls.length;
             tryNextCamera();
         }
 
-        function toggleFullscreen() {
-            const cameraFeed = document.querySelector('.camera-feed');
-            if (cameraFeed) {
-                if (!document.fullscreenElement) {
-                    cameraFeed.requestFullscreen().catch(err => {
-                        console.log('Fullscreen failed:', err);
-                    });
-                } else {
-                    document.exitFullscreen();
-                }
-            }
+        function takeSnapshot() {
+            console.log('📸 Taking snapshot...');
+            // This would integrate with the camera API to take a snapshot
+            alert('Snapshot feature would be implemented here');
         }
 
-        // Initialize Dashboard
-        window.addEventListener('DOMContentLoaded', () => {
-            window.dashboard = new TurtXDashboard();
+        function showCameraError() {
+            console.log('❌ All camera endpoints failed');
+            const status = document.getElementById('camera-status');
+            const img = document.getElementById('camera-stream');
+            const placeholder = document.getElementById('camera-placeholder');
             
-            // Initialize camera when switching to camera page
-            document.querySelector('[onclick="showPage(\'camera\')"]').addEventListener('click', () => {
-                setTimeout(initializeCamera, 500);
-            });
-        });
+            if (status) status.textContent = '📹 Camera Offline';
+            if (status) status.className = 'camera-status offline';
+            if (img) img.style.display = 'none';
+            if (placeholder) placeholder.style.display = 'block';
+        }
+
+        // Mock weather data (replace with real API)
+        function updateWeather() {
+            const mockWeather = {
+                temp: Math.round(65 + Math.random() * 20),
+                desc: ['Sunny', 'Partly Cloudy', 'Clear', 'Cloudy'][Math.floor(Math.random() * 4)],
+                wind: Math.round(3 + Math.random() * 15),
+                humidity: Math.round(40 + Math.random() * 40)
+            };
+            
+            document.getElementById('weather-temp').textContent = `${mockWeather.temp}°F`;
+            document.getElementById('weather-desc').textContent = mockWeather.desc;
+            document.getElementById('weather-wind').textContent = `${mockWeather.wind} mph`;
+            document.getElementById('weather-humidity').textContent = `${mockWeather.humidity}%`;
+        }
+
+        // Initialize animations
+        function initializeAnimations() {
+            createStarField();
+            createNyanStarOverlay();
+            updateMoonPhase();
+            
+            // Update moon phase daily
+            setInterval(updateMoonPhase, 24 * 60 * 60 * 1000);
+        }
+
+        // Initialize dashboard
+        console.log('🐢 TurtX Multi-Page Monitor initializing...');
+        console.log('🔗 API Endpoint:', `${API_BASE_URL}${API_ENDPOINTS.latest}`);
+        console.log('🌟 Initializing magical animations...');
+        
+        // Initialize animations first
+        initializeAnimations();
+        
+        // Initialize camera system
+        initializeCamera();
+        
+        // Initial data load
+        updateData();
+        updateWeather();
+        
+        // Update every 2 seconds
+        const updateInterval = setInterval(updateData, 2000);
+        
+        // Update weather every 10 minutes
+        setInterval(updateWeather, 600000);
+        
+        console.log('✅ TurtX Dashboard loaded! Updating every 2 seconds...');
     </script>
 </body>
 </html>

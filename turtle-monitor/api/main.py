@@ -762,10 +762,15 @@ app.include_router(camera_router)
 async def root():
     """Serve the main HTML page"""
     try:
-        with open("/home/shrimp/turtx/turtle-monitor/frontend/index.html", "r") as f:
+        with open("/app/frontend/index.html", "r") as f:
             return HTMLResponse(content=f.read())
     except FileNotFoundError:
-        return HTMLResponse(content="<h1>🐢 Turtle Monitor</h1><p>Frontend not found</p>")
+        try:
+            # Fallback to host path
+            with open("/home/shrimp/turtx/turtle-monitor/frontend/index.html", "r") as f:
+                return HTMLResponse(content=f.read())
+        except FileNotFoundError:
+            return HTMLResponse(content="<h1>🐢 Turtle Monitor</h1><p>Frontend not found</p>")
 
 @app.get("/css/{filename}")
 async def serve_css(filename: str):
