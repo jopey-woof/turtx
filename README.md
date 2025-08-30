@@ -1,41 +1,41 @@
 # TurtX - Turtle Monitoring System 🐢
 
-## 🎉 Status: PRODUCTION READY ✅
+## 🚧 Status: ACTIVE DEVELOPMENT
 
-The TurtX turtle monitoring system is now **fully deployed and operational** with a beautiful, stable dashboard and kiosk interface.
+The TurtX turtle monitoring system is currently **under active development** with a working prototype dashboard and kiosk interface.
 
-## 🌟 Live System
+## 🌟 Current Prototype
 
 - **Dashboard**: http://10.0.20.69/
 - **API**: http://10.0.20.69/api/latest
 - **Home Assistant**: http://10.0.20.69:8123 (for automations)
 
-## 🚀 Features
+## 🚀 Current Features
 
-### Dashboard
+### Dashboard (In Development)
 - **Real-time sensor data** - Temperature and humidity from both sensors
 - **Multi-page navigation** - Status, Camera, and Data pages
 - **Moon phase display** - Current lunar phase calculation
-- **Live camera feed** - Integrated camera streaming
+- **Live camera feed** - Integrated camera streaming (experimental)
 - **Responsive design** - Optimized for 1024x600 touchscreen
 - **Beautiful animations** - Star field and Nyan turtle animations
 - **Theme system** - CSS custom properties for easy customization
 
-### Infrastructure
+### Infrastructure (Work in Progress)
 - **FastAPI backend** - Serving sensor data and camera streams
-- **Nginx proxy** - Properly configured with host networking
+- **Nginx proxy** - Configured with host networking
 - **Docker containers** - API and nginx running with `network_mode: host`
-- **Systemd kiosk service** - Stable Chrome kiosk with auto-restart
+- **Systemd kiosk service** - Chrome kiosk with auto-restart
 - **Home Assistant integration** - Preserved for automation needs
 
-## 📊 Current Status
+## 📊 Development Status
 
 ### ✅ Working Components
 - **Sensors**: Both sensor1 and sensor2 reporting data
-- **Dashboard**: Beautiful, functional TurtX interface
+- **Dashboard**: Functional TurtX interface (prototype)
 - **API**: Real-time data flowing correctly
-- **Kiosk**: Stable Chrome instance displaying dashboard
-- **Camera**: Live streaming functional
+- **Kiosk**: Chrome instance displaying dashboard
+- **Camera**: Basic streaming functional
 - **Home Assistant**: Running for automations
 
 ### 🔧 Services
@@ -46,7 +46,7 @@ systemctl --user status kiosk.service  # Kiosk service
 ps aux | grep chrome        # Chrome processes
 ```
 
-## 🏗️ Architecture
+## 🏗️ Architecture (Current)
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
@@ -73,9 +73,9 @@ ps aux | grep chrome        # Chrome processes
 turtx/
 ├── turtle-monitor/
 │   ├── frontend/
-│   │   └── index.html              # Production dashboard
+│   │   └── index.html              # Current dashboard prototype
 │   ├── kiosk/
-│   │   └── start-turtle-monitor-kiosk-simple.sh  # Stable kiosk script
+│   │   └── start-turtle-monitor-kiosk-simple.sh  # Kiosk script
 │   └── turtle-monitor/
 │       ├── deployment/
 │       │   └── docker-compose.yml  # Docker services
@@ -84,15 +84,16 @@ turtx/
 │       └── api/                    # FastAPI backend
 ├── homeassistant/                  # Home Assistant configs
 ├── hardware/                       # Sensor configurations
+├── daily-summaries/                # Development session logs
 └── docs/                          # Documentation
 ```
 
-## 🚀 Quick Start
+## 🚀 Development Setup
 
-The system is already deployed and running. To check status:
+To work with the current prototype:
 
 ```bash
-# SSH to the server
+# SSH to the development server
 ssh shrimp@10.0.20.69
 
 # Check services
@@ -104,7 +105,7 @@ docker logs turtle-monitor-api
 journalctl --user -u kiosk.service
 ```
 
-## 🔧 Configuration
+## 🔧 Current Configuration
 
 ### Kiosk Service
 - **Location**: `/home/shrimp/.config/systemd/user/kiosk.service`
@@ -116,9 +117,9 @@ journalctl --user -u kiosk.service
 - **Nginx**: `turtle-monitor-nginx` (port 80)
 - **Network**: Both using `network_mode: host`
 
-## 📈 Monitoring
+## 📈 Current Monitoring
 
-### Dashboard Features
+### Dashboard Features (Prototype)
 - Real-time temperature and humidity display
 - Sensor connection status
 - Data freshness indicators
@@ -131,31 +132,39 @@ journalctl --user -u kiosk.service
 - `GET /api/health` - System health
 - `GET /api/camera/stream` - Camera feed
 
-## 🎯 Success Metrics
+## 🎯 Development Goals
 
-- ✅ **Single, production-ready dashboard**
-- ✅ **Real-time sensor data display**
-- ✅ **Stable kiosk configuration**
-- ✅ **No crashes or reloads**
-- ✅ **Beautiful, functional UI**
-- ✅ **Proper API integration**
-- ✅ **Home Assistant preserved**
+- 🔄 **Improve dashboard stability**
+- 🔄 **Enhance camera integration**
+- 🔄 **Add more sensor types**
+- 🔄 **Implement data logging**
+- 🔄 **Add alerting system**
+- 🔄 **Improve error handling**
+- 🔄 **Add configuration UI**
 
 ## 📚 Documentation
 
-- [Session Complete Summary](SESSION_COMPLETE.md) - Detailed deployment summary
+- [Latest Session Summary](daily-summaries/2025/08/SESSION_COMPLETE.md) - Recent development progress
 - [Hardware Setup](hardware/README.md) - Sensor configuration
 - [Home Assistant Config](homeassistant/) - Automation setup
 
 ## 🤝 Contributing
 
-The system is now in production. For enhancements or issues:
+This is an active development project. For contributions:
 
-1. Test changes thoroughly
-2. Update documentation
-3. Ensure kiosk stability
-4. Preserve Home Assistant functionality
+1. Check current development status
+2. Test changes thoroughly
+3. Update documentation
+4. Ensure kiosk stability
+5. Preserve Home Assistant functionality
+
+## 🐛 Known Issues
+
+- Camera streaming can be unstable
+- Dashboard may need optimization for performance
+- Error handling needs improvement
+- Configuration management is basic
 
 ---
 
-**TurtX is live and monitoring! 🐢✨**
+**TurtX is in active development! 🐢🚧**
