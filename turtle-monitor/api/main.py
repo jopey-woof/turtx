@@ -29,6 +29,8 @@ import uvicorn
 # Import camera routes
 from camera_routes import camera_router, init_camera_manager, stop_camera_manager
 
+from analytics_routes import router as analytics_router
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
@@ -757,6 +759,8 @@ app.mount("/static", StaticFiles(directory="/app/frontend"), name="static")
 
 # Include camera routes
 app.include_router(camera_router)
+
+app.include_router(analytics_router, prefix="/api/analytics")
 
 @app.get("/", response_class=HTMLResponse)
 async def root():

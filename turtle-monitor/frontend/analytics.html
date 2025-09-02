@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turtle Habitat Analytics</title>
+    <link rel="stylesheet" href="analytics.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="analytics.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Turtle Habitat Analytics</h1>
+        <div class="time-controls">
+            <button data-period="2h">Last 2 Hours</button>
+            <button data-period="12h">Last 12 Hours</button>
+            <button data-period="24h">Last 24 Hours</button>
+            <button data-period="3d">Last 3 Days</button>
+            <button data-period="1w">Last Week</button>
+            <button data-period="1m">Last Month</button>
+        </div>
+        <div class="kpi-cards">
+            <div class="kpi-card">
+                <h3>Avg Basking Temp</h3>
+                <p id="avg-basking-temp">--</p>
+            </div>
+            <div class="kpi-card">
+                <h3>Avg Cooling Temp</h3>
+                <p id="avg-cooling-temp">--</p>
+            </div>
+            <div class="kpi-card">
+                <h3>Avg Basking Humidity</h3>
+                <p id="avg-basking-humidity">--</p>
+            </div>
+            <div class="kpi-card">
+                <h3>Avg Cooling Humidity</h3>
+                <p id="avg-cooling-humidity">--</p>
+            </div>
+            <div class="kpi-card">
+                <h3>Optimal Conditions %</h3>
+                <p id="optimal-conditions">--</p>
+            </div>
+            <div class="kpi-card">
+                <h3>Alert Count</h3>
+                <p id="alert-count">--</p>
+            </div>
+        </div>
+        <div class="chart-container">
+            <canvas id="temperatureTrend"></canvas>
+        </div>
+        <div class="chart-container">
+            <canvas id="humidityTrend"></canvas>
+        </div>
+        <div class="chart-container">
+            <canvas id="tempDistribution"></canvas>
+        </div>
+        <div class="chart-container">
+            <canvas id="dailyPatterns"></canvas>
+        </div>
+    </div>
+</body>
+</html>

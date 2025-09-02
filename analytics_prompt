@@ -1,0 +1,206 @@
+# Turtle Monitoring Analytics Dashboard - Development Brief
+
+You are creating a **comprehensive data analytics page** for the turtle monitoring system. This is a dedicated analytics interface that displays historical data with interactive charts and meaningful insights.
+
+## Project Context
+- **System**: Turtle habitat monitoring with TEMPerHUM sensors
+- **Data Source**: SQLite database with 2-second interval sensor readings
+- **Environment**: Production system for actual turtle care
+- **Access**: http://10.0.20.69/analytics (new page to create)
+- **Integration**: Must work with existing FastAPI backend
+
+## Analytics Page Requirements
+
+### 1. **Chart Library**: Use Chart.js (from cdnjs.cloudflare.com)
+- Professional, responsive charts
+- Interactive tooltips and legends
+- Time-series data visualization
+- Multiple chart types (line, area, gauge)
+
+### 2. **Time Period Controls**
+Interactive buttons for data viewing:
+- **Last 2 Hours** (detailed view, 2-second intervals)
+- **Last 12 Hours** (1-minute averages)
+- **Last 24 Hours** (5-minute averages) 
+- **Last 3 Days** (15-minute averages)
+- **Last Week** (1-hour averages)
+- **Last Month** (4-hour averages)
+- **Custom Date Range** (date picker for specific periods)
+
+### 3. **Chart Types Needed**
+
+#### **Primary Charts:**
+- **Temperature Trends** - Dual-line chart (basking vs cooling areas)
+- **Humidity Trends** - Dual-line chart (basking vs cooling areas)
+- **Temperature Distribution** - Histogram showing time spent in different temp ranges
+- **Daily Temperature Patterns** - Heat map showing typical daily cycles
+
+#### **Analysis Charts:**
+- **Temperature Differential** - Chart showing basking-cooling temperature difference
+- **Comfort Zone Analysis** - Stacked area chart showing time in optimal vs suboptimal ranges
+- **Sensor Health** - Uptime and data quality metrics
+- **Environmental Stability** - Standard deviation and variance trends
+
+### 4. **Key Performance Indicators (KPIs)**
+
+#### **Current Status Cards:**
+- **Average Temperatures** (last 24h): Basking & Cooling
+- **Temperature Ranges** (last 24h): Min/Max for each zone
+- **System Uptime** (last 24h): % of time with valid data
+- **Data Points Collected** (last 24h): Total sensor readings
+- **Alert Count** (last 24h): Number of out-of-range incidents
+- **Optimal Conditions** (last 24h): % of time in ideal ranges
+
+#### **Turtle Welfare Metrics:**
+- **Thermoregulation Effectiveness**: How well temperature gradient is maintained
+- **Basking Lamp Performance**: Consistency of basking area heating
+- **Cooling System Performance**: Stability of cooling area temperature
+- **Environmental Stress Indicators**: Rapid temperature changes, extended out-of-range periods
+
+### 5. **Data Analysis Features**
+
+#### **Temperature Zone Analysis:**
+- **Optimal Range Time**: % time each zone spent in ideal temperature
+- **Gradient Quality**: Consistent temperature difference between zones
+- **Heating/Cooling Cycles**: Pattern recognition for system behavior
+- **Seasonal Adjustments**: Month-over-month trend comparisons
+
+#### **Real-Time Statistics:**
+- **Moving Averages**: 15-min, 1-hour, 4-hour rolling averages
+- **Standard Deviations**: Temperature stability measurements
+- **Correlation Analysis**: Temperature vs humidity relationships
+- **Outlier Detection**: Unusual readings flagged for investigation
+
+### 6. **Export and Reporting**
+
+#### **Data Export Options:**
+- **CSV Download**: Raw data for external analysis
+- **Chart Images**: PNG export of all visualizations
+- **Summary Reports**: PDF with key insights and recommendations
+- **API Endpoints**: Machine-readable data access
+
+#### **Automated Insights:**
+- **Daily Summary**: Automated analysis of the past 24 hours
+- **Weekly Trends**: Pattern recognition and health recommendations
+- **Alert History**: Timeline of all system alerts and resolutions
+- **Performance Reports**: System reliability and sensor health metrics
+
+## Technical Implementation
+
+### API Endpoints Needed (add to FastAPI):
+```python
+GET /api/analytics/temperature/{zone}?period={period}&aggregation={agg}
+GET /api/analytics/humidity/{zone}?period={period}&aggregation={agg}
+GET /api/analytics/summary?period={period}
+GET /api/analytics/kpis?period={period}
+GET /api/analytics/alerts?period={period}
+GET /api/analytics/export/csv?period={period}
+```
+
+### Database Queries Required:
+- **Time-series aggregation** by different intervals
+- **Statistical calculations** (mean, median, std dev, min/max)
+- **Moving averages** and trend calculations  
+- **Correlation analysis** between temperature and humidity
+- **Alert history** with severity and duration
+- **Data quality metrics** (missing readings, sensor uptime)
+
+### Frontend Architecture:
+```
+/home/shrimp/turtx/turtle-monitor/web/analytics.html
+├── Chart.js integration
+├── Date range picker
+├── Real-time data updates
+├── Responsive design
+└── Export functionality
+```
+
+## Design Requirements
+
+### Visual Design:
+- **Professional dashboard aesthetic** matching main monitoring page
+- **Turtle/aquatic color scheme** with blues, greens, earth tones
+- **Clean, data-focused layout** with minimal distractions
+- **Mobile-responsive** for tablet viewing
+- **High contrast** for kiosk display readability
+
+### User Experience:
+- **Instant chart updates** when changing time periods
+- **Loading indicators** for data fetching
+- **Smooth animations** for chart transitions
+- **Intuitive controls** that are immediately obvious
+- **Contextual tooltips** explaining metrics and insights
+
+### Performance:
+- **Fast initial load** (< 3 seconds for 24h data)
+- **Efficient data fetching** with proper caching
+- **Smooth chart rendering** even with large datasets
+- **Memory efficient** for 24/7 kiosk operation
+
+## Turtle Care Insights
+
+### What the Charts Should Reveal:
+- **Daily basking patterns**: When turtle uses basking area most
+- **Seasonal temperature needs**: How requirements change over time
+- **System performance**: Whether heating/cooling systems are adequate
+- **Behavioral insights**: Activity patterns based on temperature preferences
+- **Health indicators**: Consistent environment = healthier turtle
+
+### Critical Analysis Points:
+- **Temperature gradient consistency**: 10-15°F difference maintained?
+- **Rapid temperature changes**: Potentially stressful for turtle
+- **Extended out-of-range periods**: Equipment failures or seasonal adjustments needed
+- **Humidity correlation**: Proper relationship between temp and humidity
+- **System reliability**: Sensor uptime and data quality
+
+## Data Accuracy Requirements
+
+### Real Data Integration:
+- **No fake or simulated data** in production analytics
+- **Proper error handling** for missing data points
+- **Data validation** to flag suspicious readings
+- **Interpolation methods** for brief sensor outages
+- **Confidence indicators** showing data quality
+
+### Statistical Rigor:
+- **Appropriate aggregation methods** for each time period
+- **Confidence intervals** where relevant
+- **Outlier handling** without losing important information
+- **Trend significance testing** for meaningful pattern detection
+- **Seasonal adjustment** capabilities
+
+## Success Criteria
+
+### Functional Requirements:
+- [ ] All time period controls work instantly
+- [ ] Charts render smoothly with real database data
+- [ ] KPIs calculate accurately from sensor readings
+- [ ] Export functions generate correct files
+- [ ] Mobile/tablet responsive design works perfectly
+- [ ] Integration with main dashboard seamless
+
+### Analytics Quality:
+- [ ] Insights are actionable for turtle care
+- [ ] Statistical calculations are mathematically correct
+- [ ] Data visualization clearly shows important patterns
+- [ ] Historical trends help optimize habitat conditions
+- [ ] Performance metrics help maintain system health
+
+### Production Ready:
+- [ ] Works reliably for 24/7 kiosk display
+- [ ] Handles large datasets without performance issues
+- [ ] Error handling prevents crashes with bad data
+- [ ] Professional appearance suitable for turtle care facility
+- [ ] Documentation explains all metrics and charts
+
+## Implementation Priority
+
+1. **Core Infrastructure**: API endpoints for analytics data
+2. **Basic Charts**: Temperature and humidity trend lines
+3. **Time Controls**: Period selection with data aggregation
+4. **KPI Dashboard**: Current status and summary metrics
+5. **Advanced Charts**: Distribution, patterns, correlations
+6. **Export Features**: CSV, PNG, PDF generation
+7. **Polish & Performance**: Optimization and final UI refinements
+
+Remember: This analytics page should provide **meaningful insights that improve turtle care**, not just pretty charts. Every metric should help the caretaker understand their turtle's habitat quality and system performance.
