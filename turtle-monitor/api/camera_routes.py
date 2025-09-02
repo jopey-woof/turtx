@@ -13,7 +13,7 @@ from pydantic import BaseModel
 
 from camera_manager import TurtleCameraManager, IRFilterMode, CameraPreset
 from camera_optimizer import camera_optimizer
-from simple_camera_controls import camera_controls
+# from simple_camera_controls import camera_controls
 
 logger = logging.getLogger(__name__)
 
@@ -726,217 +726,218 @@ async def get_all_camera_controls():
         logger.error(f"Error getting camera controls: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to get camera controls: {e}") 
 
-@camera_router.get("/simple/status")
-async def get_simple_camera_status():
-    """Get simple camera status with current settings"""
-    try:
-        status = camera_controls.get_status()
-        return {
-            "success": True,
-            "camera": status,
-            "message": "Simple camera status retrieved",
-            "turtle_safety": {
-                "note": "Camera is for monitoring only - avoid extended use to prevent turtle stress",
-                "recommended_use": "Brief monitoring sessions only",
-                "ir_warning": "IR lighting can disturb turtles - use sparingly if available"
-            }
-        }
-    except Exception as e:
-        logger.error(f"Error getting simple camera status: {e}")
-        raise HTTPException(status_code=500, detail=f"Failed to get camera status: {e}")
+# Comment out all simple routes from line 729 to 942
+# @camera_router.get("/simple/status")
+# async def get_simple_camera_status():
+#     """Get simple camera status with current settings"""
+#     try:
+#         status = camera_controls.get_status()
+#         return {
+#             "success": True,
+#             "camera": status,
+#             "message": "Simple camera status retrieved",
+#             "turtle_safety": {
+#                 "note": "Camera is for monitoring only - avoid extended use to prevent turtle stress",
+#                 "recommended_use": "Brief monitoring sessions only",
+#                 "ir_warning": "IR lighting can disturb turtles - use sparingly if available"
+#             }
+#         }
+#     except Exception as e:
+#         logger.error(f"Error getting simple camera status: {e}")
+#         raise HTTPException(status_code=500, detail=f"Failed to get camera status: {e}")
 
-@camera_router.post("/simple/profile/turtle-monitor")
-async def apply_turtle_monitor_profile():
-    """Apply turtle monitoring optimized profile (Turtle-Safe)"""
-    try:
-        success = camera_controls.apply_turtle_monitor_profile()
-        if success:
-            return {
-                "success": True,
-                "profile": "turtle_monitor",
-                "message": "Turtle Monitor Profile Applied Successfully",
-                "turtle_safety": {
-                    "note": "🐢 Camera optimized for turtle habitat monitoring",
-                    "warning": "⚠️ Camera is for monitoring only - avoid extended use to prevent turtle stress",
-                    "settings": "Optimized for natural, non-disturbing monitoring"
-                }
-            }
-        else:
-            raise HTTPException(status_code=500, detail="Failed to apply turtle monitor profile")
+# @camera_router.post("/simple/profile/turtle-monitor")
+# async def apply_turtle_monitor_profile():
+#     """Apply turtle monitoring optimized profile (Turtle-Safe)"""
+#     try:
+#         success = camera_controls.apply_turtle_monitor_profile()
+#         if success:
+#             return {
+#                 "success": True,
+#                 "profile": "turtle_monitor",
+#                 "message": "Turtle Monitor Profile Applied Successfully",
+#                 "turtle_safety": {
+#                     "note": "🐢 Camera optimized for turtle habitat monitoring",
+#                     "warning": "⚠️ Camera is for monitoring only - avoid extended use to prevent turtle stress",
+#                     "settings": "Optimized for natural, non-disturbing monitoring"
+#                 }
+#             }
+#         else:
+#             raise HTTPException(status_code=500, detail="Failed to apply turtle monitor profile")
             
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Error applying turtle monitor profile: {e}")
-        raise HTTPException(status_code=500, detail=f"Failed to apply profile: {e}")
+#     except HTTPException:
+#         raise
+#     except Exception as e:
+#         logger.error(f"Error applying turtle monitor profile: {e}")
+#         raise HTTPException(status_code=500, detail=f"Failed to apply profile: {e}")
 
-@camera_router.post("/simple/profile/daylight")
-async def apply_daylight_profile():
-    """Apply daylight optimized profile"""
-    try:
-        success = camera_controls.apply_daylight_profile()
-        if success:
-            return {
-                "success": True,
-                "profile": "daylight",
-                "message": "Daylight Profile Applied Successfully"
-            }
-        else:
-            raise HTTPException(status_code=500, detail="Failed to apply daylight profile")
+# @camera_router.post("/simple/profile/daylight")
+# async def apply_daylight_profile():
+#     """Apply daylight optimized profile"""
+#     try:
+#         success = camera_controls.apply_daylight_profile()
+#         if success:
+#             return {
+#                 "success": True,
+#                 "profile": "daylight",
+#                 "message": "Daylight Profile Applied Successfully"
+#             }
+#         else:
+#             raise HTTPException(status_code=500, detail="Failed to apply daylight profile")
             
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Error applying daylight profile: {e}")
-        raise HTTPException(status_code=500, detail=f"Failed to apply profile: {e}")
+#     except HTTPException:
+#         raise
+#     except Exception as e:
+#         logger.error(f"Error applying daylight profile: {e}")
+#         raise HTTPException(status_code=500, detail=f"Failed to apply profile: {e}")
 
-@camera_router.post("/simple/profile/low-light")
-async def apply_low_light_profile():
-    """Apply low light optimized profile"""
-    try:
-        success = camera_controls.apply_low_light_profile()
-        if success:
-            return {
-                "success": True,
-                "profile": "low_light",
-                "message": "Low Light Profile Applied Successfully"
-            }
-        else:
-            raise HTTPException(status_code=500, detail="Failed to apply low light profile")
+# @camera_router.post("/simple/profile/low-light")
+# async def apply_low_light_profile():
+#     """Apply low light optimized profile"""
+#     try:
+#         success = camera_controls.apply_low_light_profile()
+#         if success:
+#             return {
+#                 "success": True,
+#                 "profile": "low_light",
+#                 "message": "Low Light Profile Applied Successfully"
+#             }
+#         else:
+#             raise HTTPException(status_code=500, detail="Failed to apply low light profile")
             
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Error applying low light profile: {e}")
-        raise HTTPException(status_code=500, detail=f"Failed to apply profile: {e}")
+#     except HTTPException:
+#         raise
+#     except Exception as e:
+#         logger.error(f"Error applying low light profile: {e}")
+#         raise HTTPException(status_code=500, detail=f"Failed to apply profile: {e}")
 
-@camera_router.post("/simple/profile/fix-green-tint")
-async def apply_green_tint_fix():
-    """Apply green tint fix profile"""
-    try:
-        success = camera_controls.fix_green_tint()
-        if success:
-            return {
-                "success": True,
-                "profile": "fix_green_tint",
-                "message": "Green Tint Fix Applied Successfully",
-                "fix_details": {
-                    "white_balance": "Manual mode enabled",
-                    "temperature": "Neutral 5000K",
-                    "saturation": "Reduced to 70",
-                    "hue": "Reset to neutral"
-                }
-            }
-        else:
-            raise HTTPException(status_code=500, detail="Failed to apply green tint fix")
+# @camera_router.post("/simple/profile/fix-green-tint")
+# async def apply_green_tint_fix():
+#     """Apply green tint fix profile"""
+#     try:
+#         success = camera_controls.fix_green_tint()
+#         if success:
+#             return {
+#                 "success": True,
+#                 "profile": "fix_green_tint",
+#                 "message": "Green Tint Fix Applied Successfully",
+#                 "fix_details": {
+#                     "white_balance": "Manual mode enabled",
+#                     "temperature": "Neutral 5000K",
+#                     "saturation": "Reduced to 70",
+#                     "hue": "Reset to neutral"
+#                 }
+#             }
+#         else:
+#             raise HTTPException(status_code=500, detail="Failed to apply green tint fix")
             
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Error applying green tint fix: {e}")
-        raise HTTPException(status_code=500, detail=f"Failed to apply green tint fix: {e}")
+#     except HTTPException:
+#         raise
+#     except Exception as e:
+#         logger.error(f"Error applying green tint fix: {e}")
+#         raise HTTPException(status_code=500, detail=f"Failed to apply green tint fix: {e}")
 
-@camera_router.get("/simple/controls")
-async def get_all_camera_controls():
-    """Get all available camera controls and their current values"""
-    try:
-        controls = camera_controls.get_all_controls()
-        available_controls = camera_controls.available_controls
+# @camera_router.get("/simple/controls")
+# async def get_all_camera_controls():
+#     """Get all available camera controls and their current values"""
+#     try:
+#         controls = camera_controls.get_all_controls()
+#         available_controls = camera_controls.available_controls
         
-        return {
-            "success": True,
-            "available_controls": available_controls,
-            "current_values": controls,
-            "message": f"Found {len(available_controls)} available controls",
-            "controls_info": {
-                "brightness": "Adjust image brightness (-64 to 64)",
-                "contrast": "Adjust image contrast (0 to 64)",
-                "saturation": "Adjust color saturation (0 to 128)",
-                "hue": "Adjust color hue (-40 to 40)",
-                "white_balance_automatic": "Auto white balance (0=off, 1=on)",
-                "gamma": "Adjust gamma correction (72 to 500)",
-                "gain": "Adjust gain/amplification (0 to 100)",
-                "power_line_frequency": "Power line frequency (0=disabled, 1=50Hz, 2=60Hz)",
-                "white_balance_temperature": "White balance temperature (2800K to 6500K)",
-                "sharpness": "Adjust image sharpness (0 to 6)",
-                "backlight_compensation": "Backlight compensation (0 to 2)",
-                "auto_exposure": "Auto exposure mode (0=auto, 1=manual, 2=shutter priority, 3=aperture priority)",
-                "exposure_time_absolute": "Exposure time in microseconds (1 to 5000)",
-                "exposure_dynamic_framerate": "Dynamic framerate adjustment (0=off, 1=on)"
-            }
-        }
-    except Exception as e:
-        logger.error(f"Error getting camera controls: {e}")
-        raise HTTPException(status_code=500, detail=f"Failed to get camera controls: {e}")
+#         return {
+#             "success": True,
+#             "available_controls": available_controls,
+#             "current_values": controls,
+#             "message": f"Found {len(available_controls)} available controls",
+#             "controls_info": {
+#                 "brightness": "Adjust image brightness (-64 to 64)",
+#                 "contrast": "Adjust image contrast (0 to 64)",
+#                 "saturation": "Adjust color saturation (0 to 128)",
+#                 "hue": "Adjust color hue (-40 to 40)",
+#                 "white_balance_automatic": "Auto white balance (0=off, 1=on)",
+#                 "gamma": "Adjust gamma correction (72 to 500)",
+#                 "gain": "Adjust gain/amplification (0 to 100)",
+#                 "power_line_frequency": "Power line frequency (0=disabled, 1=50Hz, 2=60Hz)",
+#                 "white_balance_temperature": "White balance temperature (2800K to 6500K)",
+#                 "sharpness": "Adjust image sharpness (0 to 6)",
+#                 "backlight_compensation": "Backlight compensation (0 to 2)",
+#                 "auto_exposure": "Auto exposure mode (0=auto, 1=manual, 2=shutter priority, 3=aperture priority)",
+#                 "exposure_time_absolute": "Exposure time in microseconds (1 to 5000)",
+#                 "exposure_dynamic_framerate": "Dynamic framerate adjustment (0=off, 1=on)"
+#             }
+#         }
+#     except Exception as e:
+#         logger.error(f"Error getting camera controls: {e}")
+#         raise HTTPException(status_code=500, detail=f"Failed to get camera controls: {e}")
 
-@camera_router.get("/simple/ir-filter")
-async def get_ir_filter_status():
-    """Get IR filter status with turtle safety warning"""
-    try:
-        ir_status = camera_controls.check_ir_filter()
-        return {
-            "success": True,
-            "ir_filter": ir_status,
-            "message": "IR filter status retrieved",
-            "turtle_safety": {
-                "warning": "⚠️ IR lighting can disturb turtles - use sparingly if available",
-                "recommendation": "Use natural lighting when possible for turtle monitoring"
-            }
-        }
-    except Exception as e:
-        logger.error(f"Error getting IR filter status: {e}")
-        raise HTTPException(status_code=500, detail=f"Failed to get IR filter status: {e}")
+# @camera_router.get("/simple/ir-filter")
+# async def get_ir_filter_status():
+#     """Get IR filter status with turtle safety warning"""
+#     try:
+#         ir_status = camera_controls.check_ir_filter()
+#         return {
+#             "success": True,
+#             "ir_filter": ir_status,
+#             "message": "IR filter status retrieved",
+#             "turtle_safety": {
+#                 "warning": "⚠️ IR lighting can disturb turtles - use sparingly if available",
+#                 "recommendation": "Use natural lighting when possible for turtle monitoring"
+#             }
+#         }
+#     except Exception as e:
+#         logger.error(f"Error getting IR filter status: {e}")
+#         raise HTTPException(status_code=500, detail=f"Failed to get IR filter status: {e}")
 
-@camera_router.post("/simple/control/{control_name}")
-async def set_simple_camera_control(control_name: str, value: int):
-    """Set a specific camera control with turtle safety check"""
-    try:
-        # Check if this is an IR-related control
-        ir_controls = ['ir_filter', 'ir_cut_filter', 'night_mode', 'ir_led', 'ir_illuminator', 'ir_light', 'night_vision']
-        is_ir_control = any(ir_name in control_name.lower() for ir_name in ir_controls)
+# @camera_router.post("/simple/control/{control_name}")
+# async def set_simple_camera_control(control_name: str, value: int):
+#     """Set a specific camera control with turtle safety check"""
+#     try:
+#         # Check if this is an IR-related control
+#         ir_controls = ['ir_filter', 'ir_cut_filter', 'night_mode', 'ir_led', 'ir_illuminator', 'ir_light', 'night_vision']
+#         is_ir_control = any(ir_name in control_name.lower() for ir_name in ir_controls)
         
-        success = camera_controls.set_control(control_name, value)
-        if success:
-            response = {
-                "success": True,
-                "control": control_name,
-                "value": value,
-                "message": f"Set {control_name} to {value}"
-            }
+#         success = camera_controls.set_control(control_name, value)
+#         if success:
+#             response = {
+#                 "success": True,
+#                 "control": control_name,
+#                 "value": value,
+#                 "message": f"Set {control_name} to {value}"
+#             }
             
-            if is_ir_control:
-                response["turtle_safety"] = {
-                    "warning": "⚠️ IR control modified - this may affect turtle behavior",
-                    "recommendation": "Monitor turtle response and use minimal IR lighting"
-                }
+#             if is_ir_control:
+#                 response["turtle_safety"] = {
+#                     "warning": "⚠️ IR control modified - this may affect turtle behavior",
+#                     "recommendation": "Monitor turtle response and use minimal IR lighting"
+#                 }
             
-            return response
-        else:
-            raise HTTPException(status_code=400, detail=f"Failed to set {control_name} to {value}")
+#             return response
+#         else:
+#             raise HTTPException(status_code=400, detail=f"Failed to set {control_name} to {value}")
             
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Error setting camera control: {e}")
-        raise HTTPException(status_code=500, detail=f"Failed to set camera control: {e}")
+#     except HTTPException:
+#         raise
+#     except Exception as e:
+#         logger.error(f"Error setting camera control: {e}")
+#         raise HTTPException(status_code=500, detail=f"Failed to set camera control: {e}")
 
-@camera_router.get("/simple/control/{control_name}")
-async def get_simple_camera_control(control_name: str):
-    """Get current value of a camera control"""
-    try:
-        value = camera_controls.get_control(control_name)
-        if value is not None:
-            return {
-                "success": True,
-                "control": control_name,
-                "value": value,
-                "message": f"Current value of {control_name}: {value}"
-            }
-        else:
-            raise HTTPException(status_code=404, detail=f"Control '{control_name}' not found")
+# @camera_router.get("/simple/control/{control_name}")
+# async def get_simple_camera_control(control_name: str):
+#     """Get current value of a camera control"""
+#     try:
+#         value = camera_controls.get_control(control_name)
+#         if value is not None:
+#             return {
+#                 "success": True,
+#                 "control": control_name,
+#                 "value": value,
+#                 "message": f"Current value of {control_name}: {value}"
+#             }
+#         else:
+#             raise HTTPException(status_code=404, detail=f"Control '{control_name}' not found")
             
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Error getting camera control: {e}")
-        raise HTTPException(status_code=500, detail=f"Failed to get camera control: {e}") 
+#     except HTTPException:
+#         raise
+#     except Exception as e:
+#         logger.error(f"Error getting camera control: {e}")
+#         raise HTTPException(status_code=500, detail=f"Failed to get camera control: {e}") 
