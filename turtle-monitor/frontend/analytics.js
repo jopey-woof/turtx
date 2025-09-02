@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function loadData(period) {
-    const zones = ['basking', 'cooling'];
+    const zones = ['sensor1', 'sensor2'];
     const metrics = ['temperature', 'humidity'];
 
     const data = {};
@@ -59,15 +59,15 @@ async function fetchData(metric, zone, period) {
 function updateCharts(data, period) {
     // Update temperature trend
     tempTrendChart.data.datasets = [
-        { label: 'Basking Temp', data: data.basking.temperature.data, borderColor: 'red' },
-        { label: 'Cooling Temp', data: data.cooling.temperature.data, borderColor: 'blue' }
+        { label: 'Basking Temp', data: data.sensor1.temperature.data, borderColor: 'red' },
+        { label: 'Cooling Temp', data: data.sensor2.temperature.data, borderColor: 'blue' }
     ];
     tempTrendChart.update();
 
     // Update humidity trend
     humidityTrendChart.data.datasets = [
-        { label: 'Basking Humidity', data: data.basking.humidity.data, borderColor: 'green' },
-        { label: 'Cooling Humidity', data: data.cooling.humidity.data, borderColor: 'purple' }
+        { label: 'Basking Humidity', data: data.sensor1.humidity.data, borderColor: 'green' },
+        { label: 'Cooling Humidity', data: data.sensor2.humidity.data, borderColor: 'purple' }
     ];
     humidityTrendChart.update();
 
@@ -75,10 +75,10 @@ function updateCharts(data, period) {
 }
 
 function updateKPIs(data, period) {
-    document.getElementById('avg-basking-temp').textContent = calculateAverage(data.basking.temperature.data);
-    document.getElementById('avg-cooling-temp').textContent = calculateAverage(data.cooling.temperature.data);
-    document.getElementById('avg-basking-humidity').textContent = calculateAverage(data.basking.humidity.data);
-    document.getElementById('avg-cooling-humidity').textContent = calculateAverage(data.cooling.humidity.data);
+    document.getElementById('avg-basking-temp').textContent = calculateAverage(data.sensor1.temperature.data);
+    document.getElementById('avg-cooling-temp').textContent = calculateAverage(data.sensor2.temperature.data);
+    document.getElementById('avg-basking-humidity').textContent = calculateAverage(data.sensor1.humidity.data);
+    document.getElementById('avg-cooling-humidity').textContent = calculateAverage(data.sensor2.humidity.data);
     document.getElementById('optimal-conditions').textContent = calculateOptimalPercentage(data);
     document.getElementById('alert-count').textContent = calculateAlertCount(data);
 }
