@@ -29,7 +29,7 @@ import uvicorn
 # Import camera routes
 from camera_routes import camera_router, init_camera_manager, stop_camera_manager
 
-from analytics_routes import router as analytics_router
+from .analytics_routes import router as analytics_router
 
 # Configure logging
 logging.basicConfig(
