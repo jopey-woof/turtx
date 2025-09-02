@@ -1,0 +1,23 @@
+[Unit]
+Description=TurtX Simple Efficient Dashboard
+After=graphical-session.target
+Wants=graphical-session.target
+
+[Service]
+Type=simple
+User=shrimp
+Group=shrimp
+Environment=DISPLAY=:0
+Environment=XDG_RUNTIME_DIR=/run/user/1000
+WorkingDirectory=/home/shrimp/turtle-monitor/kiosk
+ExecStartPre=/bin/sleep 5
+ExecStart=/home/shrimp/turtle-monitor/kiosk/start-simple-dashboard.sh
+Restart=always
+RestartSec=10
+Nice=15
+IOSchedulingClass=3
+CPUQuota=40%
+MemoryMax=256M
+
+[Install]
+WantedBy=graphical-session.target

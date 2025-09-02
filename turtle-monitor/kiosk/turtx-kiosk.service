@@ -1,0 +1,23 @@
+[Unit]
+Description=TurtX Efficient Kiosk Dashboard
+After=graphical-session.target
+Wants=graphical-session.target
+
+[Service]
+Type=simple
+User=shrimp
+Group=shrimp
+Environment=DISPLAY=:0
+Environment=XDG_RUNTIME_DIR=/run/user/1000
+WorkingDirectory=/home/shrimp/turtle-monitor/kiosk
+ExecStartPre=/bin/sleep 10
+ExecStart=/home/shrimp/turtle-monitor/kiosk/start-kiosk-efficient.sh
+Restart=always
+RestartSec=10
+Nice=10
+IOSchedulingClass=3
+CPUQuota=50%
+MemoryMax=512M
+
+[Install]
+WantedBy=graphical-session.target

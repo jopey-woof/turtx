@@ -1,0 +1,17 @@
+[Unit]
+Description=TurtX Display Configuration Fix
+After=graphical-session.target
+Wants=graphical-session.target
+
+[Service]
+Type=oneshot
+User=shrimp
+Group=shrimp
+Environment=DISPLAY=:0
+ExecStart=/home/shrimp/turtx/turtle-monitor/kiosk/display-config.sh
+RemainAfterExit=yes
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=graphical-session.target
