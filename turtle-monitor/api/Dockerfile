@@ -20,8 +20,7 @@ COPY requirements.txt .
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application code
-COPY main.py camera.py hybrid_camera.py ./
+COPY . /app/
 
 # Create data directory
 RUN mkdir -p /data && chown -R turtle:turtle /data
